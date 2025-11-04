@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef } from 'react';
+import Portal from '@/components/Portal';
 
 interface SlidingScreenProps {
   isOpen: boolean;
@@ -87,10 +88,10 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
   if (!isVisible) return null;
 
   return (
-    <>
+    <Portal>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-60 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
           isAnimating ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
@@ -98,7 +99,7 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
 
       {/* Sliding Panel - 모바일 화면 모양의 컨테이너 */}
       <div
-        className={`fixed inset-0 z-[70] flex items-center justify-center pointer-events-none`}
+        className="fixed inset-0 z-70 flex items-center justify-center pointer-events-none"
       >
         <div
           className={`w-full max-w-md h-full bg-bg-primary shadow-2xl pointer-events-auto transition-all duration-300 ease-out ${
@@ -142,7 +143,7 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
           </div>
         </div>
       </div>
-    </>
+    </Portal>
   );
 };
 

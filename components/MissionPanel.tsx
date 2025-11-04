@@ -2,6 +2,7 @@
 import React from 'react';
 import { Mission, MissionProgress } from '@/lib/types';
 import { MOCK_MISSIONS, MOCK_MISSION_PROGRESS } from '@/lib/constants';
+import Portal from '@/components/Portal';
 
 interface MissionPanelProps {
   isOpen: boolean;
@@ -95,22 +96,20 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
   const intermediateMissions = missions.filter((m) => m.difficulty === 'intermediate');
   const advancedMissions = missions.filter((m) => m.difficulty === 'advanced');
 
+  if (!isOpen) return null;
+
   return (
-    <>
+    <Portal>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-[60] transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className="fixed inset-0 z-60 bg-black/30 backdrop-blur-sm transition-opacity duration-300 opacity-100 pointer-events-auto"
         onClick={onClose}
       />
 
       {/* Panel - 모바일 화면 모양의 컨테이너 */}
-      <div className="fixed inset-0 z-[70] flex items-center justify-center pointer-events-none">
+      <div className="fixed inset-0 z-70 flex items-center justify-center pointer-events-none">
         <div
-          className={`w-full max-w-md h-full bg-bg-primary shadow-2xl pointer-events-auto transition-transform duration-300 ease-out overflow-y-auto ${
-            isOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+          className="w-full max-w-md h-full bg-bg-primary shadow-2xl pointer-events-auto transition-transform duration-300 ease-out overflow-y-auto translate-x-0"
         >
           {/* Header */}
           <div className="sticky top-0 bg-bg-primary border-b border-border-color z-10 px-5 py-4">
@@ -229,9 +228,9 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
         </div>
+        </div>
       </div>
-      </div>
-    </>
+    </Portal>
   );
 };
 
