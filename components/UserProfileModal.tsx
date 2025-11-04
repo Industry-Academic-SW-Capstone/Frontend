@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { LeaderboardEntry, Achievement } from '@/lib/types';
 import * as Icons from './icons/Icons';
 import { MOCK_ACHIEVEMENTS } from '@/lib/constants';
+import { Drawer } from 'vaul';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -41,55 +42,51 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose, us
     }
   }, [user]);
 
-  if (!isOpen || !user) return null;
+
+  // Vaul Drawer는 open 상태만 관리하면 되므로 user가 없으면 Drawer를 닫음
+  if (!isOpen || !user) return <></>;
 
   const handleToggleRival = () => {
     setIsRival(!isRival);
   };
 
   return (
-    <div 
-        className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 transition-opacity duration-300" 
-        onClick={onClose}
-        style={{ opacity: isOpen ? 1 : 0 }}
-    >
-      <div 
-        className="w-full max-w-md bg-bg-secondary rounded-t-2xl p-4 transform transition-transform duration-300 ease-in-out" 
-        onClick={(e) => e.stopPropagation()}
-        style={{ transform: isOpen ? 'translateY(0)' : 'translateY(100%)' }}
-      >
+    <Drawer.Root open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <Drawer.Overlay className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm" />
+      <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 w-full max-w-md mx-auto bg-bg-secondary rounded-t-2xl p-4 shadow-2xl" style={{ touchAction: 'none' }}>
         <div className="w-12 h-1.5 bg-border-color rounded-full mx-auto mb-4"></div>
-        
+        <Drawer.Close asChild>
+          <button className="absolute top-4 right-4 p-2 rounded-full hover:bg-border-color">
+            <Icons.XMarkIcon className="w-6 h-6 text-text-secondary" />
+          </button>
+        </Drawer.Close>
         <div className="flex flex-col items-center text-center">
-            <img src={user.avatar} alt={user.username} className="w-20 h-20 rounded-full mb-3 border-4 border-bg-primary shadow-lg"/>
-            <h2 className="text-xl font-bold text-text-primary">{user.username}</h2>
-            <div className="flex items-center gap-4 mt-2 text-sm text-text-secondary">
-                <span>랭킹: <span className="font-bold text-text-primary">{user.rank}위</span></span>
-                <span>수익률: <span className="font-bold text-positive">{user.returnRate.toFixed(1)}%</span></span>
-            </div>
+          <img src={user.avatar} alt={user.username} className="w-20 h-20 rounded-full mb-3 border-4 border-bg-primary shadow-lg"/>
+          <h2 className="text-xl font-bold text-text-primary">{user.username}</h2>
+          <div className="flex items-center gap-4 mt-2 text-sm text-text-secondary">
+            <span>랭킹: <span className="font-bold text-text-primary">{user.rank}위</span></span>
+            <span>수익률: <span className="font-bold text-positive">{user.returnRate.toFixed(1)}%</span></span>
+          </div>
         </div>
-
         <div className="my-6">
-            <h3 className="text-sm font-bold text-text-secondary text-center mb-3">대표 업적</h3>
-            <div className="flex justify-center gap-4">
-                {userAchievements.map(ach => <MiniAchievement key={ach.id} achievement={ach} />)}
-            </div>
+          <h3 className="text-sm font-bold text-text-secondary text-center mb-3">대표 업적</h3>
+          <div className="flex justify-center gap-4">
+            {userAchievements.map(ach => <MiniAchievement key={ach.id} achievement={ach} />)}
+          </div>
         </div>
-
         <button 
-            onClick={handleToggleRival}
-            className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-white transition-colors ${
-                isRival 
-                ? 'bg-secondary hover:bg-secondary/90' 
-                : 'bg-primary hover:bg-primary/90'
-            }`}
+          onClick={handleToggleRival}
+          className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-white transition-colors ${
+            isRival 
+            ? 'bg-secondary hover:bg-secondary/90' 
+            : 'bg-primary hover:bg-primary/90'
+          }`}
         >
-            {isRival ? <Icons.UsersIcon className="w-5 h-5" /> : <Icons.UserPlusIcon className="w-5 h-5" />}
-            {isRival ? '라이벌' : '라이벌 추가'}
+          {isRival ? <Icons.UsersIcon className="w-5 h-5" /> : <Icons.UserPlusIcon className="w-5 h-5" />}
+          {isRival ? '라이벌' : '라이벌 추가'}
         </button>
-
-      </div>
-    </div>
+      </Drawer.Content>
+    </Drawer.Root>
   );
 };
 

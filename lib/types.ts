@@ -168,3 +168,29 @@ export interface Notification {
     competitionId?: string;
   };
 }
+
+export type MissionDifficulty = 'beginner' | 'intermediate' | 'advanced';
+export type MissionStatus = 'locked' | 'in_progress' | 'completed';
+
+export interface Mission {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: MissionDifficulty;
+  status: MissionStatus;
+  progress: number;
+  maxProgress: number;
+  reward: number;
+  theme: string;
+}
+
+export interface MissionProgress {
+  dailyMissionsCompleted: number;
+  dailyMissionsTotal: number;
+  themeMissions: {
+    beginner: { completed: number; total: number };
+    intermediate: { completed: number; total: number };
+    advanced: { completed: number; total: number };
+  };
+  currentTheme: string;
+}

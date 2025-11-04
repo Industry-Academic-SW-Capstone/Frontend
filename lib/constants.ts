@@ -1,4 +1,4 @@
-import { Account, StockHolding, Transaction, Competition, Achievement, LeaderboardEntry, StockDetail, Sector, User, UserGroup, AIPersonaLeaderboardEntry, RivalLeaderboardEntry, BasicStockInfo, Order, InvestmentStyleAnalysis, Notification } from './types';
+import { Account, StockHolding, Transaction, Competition, Achievement, LeaderboardEntry, StockDetail, Sector, User, UserGroup, AIPersonaLeaderboardEntry, RivalLeaderboardEntry, BasicStockInfo, Order, InvestmentStyleAnalysis, Notification, Mission, MissionProgress } from './types';
 
 export const MOCK_USER: User = {
   username: '주린이탈출',
@@ -251,3 +251,23 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
         read: true,
     }
 ];
+
+export const MOCK_MISSIONS: Mission[] = [
+    { id: 'm-1', title: '첫 거래 완료', description: '주식을 처음 거래해보세요', difficulty: 'beginner', status: 'completed', progress: 1, maxProgress: 1, reward: 10000, theme: '기본' },
+    { id: 'm-2', title: '일일 체크인', description: '오늘 앱에 접속하기', difficulty: 'beginner', status: 'completed', progress: 1, maxProgress: 1, reward: 5000, theme: '기본' },
+    { id: 'm-3', title: '3종목 보유', description: '서로 다른 3개의 종목을 보유하세요', difficulty: 'beginner', status: 'in_progress', progress: 2, maxProgress: 3, reward: 15000, theme: '기본' },
+    { id: 'm-4', title: '수익 실현', description: '주식을 매도하여 수익을 실현하세요', difficulty: 'intermediate', status: 'in_progress', progress: 0, maxProgress: 1, reward: 20000, theme: '가치투자' },
+    { id: 'm-5', title: '10% 수익률 달성', description: '계좌 수익률 10% 달성하기', difficulty: 'intermediate', status: 'locked', progress: 0, maxProgress: 1, reward: 50000, theme: '가치투자' },
+    { id: 'm-6', title: '월간 챌린지', description: '한 달 동안 매일 거래하기', difficulty: 'advanced', status: 'locked', progress: 0, maxProgress: 30, reward: 100000, theme: '가치투자' },
+];
+
+export const MOCK_MISSION_PROGRESS: MissionProgress = {
+    dailyMissionsCompleted: 2,
+    dailyMissionsTotal: 3,
+    themeMissions: {
+        beginner: { completed: 1, total: 3 },
+        intermediate: { completed: 0, total: 2 },
+        advanced: { completed: 0, total: 1 },
+    },
+    currentTheme: '가치투자',
+};
