@@ -58,7 +58,7 @@ const LandingScreen: React.FC = () => {
       <div className="w-24 h-24 bg-primary text-white rounded-3xl mx-auto flex items-center justify-center mb-6 shadow-lg">
         <StonkIcon className="w-14 h-14" />
       </div>
-      <h1 className="text-5xl font-extrabold text-slate-900">주린이 놀이터</h1>
+      <h1 className="text-5xl font-extrabold text-slate-900">스톡잇!</h1>
       <p className="text-slate-600 mt-4 text-lg max-w-2xl">
         A gamified stock simulation platform for beginners, combining casual gameplay with real-world market data to make learning about investing fun and accessible.
       </p>

@@ -176,7 +176,7 @@ export interface Sector {
     stocks: BasicStockInfo[];
 }
 
-export type PopularStockCategory = 'gainers' | 'losers' | 'volume';
+export type PopularStockCategory = 'gainers' | 'losers' | 'volume' | 'amount';
 
 export interface InvestmentStyleAnalysis {
   personaName: string;
@@ -232,3 +232,27 @@ export interface MissionProgress {
   };
   currentTheme: string;
 }
+
+/**
+ * @param stockCode 주식코드
+ * @param stockName 주식명
+ * @param volume 거래량
+ * @param amount 거래대금
+ * @param marketType 시장구분 (KOSPI/KOSDAQ)
+ * @param currentPrice 현재가
+ * @param changeAmount 전일대비 금액
+ * @param changeRate 전일대비율
+ * @param changeSign 등락 부호
+ */
+export interface StockInfo {
+  stock_code: string;
+  stock_name: string;
+  volume: number;
+  amount: number;
+  market_type: 'KOSPI' | 'KOSDAQ';
+  current_price: number;
+  change_amount: number;
+  change_rate: number;
+  change_sign: '+' | '-';
+}
+

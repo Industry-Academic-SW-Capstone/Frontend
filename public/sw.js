@@ -47,7 +47,7 @@ self.addEventListener('push', event => {
   console.log('Push received:', event);
   
   let notificationData = {
-    title: '주린이 놀이터',
+    title: '스톡잇',
     body: '새로운 알림이 도착했습니다.',
     icon: '/logo.svg',
     badge: '/logo.svg',

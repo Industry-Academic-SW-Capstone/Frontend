@@ -1,0 +1,1 @@
+export const generateLogo = (ticker: string, name: string) => `https://avatar.vercel.sh/${ticker}.png?text=${name.substring(0,1)}`;

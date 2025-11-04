@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { MagnifyingGlassIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon, FireIcon, BookmarkIcon } from '@/components/icons/Icons';
 import { Sector, BasicStockInfo, PopularStockCategory } from '@/lib/types';
 import { MOCK_SECTORS, MOCK_POPULAR_STOCKS, MOCK_FAVORITE_STOCKS } from '@/lib/constants';
+import { useTopStocks } from '@/lib/hooks/useTopStocks';
 
 interface ExploreScreenProps {
   onSelectStock: (ticker: string) => void;
@@ -50,10 +51,24 @@ const PopularStockCard: React.FC<{ stock: BasicStockInfo, onClick: () => void }>
 
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [activePopularTab, setActivePopularTab] = useState<PopularStockCategory>('gainers');
+    const [activePopularTab, setActivePopularTab] = useState<PopularStockCategory>('amount');
     const [activeContentTab, setActiveContentTab] = useState<'sectors' | 'favorites'>('sectors');
   
-    const popularStocks = MOCK_POPULAR_STOCKS[activePopularTab];
+    const { stocks: popularStocks, isLoading: isLoadingTopStocks } = useTopStocks();
+
+    // 인기주식 스켈레톤 컴포넌트
+    const PopularStockSkeleton = () => (
+        <div className="flex-shrink-0 w-36 h-28 bg-bg-secondary border border-border-color rounded-2xl p-4 flex flex-col justify-between animate-pulse">
+            <div>
+                <div className="w-8 h-8 rounded-full mb-2 bg-gray-200" />
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-1" />
+            </div>
+            <div>
+                <div className="h-4 bg-gray-200 rounded w-2/3 mb-1" />
+                <div className="h-3 bg-gray-200 rounded w-1/3" />
+            </div>
+        </div>
+    );
 
     const filteredSectors = useMemo(() => {
         if (!searchTerm) return MOCK_SECTORS;
@@ -100,12 +115,14 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
                 <div className="flex bg-bg-secondary p-1 rounded-lg">
                     <button onClick={() => setActivePopularTab('gainers')} className={`flex-1 py-2 text-sm font-semibold rounded-md ${activePopularTab === 'gainers' ? 'bg-bg-primary text-positive shadow' : 'text-text-secondary'}`}>급등</button>
                     <button onClick={() => setActivePopularTab('losers')} className={`flex-1 py-2 text-sm font-semibold rounded-md ${activePopularTab === 'losers' ? 'bg-bg-primary text-negative shadow' : 'text-text-secondary'}`}>급락</button>
-                    <button onClick={() => setActivePopularTab('volume')} className={`flex-1 py-2 text-sm font-semibold rounded-md ${activePopularTab === 'volume' ? 'bg-bg-primary text-primary shadow' : 'text-text-secondary'}`}>거래량</button>
+                    <button onClick={() => setActivePopularTab('amount')} className={`flex-1 py-2 text-sm font-semibold rounded-md ${activePopularTab === 'amount' ? 'bg-bg-primary text-primary shadow' : 'text-text-secondary'}`}>거래대금</button>
                 </div>
                 <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
-                    {popularStocks.map(stock => (
-                        <PopularStockCard key={stock.ticker} stock={stock} onClick={() => onSelectStock(stock.ticker)} />
-                    ))}
+                    {isLoadingTopStocks
+                        ? Array.from({ length: 5 }).map((_, i) => <PopularStockSkeleton key={i} />)
+                        : popularStocks.map(stock => (
+                            <PopularStockCard key={stock.ticker} stock={stock} onClick={() => onSelectStock(stock.ticker)} />
+                        ))}
                 </div>
             </div>
 

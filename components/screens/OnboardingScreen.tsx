@@ -115,7 +115,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                 <div className="w-24 h-24 bg-primary text-white rounded-3xl mx-auto flex items-center justify-center mb-6">
                     <Icons.StonkIcon className="w-14 h-14"/>
                 </div>
-                <h1 className="text-4xl font-extrabold text-text-primary">주린이 놀이터</h1>
+                <h1 className="text-4xl font-extrabold text-text-primary">스톡잇!</h1>
                 <p className="text-text-secondary mt-4 text-lg">게임하듯 즐겁게, 주식 투자를 마스터하세요.</p>
             </div>
             <div className="space-y-3">
@@ -312,7 +312,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
           <div className="flex flex-col items-center justify-center h-full text-center p-8 animate-fadeInUp">
             <Icons.CheckCircleIcon className="w-24 h-24 text-positive mb-6" />
             <h1 className="text-3xl font-bold">환영합니다, {newUser.username}님!</h1>
-            <p className="text-text-secondary mt-2">이제 주린이 놀이터를 시작할 준비가 되었습니다.</p>
+            <p className="text-text-secondary mt-2">이제 스톡잇을 시작할 준비가 되었습니다.</p>
           </div>
         );
       default:

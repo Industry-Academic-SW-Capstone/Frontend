@@ -1,7 +1,7 @@
 {
-  "name": "주린이 놀이터",
+  "name": "스톡잇",
   "short_name": "주린이",
-  "description": "게임하듯 즐겁게 주식투자를 배우는 주린이 놀이터",
+  "description": "게임하듯 즐겁게 주식투자를 배우는 스톡잇",
   "start_url": "/?view=app",
   "display": "standalone",
   "background_color": "#f8fafc",
