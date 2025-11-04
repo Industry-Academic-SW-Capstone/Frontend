@@ -83,10 +83,6 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, isMe, onClick })
         <RankChange change={entry.change} />
       </div>
       
-      {/* Corner accent for me */}
-      {isMe && (
-        <div className="absolute top-0 right-0 w-16 h-16 bg-primary/30 rounded-bl-full" />
-      )}
     </button>
   );
 };

@@ -36,7 +36,16 @@ import {
   HiChevronLeft,
   HiClipboardDocumentList,
   HiCog,
-  HiMegaphone
+  HiMegaphone,
+  HiChevronRight,
+  HiUser,
+  HiMoon,
+  HiSun,
+  HiLockClosed,
+  HiQuestionMarkCircle,
+  HiArrowRightOnRectangle,
+  HiPencil,
+  HiLink
 } from 'react-icons/hi2';
 import { 
   MdPhone, 
@@ -122,3 +131,12 @@ export const ChevronLeftIcon = (props: IconProps) => <HiChevronLeft {...props} /
 export const ClipboardDocumentListIcon = (props: IconProps) => <HiClipboardDocumentList {...props} />;
 export const CogIcon = (props: IconProps) => <HiCog {...props} />;
 export const MegaphoneIcon = (props: IconProps) => <HiMegaphone {...props} />;
+export const ChevronRightIcon = (props: IconProps) => <HiChevronRight {...props} />;
+export const UserIcon = (props: IconProps) => <HiUser {...props} />;
+export const MoonIcon = (props: IconProps) => <HiMoon {...props} />;
+export const SunIcon = (props: IconProps) => <HiSun {...props} />;
+export const LockClosedIcon = (props: IconProps) => <HiLockClosed {...props} />;
+export const QuestionMarkCircleIcon = (props: IconProps) => <HiQuestionMarkCircle {...props} />;
+export const ArrowRightOnRectangleIcon = (props: IconProps) => <HiArrowRightOnRectangle {...props} />;
+export const PencilIcon = (props: IconProps) => <HiPencil {...props} />;
+export const LinkIcon = (props: IconProps) => <HiLink {...props} />;

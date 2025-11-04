@@ -1,15 +1,71 @@
 "use client";
-import React from 'react';
-import { ChartPieIcon } from '@/components/icons/Icons';
+import React, { useState } from 'react';
+import { MOCK_TRANSACTIONS, MOCK_ANALYSIS_RESULT } from '@/lib/constants';
+import { InvestmentStyleAnalysis } from '@/lib/types';
+import { analyzeInvestmentStyle } from '@/lib/services/geminiService';
+import * as Icons from '@/components/icons/Icons';
+import InvestmentAnalysisCard from '@/components/InvestmentAnalysisCard';
 
 const AnalysisScreen: React.FC = () => {
+  const [analysis, setAnalysis] = useState<InvestmentStyleAnalysis | null>(MOCK_ANALYSIS_RESULT);
+  const [analysisError, setAnalysisError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleAnalyze = async () => {
+    setIsLoading(true);
+    setAnalysisError('');
+    setAnalysis(null);
+    const result = await analyzeInvestmentStyle(MOCK_TRANSACTIONS);
+    if (typeof result === 'string') {
+        setAnalysisError(result);
+    } else {
+        setAnalysis(result);
+    }
+    setIsLoading(false);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center p-4">
-      <ChartPieIcon className="w-16 h-16 text-primary mb-4" />
-      <h1 className="text-2xl font-bold text-text-primary">AI 투자 분석</h1>
-      <p className="text-text-secondary mt-2">
-        나의 투자 성향과 포트폴리오를 AI가 분석해주는 기능이 곧 출시될 예정입니다.
-      </p>
+    <div className="pt-4 space-y-6 animate-fadeInUp">
+      {/* Header Section */}
+      <div className="bg-bg-secondary p-6 rounded-3xl shadow-lg">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-3 bg-secondary/10 rounded-xl">
+            <Icons.SparklesIcon className="w-7 h-7 text-secondary animate-pulse"/>
+          </div>
+          <h1 className="font-bold text-2xl text-text-primary">AI 투자 분석</h1>
+        </div>
+        <p className="text-text-secondary text-sm ml-14">
+          AI가 당신의 투자 성향과 패턴을 분석합니다
+        </p>
+      </div>
+
+      {/* AI Analysis Section */}
+      {analysis ? (
+        <InvestmentAnalysisCard analysis={analysis} />
+      ) : (
+        <div className="bg-bg-secondary p-6 rounded-3xl border border-border-color shadow-lg card-hover overflow-hidden relative group">
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer" />
+          
+          <div className="flex items-center gap-3 mb-5 relative z-10">
+            <div className="p-3 bg-secondary/10 rounded-xl">
+              <Icons.ChartPieIcon className="w-7 h-7 text-secondary"/>
+            </div>
+            <h3 className="font-bold text-xl text-text-primary">투자 스타일 분석</h3>
+          </div>
+          
+          {analysisError && (
+            <p className="text-negative text-center mb-4 font-medium animate-fadeIn">{analysisError}</p>
+          )}
+          
+          <button 
+            onClick={handleAnalyze} 
+            disabled={isLoading}
+            className="w-full bg-secondary text-white font-bold py-4 px-6 rounded-xl disabled:opacity-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95"
+          >
+            <span className="relative z-10">{isLoading ? '분석 중...' : '내 투자 스타일 분석하기'}</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
