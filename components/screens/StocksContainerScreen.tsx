@@ -1,9 +1,8 @@
 "use client";
 import React, { useState } from 'react';
 import StocksBottomNavBar, { StocksView } from '@/components/StocksBottomNavBar';
-import PortfolioScreen from './PortfolioScreen';
-import ExploreScreen from './ExploreScreen';
-import AnalysisScreen from './AnalysisScreen';
+import StocksSwiper from '@/components/navigation/StocksSwiper';
+import SlidingScreen from '@/components/navigation/SlidingScreen';
 import StockDetailScreen from './StockDetailScreen';
 
 interface StocksContainerScreenProps {
@@ -23,25 +22,7 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({ onExit, n
     setSelectedTicker(null);
   }
 
-  const renderContent = () => {
-    if (selectedTicker) {
-      return <StockDetailScreen ticker={selectedTicker} onBack={handleBack} />;
-    }
-
-    switch (currentView) {
-      case 'portfolio':
-        return <PortfolioScreen onSelectStock={handleSelectStock} />;
-      case 'explore':
-        return <ExploreScreen onSelectStock={handleSelectStock} />;
-      case 'analysis':
-        return <AnalysisScreen />;
-      default:
-        return <PortfolioScreen onSelectStock={handleSelectStock} />;
-    }
-  };
-
   const getHeaderTitle = () => {
-      if (selectedTicker) return "종목 상세";
       switch (currentView) {
           case 'portfolio': return "내 자산";
           case 'explore': return "탐색";
@@ -52,22 +33,35 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({ onExit, n
 
   return (
     <div className="h-screen flex flex-col">
-       {!selectedTicker && (
-           <header className="sticky top-0 z-10 bg-bg-primary/80 backdrop-blur-sm p-4">
-               <h1 className="text-xl font-bold text-center text-text-primary">{getHeaderTitle()}</h1>
-           </header>
-       )}
-      <div className={`flex-1 overflow-y-auto px-4 ${selectedTicker ? '' : 'pb-24'}`}>
-        {renderContent()}
+      <header className="sticky top-0 z-10 bg-bg-primary/95 backdrop-blur-sm border-b border-border-color p-4">
+        <h1 className="text-xl font-bold text-center text-text-primary">{getHeaderTitle()}</h1>
+      </header>
+      
+      <div className="flex-1 overflow-hidden">
+        <StocksSwiper
+          currentView={currentView}
+          onSlideChange={setCurrentView}
+          onSelectStock={handleSelectStock}
+        />
       </div>
       
-      {needHeader && !selectedTicker && (
-          <StocksBottomNavBar 
-              currentView={currentView}
-              setCurrentView={setCurrentView}
-              onExit={onExit}
-          />
+      {needHeader && (
+        <StocksBottomNavBar 
+          currentView={currentView}
+          setCurrentView={setCurrentView}
+          onExit={onExit}
+        />
       )}
+
+      {/* 종목 상세 화면 - 오른쪽에서 슬라이딩 */}
+      <SlidingScreen
+        isOpen={!!selectedTicker}
+        onClose={handleBack}
+      >
+        {selectedTicker && (
+          <StockDetailScreen ticker={selectedTicker} onBack={handleBack} />
+        )}
+      </SlidingScreen>
     </div>
   );
 };

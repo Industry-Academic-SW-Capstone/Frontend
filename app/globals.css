@@ -74,6 +74,19 @@ body {
   background-color: transparent;
 }
 
+/* Swiper custom styles */
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Legacy animation styles - keeping for backward compatibility */
 .main-view-container, .stocks-view-container {
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   position: absolute;

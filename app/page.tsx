@@ -4,10 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Analytics } from "@vercel/analytics/react"
 import Header from '@/components/Header';
 import BottomNavBar from '@/components/BottomNavBar';
-import HomeScreen from '@/components/screens/HomeScreen';
-import CompetitionsScreen from '@/components/screens/CompetitionsScreen';
-import RankingsScreen from '@/components/screens/RankingsScreen';
-import ProfileScreen from '@/components/screens/ProfileScreen';
+import MainSwiper from '@/components/navigation/MainSwiper';
+import SlidingScreen from '@/components/navigation/SlidingScreen';
 import StocksContainerScreen from '@/components/screens/StocksContainerScreen';
 import NotificationsScreen from '@/components/screens/NotificationsScreen';
 import AccountSwitcher from '@/components/AccountSwitcher';
@@ -70,6 +68,7 @@ export default function Home() {
         setIsStocksViewActive(true);
     } else {
         setCurrentScreen(screen);
+        setIsStocksViewActive(false);
     }
   }
 
@@ -97,21 +96,6 @@ export default function Home() {
     }
   }
 
-  const renderScreen = () => {
-    switch (currentScreen) {
-      case 'home':
-        return <HomeScreen selectedAccount={selectedAccount} />;
-      case 'competitions':
-        return <CompetitionsScreen />;
-      case 'rankings':
-        return <RankingsScreen selectedAccount={selectedAccount} user={user} />;
-      case 'profile':
-        return <ProfileScreen user={user} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
-      default:
-        return <HomeScreen selectedAccount={selectedAccount} />;
-    }
-  };
-
   if (!isLoggedIn) {
     return <OnboardingScreen onLoginSuccess={handleLoginSuccess} />;
   }
@@ -119,29 +103,39 @@ export default function Home() {
   return (
     <>
       <div className="max-w-md mx-auto bg-bg-primary text-text-primary min-h-screen font-sans relative overflow-hidden">
-        <div className={`main-view-container ${isStocksViewActive ? 'exiting' : ''}`}>
-          <Header 
-            title={getHeaderTitle()} 
+        <Header 
+          title={getHeaderTitle()} 
+          selectedAccount={selectedAccount}
+          user={user}
+          onAccountSwitch={() => setIsAccountSwitcherOpen(true)}
+          onNotificationClick={() => setIsNotificationsOpen(true)}
+          unreadCount={unreadNotifications}
+        />
+        
+        <main className="h-screen">
+          <MainSwiper
             selectedAccount={selectedAccount}
             user={user}
-            onAccountSwitch={() => setIsAccountSwitcherOpen(true)}
-            onNotificationClick={() => setIsNotificationsOpen(true)}
-            unreadCount={unreadNotifications}
+            isDarkMode={isDarkMode}
+            setIsDarkMode={setIsDarkMode}
+            currentScreen={currentScreen}
+            onSlideChange={setCurrentScreen}
           />
-          <main className="px-4 pb-28 pt-20 overflow-y-auto h-full">
-            <div key={currentScreen} className="animate-fadeIn">
-              {renderScreen()}
-            </div>
-          </main>
-          <BottomNavBar 
-            currentScreen={currentScreen} 
-            setCurrentScreen={handleSetCurrentScreen} 
-          />
-        </div>
+        </main>
         
-        <div className={`stocks-view-container ${isStocksViewActive ? 'active' : ''}`}>
+        <BottomNavBar 
+          currentScreen={currentScreen} 
+          setCurrentScreen={handleSetCurrentScreen}
+          isStocksActive={isStocksViewActive}
+        />
+
+        {/* 증권 화면 - 오른쪽에서 슬라이딩 */}
+        <SlidingScreen
+          isOpen={isStocksViewActive}
+          onClose={handleExitStocks}
+        >
           <StocksContainerScreen onExit={handleExitStocks} />
-        </div>
+        </SlidingScreen>
 
         <AccountSwitcher
           isOpen={isAccountSwitcherOpen}
@@ -151,25 +145,14 @@ export default function Home() {
           onSelect={handleSelectAccount}
         />
 
-        {/* 알림 모달 with improved animations */}
-        {isNotificationsOpen && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm animate-fadeIn">
-            <div className="h-full flex flex-col bg-bg-primary animate-slideInRight">
-              <div className="flex items-center justify-between p-4 border-b border-border-color bg-bg-primary shadow-lg">
-                <h2 className="text-xl font-bold text-text-primary">알림</h2>
-                <button
-                  onClick={() => setIsNotificationsOpen(false)}
-                  className="p-2 hover:bg-bg-secondary rounded-full transition-all duration-300 hover:rotate-90 active:scale-95"
-                >
-                  <span className="text-2xl leading-none text-text-primary">×</span>
-                </button>
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <NotificationsScreen />
-              </div>
-            </div>
-          </div>
-        )}
+        {/* 알림 화면 - 오른쪽에서 슬라이딩 */}
+        <SlidingScreen
+          isOpen={isNotificationsOpen}
+          onClose={() => setIsNotificationsOpen(false)}
+          title="알림"
+        >
+          <NotificationsScreen />
+        </SlidingScreen>
       </div>
       
       <Analytics />
