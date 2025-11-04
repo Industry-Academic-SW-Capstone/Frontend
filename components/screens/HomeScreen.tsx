@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Account, Competition } from '@/lib/types';
 import StatCard from '@/components/StatCard';
 import AccountChart from '@/components/AccountChart';
@@ -123,15 +123,21 @@ const MissionSummary: React.FC<{ onOpenMissions: () => void }> = ({ onOpenMissio
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ selectedAccount }) => {
   const [isMissionPanelOpen, setIsMissionPanelOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const isPositive = selectedAccount.change >= 0;
   const changeString = `${isPositive ? '+' : ''}${selectedAccount.change.toLocaleString()}원 (${isPositive ? '+' : ''}${selectedAccount.changePercent}%)`;
   const isMainAccount = selectedAccount.type === 'regular';
 
   return (
     <>
+
       <div className="space-y-6">
         {/* Total Assets Section with animated entrance */}
-        <div className="animate-fadeInUp">
+        <div className={`transition-opacity duration-500 ${isMounted ? 'animate-fadeInUp opacity-100' : 'opacity-0'}`}>
           <p className="text-text-secondary text-sm mb-1 font-medium">총 자산</p>
           <p className="text-5xl font-extrabold text-text-primary mb-2 transition-all duration-300">
             {selectedAccount.totalValue.toLocaleString()}원
@@ -145,13 +151,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ selectedAccount }) => {
         </div>
 
         {/* Chart with slide-in animation */}
-        {/* <div className="animate-fadeInScale">
-          <AccountChart data={selectedAccount.chartData} isPositive={isPositive} />
-        </div> */}
-        
+        {/* <div className={`transition-opacity duration-500 ${isMounted ? 'animate-fadeInScale opacity-100' : 'opacity-0'}`}> */}
+        {/*   <AccountChart data={selectedAccount.chartData} isPositive={isPositive} /> */}
+        {/* </div> */}
+
         {/* Conditional Section: Mission Summary or Featured Competition */}
-        <div className="animate-fadeInUp" style={{ animationDelay: '100ms' }}>
-          
+        <div className={`transition-opacity duration-500 ${isMounted ? 'animate-fadeInUp opacity-100' : 'opacity-0'}`} style={{ animationDelay: '100ms' }}>
           {isMainAccount ? (
             <MissionSummary onOpenMissions={() => setIsMissionPanelOpen(true)} />
           ) : (
@@ -161,18 +166,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ selectedAccount }) => {
 
         {/* Stats Grid with stagger animation */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="animate-slideInLeft" style={{ animationDelay: '200ms' }}>
+          <div className={`transition-opacity duration-500 ${isMounted ? 'animate-slideInLeft opacity-100' : 'opacity-0'}`} style={{ animationDelay: '200ms' }}>
             <StatCard title="오늘의 수익" value="+150,000" change="+1.2%" changeType="positive">
-            <div className="bg-positive/10 p-3 rounded-full">
-                    <ArrowTrendingUpIcon className="w-6 h-6 text-positive"/>
-                </div>
+              <div className="bg-positive/10 p-3 rounded-full">
+                <ArrowTrendingUpIcon className="w-6 h-6 text-positive"/>
+              </div>
             </StatCard>
           </div>
-          <div className="animate-slideInRight" style={{ animationDelay: '200ms' }}>
+          <div className={`transition-opacity duration-500 ${isMounted ? 'animate-slideInRight opacity-100' : 'opacity-0'}`} style={{ animationDelay: '200ms' }}>
             <StatCard title="전체 랭킹" value="4위" change="↑ 1" changeType="positive">
-          <div className="bg-primary/10 p-3 rounded-full">
-                    <FlagIcon className="w-6 h-6 text-primary"/>
-                </div>
+              <div className="bg-primary/10 p-3 rounded-full">
+                <FlagIcon className="w-6 h-6 text-primary"/>
+              </div>
             </StatCard>
           </div>
         </div>

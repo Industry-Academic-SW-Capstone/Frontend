@@ -147,9 +147,6 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({ selectedAccount, user }
   return (
     <>
         <div className="space-y-6">
-        <h1 className="text-3xl font-extrabold text-text-primary animate-fadeInUp">
-          {getTitle()}
-        </h1>
         
         {!isCompetition && (
             <div className="flex bg-bg-secondary p-1.5 rounded-2xl shadow-lg border border-border-color animate-fadeInScale">
