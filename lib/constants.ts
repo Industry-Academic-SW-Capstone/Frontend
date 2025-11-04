@@ -71,8 +71,42 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
 ];
 
 export const MOCK_COMPETITIONS: Competition[] = [
-  { id: 'c-1', name: '제 1회 스탁앱 수익률 대회', description: '최고의 수익률을 달성하고 상금을 차지하세요!', participants: 1250, totalPrize: 10000000, startDate: '2023.10.01', endDate: '2023.10.31', isJoined: true, rank: 12, returnPercent: 15.0 },
-  { id: 'c-2', name: '단타의 신 선발전', description: '하루 최고의 수익률을 가리는 단타 대회', participants: 880, totalPrize: 5000000, startDate: '2023.11.01', endDate: '2023.11.01', isJoined: false },
+  { 
+    id: 'c-1', 
+    name: '제 1회 스탁앱 수익률 대회', 
+    description: '최고의 수익률을 달성하고 상금을 차지하세요!', 
+    participants: 1250, 
+    totalPrize: 10000000, 
+    startDate: '2023.10.01', 
+    endDate: '2023.10.31', 
+    isJoined: true, 
+    rank: 12, 
+    returnPercent: 15.0,
+    isAdmin: true, // 관리자 권한
+    creatorId: 'user-me',
+    rules: {
+      startingCapital: 10000000,
+      maxInvestmentPerStock: 2000000,
+      allowedSectors: ['전체'],
+    }
+  },
+  { 
+    id: 'c-2', 
+    name: '단타의 신 선발전', 
+    description: '하루 최고의 수익률을 가리는 단타 대회', 
+    participants: 880, 
+    totalPrize: 5000000, 
+    startDate: '2023.11.01', 
+    endDate: '2023.11.01', 
+    isJoined: false,
+    isAdmin: false,
+    creatorId: 'user-other',
+    rules: {
+      startingCapital: 5000000,
+      maxInvestmentPerStock: 1000000,
+      allowedSectors: ['IT', '반도체'],
+    }
+  },
 ];
 
 export const MOCK_ACHIEVEMENTS: Achievement[] = [

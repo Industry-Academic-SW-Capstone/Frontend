@@ -32,7 +32,11 @@ import {
   HiBanknotes,
   HiUserPlus,
   HiBell,
-  HiBellAlert
+  HiBellAlert,
+  HiChevronLeft,
+  HiClipboardDocumentList,
+  HiCog,
+  HiMegaphone
 } from 'react-icons/hi2';
 import { 
   MdPhone, 
@@ -114,3 +118,7 @@ export const BanknotesIcon = (props: IconProps) => <HiBanknotes {...props} />;
 export const UserPlusIcon = (props: IconProps) => <HiUserPlus {...props} />;
 export const BellIcon = (props: IconProps) => <HiBell {...props} />;
 export const BellAlertIcon = (props: IconProps) => <HiBellAlert {...props} />;
+export const ChevronLeftIcon = (props: IconProps) => <HiChevronLeft {...props} />;
+export const ClipboardDocumentListIcon = (props: IconProps) => <HiClipboardDocumentList {...props} />;
+export const CogIcon = (props: IconProps) => <HiCog {...props} />;
+export const MegaphoneIcon = (props: IconProps) => <HiMegaphone {...props} />;

@@ -3,13 +3,14 @@
 
 import React from 'react';
 import { Competition } from '@/lib/types';
-import { CalendarIcon, UsersIcon, GiftIcon } from './icons/Icons';
+import { CalendarIcon, UsersIcon, GiftIcon, CogIcon } from './icons/Icons';
 
 interface CompetitionCardProps {
   competition: Competition;
+  onAdminClick?: (competition: Competition) => void;
 }
 
-const CompetitionCard: React.FC<CompetitionCardProps> = ({ competition }) => {
+const CompetitionCard: React.FC<CompetitionCardProps> = ({ competition, onAdminClick }) => {
   return (
     <div className="bg-bg-secondary border border-border-color rounded-2xl p-5 mb-4 shadow-lg card-hover cursor-pointer group overflow-hidden relative">
       {/* Animated background accent (flat) */}
@@ -17,12 +18,28 @@ const CompetitionCard: React.FC<CompetitionCardProps> = ({ competition }) => {
       
       <div className="flex flex-col relative z-10">
         <div className="mb-4">
-          <h3 className="text-lg font-bold text-text-primary mb-1 transition-colors duration-300 group-hover:text-primary">
-            {competition.name}
-          </h3>
-          <p className="text-sm text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
-            {competition.description}
-          </p>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-text-primary mb-1 transition-colors duration-300 group-hover:text-primary">
+                {competition.name}
+              </h3>
+              <p className="text-sm text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
+                {competition.description}
+              </p>
+            </div>
+            {competition.isAdmin && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAdminClick?.(competition);
+                }}
+                className="ml-2 p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+                title="대회 관리"
+              >
+                <CogIcon className="w-5 h-5 text-primary" />
+              </button>
+            )}
+          </div>
         </div>
         
         <div className="grid grid-cols-2 gap-3 text-sm text-text-secondary mb-4">

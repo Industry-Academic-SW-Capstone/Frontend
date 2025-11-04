@@ -1,14 +1,23 @@
 "use client";
 import React, { useState } from 'react';
 import { MOCK_COMPETITIONS } from '@/lib/constants';
+import { Competition } from '@/lib/types';
 import CompetitionCard from '@/components/CompetitionCard';
 import CreateCompetitionScreen from './CreateCompetitionScreen';
+import CompetitionAdminScreen from './CompetitionAdminScreen';
 import SlidingScreen from '@/components/navigation/SlidingScreen';
 import { PlusCircleIcon } from '@/components/icons/Icons';
 
 const CompetitionsScreen: React.FC = () => {
   const [showCreate, setShowCreate] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
   const [view, setView] = useState<'ongoing' | 'finished'>('ongoing');
+
+  const handleAdminClick = (competition: Competition) => {
+    setSelectedCompetition(competition);
+    setShowAdmin(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -63,7 +72,7 @@ const CompetitionsScreen: React.FC = () => {
             className="animate-fadeInUp"
             style={{ animationDelay: `${index * 100}ms` }}
           >
-            <CompetitionCard competition={comp} />
+            <CompetitionCard competition={comp} onAdminClick={handleAdminClick} />
           </div>
         ))}
       </div>
@@ -74,6 +83,25 @@ const CompetitionsScreen: React.FC = () => {
         onClose={() => setShowCreate(false)}
       >
         <CreateCompetitionScreen onBack={() => setShowCreate(false)} />
+      </SlidingScreen>
+
+      {/* 대회 관리 화면 - 슬라이딩 패널 */}
+      <SlidingScreen
+        isOpen={showAdmin}
+        onClose={() => {
+          setShowAdmin(false);
+          setSelectedCompetition(null);
+        }}
+      >
+        {selectedCompetition && (
+          <CompetitionAdminScreen
+            competition={selectedCompetition}
+            onBack={() => {
+              setShowAdmin(false);
+              setSelectedCompetition(null);
+            }}
+          />
+        )}
       </SlidingScreen>
     </div>
   );

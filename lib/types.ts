@@ -76,6 +76,44 @@ export interface Competition {
   rules?: CompetitionRules;
   rank?: number;
   returnPercent?: number;
+  isAdmin?: boolean; // 현재 사용자가 관리자인지 여부
+  creatorId?: string; // 대회 생성자 ID
+}
+
+export interface CompetitionParticipant {
+  id: string;
+  username: string;
+  avatar: string;
+  joinDate: string;
+  currentRank: number;
+  totalValue: number;
+  returnPercent: number;
+  trades: number;
+  lastActive: string;
+  portfolio: {
+    ticker: string;
+    shares: number;
+    value: number;
+  }[];
+}
+
+export interface CompetitionLog {
+  id: string;
+  timestamp: Date;
+  type: 'join' | 'leave' | 'trade' | 'ranking_change' | 'setting_change' | 'announcement';
+  userId?: string;
+  username?: string;
+  description: string;
+  metadata?: Record<string, any>;
+}
+
+export interface CompetitionAnnouncement {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+  isPinned: boolean;
+  readBy: string[];
 }
 
 export interface Achievement {
