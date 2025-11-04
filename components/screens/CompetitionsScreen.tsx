@@ -3,15 +3,12 @@ import React, { useState } from 'react';
 import { MOCK_COMPETITIONS } from '@/lib/constants';
 import CompetitionCard from '@/components/CompetitionCard';
 import CreateCompetitionScreen from './CreateCompetitionScreen';
+import SlidingScreen from '@/components/navigation/SlidingScreen';
 import { PlusCircleIcon } from '@/components/icons/Icons';
 
 const CompetitionsScreen: React.FC = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [view, setView] = useState<'ongoing' | 'finished'>('ongoing');
-
-  if (showCreate) {
-    return <CreateCompetitionScreen onBack={() => setShowCreate(false)} />;
-  }
 
   return (
     <div className="space-y-6">
@@ -70,6 +67,14 @@ const CompetitionsScreen: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* 대회 생성 화면 - 슬라이딩 패널 */}
+      <SlidingScreen
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+      >
+        <CreateCompetitionScreen onBack={() => setShowCreate(false)} />
+      </SlidingScreen>
     </div>
   );
 };

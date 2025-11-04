@@ -104,7 +104,6 @@ export default function Home() {
     <>
       <div className="max-w-md mx-auto bg-bg-primary text-text-primary min-h-screen font-sans relative overflow-hidden">
         <Header 
-          title={getHeaderTitle()} 
           selectedAccount={selectedAccount}
           user={user}
           onAccountSwitch={() => setIsAccountSwitcherOpen(true)}

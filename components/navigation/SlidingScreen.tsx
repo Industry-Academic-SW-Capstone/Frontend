@@ -90,7 +90,7 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
           isAnimating ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
@@ -98,7 +98,7 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
 
       {/* Sliding Panel - 모바일 화면 모양의 컨테이너 */}
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none`}
+        className={`fixed inset-0 z-[70] flex items-center justify-center pointer-events-none`}
       >
         <div
           className={`w-full max-w-md h-full bg-bg-primary shadow-2xl pointer-events-auto transition-all duration-300 ease-out ${

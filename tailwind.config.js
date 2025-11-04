@@ -7,7 +7,12 @@ module.exports = {
     './lib/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      zIndex: {
+        '60': '60',
+        '70': '70',
+      },
+    },
   },
   plugins: [],
 };

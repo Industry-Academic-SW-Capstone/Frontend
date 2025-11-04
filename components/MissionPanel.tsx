@@ -99,33 +99,34 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-[60] transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
       />
 
-      {/* Panel */}
-      <div
-        className={`fixed top-0 right-0 h-full w-full bg-bg-primary z-50 shadow-2xl transition-transform duration-300 ease-out overflow-y-auto ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        {/* Header */}
-        <div className="sticky top-0 bg-bg-primary border-b border-border-color z-10 px-5 py-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-text-primary">미션</h2>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-            >
-              <span className="text-lg text-text-primary">✕</span>
-            </button>
+      {/* Panel - 모바일 화면 모양의 컨테이너 */}
+      <div className="fixed inset-0 z-[70] flex items-center justify-center pointer-events-none">
+        <div
+          className={`w-full max-w-md h-full bg-bg-primary shadow-2xl pointer-events-auto transition-transform duration-300 ease-out overflow-y-auto ${
+            isOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          {/* Header */}
+          <div className="sticky top-0 bg-bg-primary border-b border-border-color z-10 px-5 py-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-text-primary">미션</h2>
+              <button
+                onClick={onClose}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                <span className="text-lg text-text-primary">✕</span>
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="p-5 space-y-6 pb-24">
+          {/* Content */}
+          <div className="p-5 space-y-6 pb-24">
           {/* Theme Progress */}
           <div className="bg-linear-to-br from-primary to-secondary p-5 rounded-3xl text-white">
             <h3 className="text-sm font-semibold mb-1 opacity-90">현재 테마</h3>
@@ -228,6 +229,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </>
   );

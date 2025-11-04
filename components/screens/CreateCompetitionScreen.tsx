@@ -158,8 +158,8 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({ onBac
   };
 
   return (
-    <div className="fixed inset-0 z-30 max-w-md mx-auto bg-bg-primary flex flex-col">
-      <header className="flex items-center justify-between p-4">
+    <div className="h-full bg-bg-primary flex flex-col overflow-hidden">
+      <header className="flex items-center justify-between p-4 border-b border-border-color">
         {step > 1 && step < 4 ? (
           <button onClick={handlePrev} className="p-1"><ArrowLeftIcon className="w-6 h-6 text-text-primary" /></button>
         ) : <div className="w-8"/>}
@@ -171,23 +171,23 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({ onBac
         {step < 4 && <StepIndicator currentStep={step} />}
       </div>
       
-      <div className="flex-1 overflow-y-auto px-4">
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
         {renderStep()}
       </div>
 
-      <div className="p-4 mt-auto">
+      <div className="p-4 border-t border-border-color bg-bg-primary">
         {step < 3 && (
-          <button onClick={handleNext} className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg">
+          <button onClick={handleNext} className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
             다음
           </button>
         )}
         {step === 3 && (
-            <button onClick={handleNext} className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg">
+            <button onClick={handleNext} className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
                 대회 생성하기
             </button>
         )}
         {step === 4 && (
-            <button onClick={onBack} className="w-full bg-positive text-white font-bold py-3 px-4 rounded-lg">
+            <button onClick={onBack} className="w-full bg-positive text-white font-bold py-3 px-4 rounded-lg hover:bg-positive/90 transition-colors">
                 완료
             </button>
         )}

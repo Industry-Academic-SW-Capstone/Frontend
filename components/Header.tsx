@@ -4,7 +4,6 @@ import { Account, User } from '@/lib/types';
 import { ChevronDownIcon, BuildingOffice2Icon, BellIcon } from './icons/Icons';
 
 interface HeaderProps {
-  title: string;
   selectedAccount: Account;
   user: User;
   onAccountSwitch: () => void;
@@ -13,7 +12,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ 
-  title, 
   selectedAccount, 
   user, 
   onAccountSwitch,
@@ -24,7 +22,6 @@ const Header: React.FC<HeaderProps> = ({
     <header className="fixed top-0 left-0 right-0 z-20 max-w-md mx-auto bg-bg-primary/80 backdrop-blur-lg border-b border-border-color">
       <div className="flex items-center justify-between p-4 h-16">
         <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-text-primary">{title}</h1>
             {user.group && (
                 <div className="flex items-center gap-1 text-xs bg-bg-secondary px-2 py-1 rounded-full text-text-secondary font-semibold">
                     <BuildingOffice2Icon className="w-4 h-4"/>
