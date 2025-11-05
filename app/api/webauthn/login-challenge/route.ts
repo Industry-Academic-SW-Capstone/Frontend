@@ -27,22 +27,21 @@ export async function POST(request: NextRequest) {
 
     const allowCredentials: Array<{ id: string; type: 'public-key'; transports?: AuthenticatorTransportFuture[] }> = [];
     
-    if (authenticator) {
-      try {
-        // credentialID를 base64에서 base64url로 올바르게 변환
-        const idBuffer = Buffer.from(authenticator.credentialID, 'base64');
-        allowCredentials.push({
-          id: idBuffer.toString('base64url'),
-          type: 'public-key' as const,
-          transports: authenticator.transports ?? ['internal'], // 등록 시 저장된 transports 사용
-        });
-      } catch (error) {
-        console.error('인증 정보 처리 실패:', error);
-        return NextResponse.json(
-          { error: '등록된 인증 정보를 찾을 수 없습니다. 먼저 등록해주세요.' },
-          { status: 404 }
-        );
-      }
+      if (authenticator) {
+        try {
+          // credentialID was stored as Base64URL string; use it directly
+          allowCredentials.push({
+            id: authenticator.credentialID,
+            type: 'public-key' as const,
+            transports: authenticator.transports ?? ['internal'], // 등록 시 저장된 transports 사용
+          });
+        } catch (error) {
+          console.error('인증 정보 처리 실패:', error);
+          return NextResponse.json(
+            { error: '등록된 인증 정보를 찾을 수 없습니다. 먼저 등록해주세요.' },
+            { status: 404 }
+          );
+        }
     } else {
       return NextResponse.json(
         { error: '등록된 인증 정보를 찾을 수 없습니다. 먼저 등록해주세요.' },

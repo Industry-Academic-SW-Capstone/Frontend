@@ -38,9 +38,9 @@ export async function POST(request: NextRequest) {
     if (authenticator) {
       try {
         // credentialID는 base64로 저장되어 있으므로, base64url로 변환
-        const idBuffer = Buffer.from(authenticator.credentialID, 'base64');
+        // credentialID was stored as a Base64URL string during registration; use it directly
         excludeCredentials.push({
-          id: idBuffer.toString('base64url'),
+          id: authenticator.credentialID,
           transports: authenticator.transports ?? ['internal'], // 저장된 transports 사용
         });
       } catch (parseError) {

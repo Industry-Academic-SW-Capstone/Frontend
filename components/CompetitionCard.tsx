@@ -44,7 +44,7 @@ const CompetitionCard: React.FC<CompetitionCardProps> = ({ competition, onAdminC
         
         <div className="grid grid-cols-2 gap-3 text-sm text-text-secondary mb-4">
           <div className="flex items-center gap-2 transition-all duration-300 hover:text-primary hover:translate-x-1">
-            <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+            <div className="p-1.5 rounded-lg group-hover:bg-primary/20 transition-colors duration-300">
               <UsersIcon className="w-4 h-4" />
             </div>
             <span className="font-medium">{competition.participants.toLocaleString()}명 참여</span>

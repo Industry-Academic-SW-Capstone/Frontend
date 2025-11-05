@@ -76,7 +76,9 @@ export async function POST(request: NextRequest) {
 
     // Upstash Redis는 자동으로 JSON 직렬화를 처리하므로 객체를 직접 저장
     const newAuthenticator: Authenticator = {
-      credentialID: Buffer.from(credential.id).toString('base64'),
+      // credential.id is already a Base64URL string (as returned by the browser)
+      credentialID: credential.id,
+      // store publicKey as base64 for compact storage
       publicKey: Buffer.from(credential.publicKey).toString('base64'),
       counter: credential.counter,
       transports: transports, // 실제 사용된 transports 저장
