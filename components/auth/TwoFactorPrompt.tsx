@@ -136,11 +136,11 @@ export default function TwoFactorPrompt({
   // 선택 화면
   if (method === "choice") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fadeIn">
-        <div className="w-full max-w-md mx-6 bg-linear-to-br from-gray-900 to-gray-800 rounded-3xl p-8 shadow-2xl animate-slideUp">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
+        <div className="w-full max-w-md mx-6 rounded-3xl p-8 shadow-2xl animate-slideUp bg-linear-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
           {/* 헤더 */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-linear-to-br from-gray-300 to-gray-200  dark:from-gray-600 dark:to-gray-700 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-linear-to-br from-white to-gray-200 dark:from-gray-600 dark:to-gray-700 flex items-center justify-center">
               <svg
                 className="w-8 h-8 text-white"
                 fill="none"
@@ -155,8 +155,10 @@ export default function TwoFactorPrompt({
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">보안 인증</h2>
-            <p className="text-gray-400 text-sm">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              보안 인증
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
               증권 거래를 위해 인증이 필요합니다
             </p>
           </div>
@@ -166,19 +168,13 @@ export default function TwoFactorPrompt({
             {config.biometricEnabled && (
               <button
                 onClick={() => setMethod("biometric")}
-                className="
-                  w-full p-4 rounded-2xl
-                  bg-linear-to-r from-blue-500/20 to-purple-500/20
-                  border border-blue-500/30
-                  hover:border-blue-500/50
-                  transition-all duration-200
-                  active:scale-95
-                  flex items-center gap-4
-                "
+                className={
+                  "w-full p-4 rounded-2xl bg-linear-to-r from-blue-100 to-purple-100 dark:from-blue-500/20 dark:to-purple-500/20 border border-gray-200 dark:border-blue-500/30 hover:border-gray-300 dark:hover:border-blue-500/50 transition-all duration-200 active:scale-95 flex items-center gap-4"
+                }
               >
-                <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-blue-400"
+                    className="w-6 h-6 text-blue-600 dark:text-blue-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -190,8 +186,12 @@ export default function TwoFactorPrompt({
                   </svg>
                 </div>
                 <div className="text-left flex-1">
-                  <p className="font-semibold text-white">생체 인증</p>
-                  <p className="text-xs text-gray-400">FaceID 또는 TouchID</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">
+                    생체 인증
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    FaceID 또는 TouchID
+                  </p>
                 </div>
                 <svg
                   className="w-5 h-5 text-gray-400"
@@ -212,19 +212,13 @@ export default function TwoFactorPrompt({
             {config.pinEnabled && (
               <button
                 onClick={() => setMethod("pin")}
-                className="
-                  w-full p-4 rounded-2xl
-                  bg-white/5
-                  border border-gray-600
-                  hover:border-gray-500
-                  transition-all duration-200
-                  active:scale-95
-                  flex items-center gap-4
-                "
+                className={
+                  "w-full p-4 rounded-2xl bg-white border border-gray-200 dark:bg-white/5 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-200 active:scale-95 flex items-center gap-4"
+                }
               >
-                <div className="w-12 h-12 rounded-xl bg-gray-500/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-500/20 flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 text-gray-400"
+                    className="w-6 h-6 text-gray-700 dark:text-gray-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -236,8 +230,12 @@ export default function TwoFactorPrompt({
                   </svg>
                 </div>
                 <div className="text-left flex-1">
-                  <p className="font-semibold text-white">PIN 입력</p>
-                  <p className="text-xs text-gray-400">6자리 보안 PIN</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">
+                    PIN 입력
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    6자리 보안 PIN
+                  </p>
                 </div>
                 <svg
                   className="w-5 h-5 text-gray-400"
@@ -260,7 +258,7 @@ export default function TwoFactorPrompt({
           {onCancel && (
             <button
               onClick={onCancel}
-              className="w-full mt-4 py-3 text-gray-400 hover:text-white transition-colors"
+              className="w-full mt-4 py-3 text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               취소
             </button>
@@ -273,8 +271,8 @@ export default function TwoFactorPrompt({
   // PIN 입력 화면
   if (method === "pin") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fadeIn">
-        <div className="w-full max-w-md mx-6 bg-linear-to-br from-gray-900 to-gray-800 rounded-3xl p-8 shadow-2xl animate-slideUp">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
+        <div className="w-full max-w-md mx-6 rounded-3xl p-8 shadow-2xl animate-slideUp bg-linear-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
           {/* 뒤로가기 버튼 */}
           <button
             onClick={() => {
@@ -302,23 +300,27 @@ export default function TwoFactorPrompt({
 
           {/* PIN 디스플레이 */}
           <div className="text-center mb-8">
-            <h3 className="text-xl font-bold text-white mb-6">PIN 입력</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+              PIN 입력
+            </h3>
             <div className="flex justify-center gap-3 mb-4">
               {pin.map((digit, index) => (
                 <div
                   key={index}
-                  className={`
-                    w-12 h-12 rounded-xl flex items-center justify-center
-                    transition-all duration-300
-                    ${digit ? "bg-blue-500 scale-110" : "bg-gray-700"}
-                  `}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                    digit
+                      ? "bg-blue-500 scale-110"
+                      : "bg-gray-200 dark:bg-gray-700"
+                  }`}
                 >
                   {digit && <div className="w-3 h-3 rounded-full bg-white" />}
                 </div>
               ))}
             </div>
             {error && (
-              <p className="text-red-400 text-sm animate-shake">{error}</p>
+              <p className="text-red-600 dark:text-red-400 text-sm animate-shake">
+                {error}
+              </p>
             )}
           </div>
 
@@ -328,17 +330,11 @@ export default function TwoFactorPrompt({
               <button
                 key={num}
                 onClick={() => handleKeyPress(num.toString())}
-                className={`
-                h-16 rounded-2xl bg-gray-800 hover:bg-gray-700
-                text-white text-2xl font-semibold
-                transition-all duration-200
-                hover:shadow-lg hover:shadow-blue-500/20
-                ${
+                className={`h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white text-2xl font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/20 ${
                   clickedPinIndexs.includes(num)
                     ? "ring-3 ring-blue-300 scale-95"
                     : ""
-                }
-              `}
+                }`}
               >
                 {num}
               </button>
@@ -346,23 +342,17 @@ export default function TwoFactorPrompt({
             <div />
             <button
               onClick={() => handleKeyPress("0")}
-              className={`
-                h-16 rounded-2xl bg-gray-800 hover:bg-gray-700
-                text-white text-2xl font-semibold
-                transition-all duration-200
-                hover:shadow-lg hover:shadow-blue-500/20
-                ${
-                  clickedPinIndexs.includes(0)
-                    ? "ring-3 ring-blue-300 scale-95"
-                    : ""
-                }
-              `}
+              className={`h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white text-2xl font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/20 ${
+                clickedPinIndexs.includes(0)
+                  ? "ring-3 ring-blue-300 scale-95"
+                  : ""
+              }`}
             >
               0
             </button>
             <button
               onClick={() => handleKeyPress("backspace")}
-              className={`h-14 rounded-xl bg-gray-800 hover:bg-gray-700 text-white transition-all active:scale-95 ${
+              className={`h-14 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-all active:scale-95 ${
                 clickedPinIndexs.includes(0)
                   ? "ring-3 ring-blue-300 scale-95"
                   : ""
@@ -379,8 +369,8 @@ export default function TwoFactorPrompt({
   // 생체 인증 화면
   if (method === "biometric") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fadeIn">
-        <div className="w-full max-w-md mx-6 bg-linear-to-br from-blue-900 to-purple-900 rounded-3xl p-8 shadow-2xl animate-slideUp">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
+        <div className="w-full max-w-md mx-6 rounded-3xl p-8 shadow-2xl animate-slideUp bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900">
           {/* 뒤로가기 버튼 */}
           <button
             onClick={() => setMethod("choice")}
@@ -408,7 +398,7 @@ export default function TwoFactorPrompt({
               <div className="absolute inset-0 rounded-full border-4 border-blue-500/30 animate-ping" />
               <div className="absolute inset-4 rounded-full border-4 border-blue-400/50 animate-pulse" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-linear-to-br from-blue-500 to-purple-500 dark:from-blue-500 dark:to-purple-500 flex items-center justify-center">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="currentColor"
@@ -424,23 +414,17 @@ export default function TwoFactorPrompt({
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-white mb-2">생체 인증</h3>
-            <p className="text-gray-300 text-sm mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              생체 인증
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 text-sm mb-8">
               기기의 생체 인증을 진행해주세요
             </p>
 
             <button
               onClick={handleBiometricAuth}
               disabled={isLoading}
-              className="
-                w-full py-4 rounded-2xl
-                bg-linear-to-r from-blue-500 to-purple-500
-                text-white font-semibold
-                transition-all duration-200
-                hover:shadow-lg hover:shadow-blue-500/50
-                active:scale-95
-                disabled:opacity-50 disabled:cursor-not-allowed
-              "
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "인증 중..." : "생체 인증 시작"}
             </button>
