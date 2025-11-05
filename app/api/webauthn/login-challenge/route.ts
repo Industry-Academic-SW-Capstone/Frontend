@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         allowCredentials.push({
           id: idBuffer.toString('base64url'),
           type: 'public-key' as const,
-          transports: authenticator.transports, // 등록 시 저장된 transports 사용
+          transports: authenticator.transports ?? ['internal'], // 등록 시 저장된 transports 사용
         });
       } catch (error) {
         console.error('인증 정보 처리 실패:', error);
