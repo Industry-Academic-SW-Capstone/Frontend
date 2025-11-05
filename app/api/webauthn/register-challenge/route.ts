@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         const idBuffer = Buffer.from(authenticator.credentialID, 'base64');
         excludeCredentials.push({
           id: idBuffer.toString('base64url'),
-          transports: authenticator.transports, // 저장된 transports 사용
+          transports: authenticator.transports ?? ['internal'], // 저장된 transports 사용
         });
       } catch (parseError) {
         console.error('기존 인증 정보 처리 실패:', parseError);
