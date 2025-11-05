@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession, Authenticator } from '@/lib/session';
 import { kv } from '@/lib/redis';
-import { generateAuthenticationOptions } from '@simplewebauthn/server';
+import { 
+  generateAuthenticationOptions,
+  type AuthenticatorTransportFuture 
+} from '@simplewebauthn/server';
 
 // 환경 변수 검증
 function validateEnv() {
@@ -22,7 +25,7 @@ export async function POST(request: NextRequest) {
     // 1. KV에서 Authenticator 정보 조회
     const authenticator = await kv.get<Authenticator>(userId);
 
-    const allowCredentials: Array<{ id: string; type: 'public-key'; transports?: AuthenticatorTransport[] }> = [];
+    const allowCredentials: Array<{ id: string; type: 'public-key'; transports?: AuthenticatorTransportFuture[] }> = [];
     
     if (authenticator) {
       try {
@@ -31,7 +34,7 @@ export async function POST(request: NextRequest) {
         allowCredentials.push({
           id: idBuffer.toString('base64url'),
           type: 'public-key' as const,
-          transports: ['internal', 'hybrid'],
+          transports: authenticator.transports, // 등록 시 저장된 transports 사용
         });
       } catch (error) {
         console.error('인증 정보 처리 실패:', error);
@@ -50,7 +53,7 @@ export async function POST(request: NextRequest) {
     const options = await generateAuthenticationOptions({
       rpID,
       allowCredentials,
-      userVerification: 'preferred',
+      userVerification: 'required', // 생체 인증 필수
     });
 
     // 2. 세션에 Challenge 저장

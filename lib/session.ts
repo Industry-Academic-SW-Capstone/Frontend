@@ -1,5 +1,6 @@
 import { getIronSession, IronSession } from 'iron-session';
 import { cookies } from 'next/headers'; // (중요!) App Router용
+import type { AuthenticatorTransportFuture } from '@simplewebauthn/server';
 
 // 1. 세션에 저장될 데이터 타입을 정의합니다.
 export interface SessionData {
@@ -45,4 +46,5 @@ export interface Authenticator {
   credentialID: string; // Base64
   publicKey: string;    // Base64
   counter: number;
+  transports?: AuthenticatorTransportFuture[]; // 등록 시 사용된 transports 저장
 }
