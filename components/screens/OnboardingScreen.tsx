@@ -281,6 +281,9 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                       type="email"
                       placeholder="이메일"
                       className="w-full bg-bg-secondary border-2 border-border-color rounded-lg p-3.5 pl-11 focus:border-primary outline-none"
+                      onChange={(e) => {
+                        sessionStorage.setItem("email", e.target.value);
+                      }}
                     />
                   </div>
                   <div className="relative">
