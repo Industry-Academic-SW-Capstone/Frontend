@@ -29,6 +29,8 @@ export default function BiometricSetup({
       // 1. 서버에서 등록 옵션 가져오기
       const res = await fetch("/api/webauthn/register-challenge", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: sessionStorage.getItem("email") }),
       });
       const regOptions = await res.json();
 
