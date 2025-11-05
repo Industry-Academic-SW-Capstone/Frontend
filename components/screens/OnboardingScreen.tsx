@@ -258,7 +258,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                 
                 <div className="space-y-4 mb-auto">
                   <div className="flex items-start gap-3 p-4 bg-bg-secondary rounded-xl text-left">
-                    <Icons.CheckCircleIcon className="w-6 h-6 text-positive flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="font-semibold text-text-primary mb-1">주문 체결 알림</p>
                       <p className="text-sm text-text-secondary">매수/매도 주문이 체결되면 즉시 알려드려요</p>
@@ -266,7 +265,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                   </div>
                   
                   <div className="flex items-start gap-3 p-4 bg-bg-secondary rounded-xl text-left">
-                    <Icons.TrophyIcon className="w-6 h-6 text-accent flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="font-semibold text-text-primary mb-1">랭킹 변동 알림</p>
                       <p className="text-sm text-text-secondary">내 순위가 상승하면 바로 확인할 수 있어요</p>
@@ -274,7 +272,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                   </div>
                   
                   <div className="flex items-start gap-3 p-4 bg-bg-secondary rounded-xl text-left">
-                    <Icons.SparklesIcon className="w-6 h-6 text-secondary flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="font-semibold text-text-primary mb-1">업적 달성 알림</p>
                       <p className="text-sm text-text-secondary">새로운 업적을 달성하면 축하 메시지를 보내드려요</p>

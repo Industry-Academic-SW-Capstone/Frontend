@@ -265,10 +265,7 @@ const NotificationsScreen: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* Corner decoration for unread */}
-                  {!notification.read && (
-                    <div className="absolute top-0 right-0 w-12 h-12 bg-primary/20 rounded-bl-full" />
-                  )}
+            
                 </div>
               );
             })}

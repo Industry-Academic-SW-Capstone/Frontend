@@ -63,7 +63,9 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose, us
         </Drawer.Close>
         <div className="flex flex-col items-center text-center">
           <img src={user.avatar} alt={user.username} className="w-20 h-20 rounded-full mb-3 border-4 border-bg-primary shadow-lg"/>
-          <h2 className="text-xl font-bold text-text-primary">{user.username}</h2>
+          <Drawer.Title className="text-xl font-bold text-text-primary">
+            {user.username}
+          </Drawer.Title>
           <div className="flex items-center gap-4 mt-2 text-sm text-text-secondary">
             <span>랭킹: <span className="font-bold text-text-primary">{user.rank}위</span></span>
             <span>수익률: <span className="font-bold text-positive">{user.returnRate.toFixed(1)}%</span></span>

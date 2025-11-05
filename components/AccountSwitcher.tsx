@@ -21,7 +21,9 @@ const AccountSwitcher: React.FC<AccountSwitcherProps> = ({ isOpen, onClose, acco
         <Drawer.Overlay className="fixed inset-0 z-60 bg-black/30 backdrop-blur-sm" />
         <Drawer.Content className="fixed bottom-0 left-0 right-0 z-70 w-full max-w-md mx-auto bg-bg-secondary rounded-t-2xl p-4 shadow-2xl" style={{ touchAction: 'none' }}>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold text-text-primary">계좌 전환</h2>
+          <Drawer.Title className="text-lg font-bold text-text-primary">
+            계좌 전환
+          </Drawer.Title>
           <Drawer.Close asChild>
             <button className="p-2 rounded-full hover:bg-border-color">
               <XMarkIcon className="w-6 h-6 text-text-secondary" />
