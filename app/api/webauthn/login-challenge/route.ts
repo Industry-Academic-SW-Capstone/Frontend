@@ -20,7 +20,31 @@ function validateEnv() {
 export async function POST(request: NextRequest) {
   try {
     const { rpID } = validateEnv();
-    const userEmail = sessionStorage.getItem("email");
+
+    const session = await getSession();
+
+    let userEmail: string | undefined;
+    // 1) 요청 바디(JSON)에서 email 추출 시도
+    try {
+      const body = await request.json();
+      if (body && typeof body.email === "string" && body.email.trim() !== "") {
+        userEmail = body.email.trim();
+      }
+    } catch (err) {
+      // JSON 파싱 실패 시 무시하고 다음 단계로 진행
+    }
+
+    // 2) 바디에 없으면 (서버)세션에서 이메일 확인
+    if (
+      !userEmail &&
+      (session as any)?.email &&
+      typeof (session as any).email === "string"
+    ) {
+      userEmail = (session as any).email;
+    }
+
+    // 3) 둘 다 없으면 임시 이메일 사용
+
     let userId;
     if (!userEmail) {
       userId = "temp-user-id-123"; // (임시 ID)
@@ -66,7 +90,6 @@ export async function POST(request: NextRequest) {
     });
 
     // 2. 세션에 Challenge 저장
-    const session = await getSession();
     session.challenge = options.challenge;
     session.userId = userId;
     await session.save();

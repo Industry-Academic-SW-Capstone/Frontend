@@ -100,6 +100,8 @@ export default function TwoFactorPrompt({
       // 1. 서버에서 로그인 옵션 가져오기
       const res = await fetch("/api/webauthn/login-challenge", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: sessionStorage.getItem("email") }),
       });
       const authOptions = await res.json();
 

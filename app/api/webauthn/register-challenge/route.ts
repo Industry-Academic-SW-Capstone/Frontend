@@ -25,11 +25,34 @@ export async function POST(request: NextRequest) {
   try {
     const { rpID, rpName } = validateEnv();
 
-    const userEmail = sessionStorage.getItem("email");
+    // 서버에서 세션을 먼저 가져와서 POST body와 세션 모두에서 email을 시도해서 가져옵니다.
+    const session = await getSession();
+
+    let userEmail: string | undefined;
+    // 1) 요청 바디(JSON)에서 email 추출 시도
+    try {
+      const body = await request.json();
+      if (body && typeof body.email === "string" && body.email.trim() !== "") {
+        userEmail = body.email.trim();
+      }
+    } catch (err) {
+      // JSON 파싱 실패 시 무시하고 다음 단계로 진행
+    }
+
+    // 2) 바디에 없으면 (서버)세션에서 이메일 확인
+    if (
+      !userEmail &&
+      (session as any)?.email &&
+      typeof (session as any).email === "string"
+    ) {
+      userEmail = (session as any).email;
+    }
+
+    // 3) 둘 다 없으면 임시 사용자 사용
     let user;
-    if (userEmail != null) {
+    if (userEmail) {
       user = {
-        id: userEmail.split("@")[0], // 이메일 앞부분을 userId로 사용
+        id: userEmail.split("@")[0],
         name: userEmail,
       };
     } else {
@@ -48,15 +71,12 @@ export async function POST(request: NextRequest) {
 
     if (authenticator) {
       try {
-        // credentialID는 base64로 저장되어 있으므로, base64url로 변환
-        // credentialID was stored as a Base64URL string during registration; use it directly
         excludeCredentials.push({
           id: authenticator.credentialID,
-          transports: authenticator.transports ?? ["internal"], // 저장된 transports 사용
+          transports: authenticator.transports ?? ["internal"],
         });
       } catch (parseError) {
         console.error("기존 인증 정보 처리 실패:", parseError);
-        // 처리 실패해도 계속 진행 (새로 등록 가능)
       }
     }
 
@@ -65,17 +85,16 @@ export async function POST(request: NextRequest) {
       rpName,
       userID: new Uint8Array(Buffer.from(user.id, "utf8")),
       userName: user.name,
-      attestationType: "none", // 대부분의 경우 'none'으로 충분
+      attestationType: "none",
       authenticatorSelection: {
-        authenticatorAttachment: "platform", // 같은 기기의 생체 인증만 사용
+        authenticatorAttachment: "platform",
         residentKey: "preferred",
-        userVerification: "required", // 생체 인증 필수
+        userVerification: "required",
       },
-      excludeCredentials, // 이미 등록된 기기 제외
+      excludeCredentials,
     });
 
     // 세션에 challenge 저장
-    const session = await getSession();
     session.challenge = options.challenge;
     session.userId = user.id;
     await session.save();
