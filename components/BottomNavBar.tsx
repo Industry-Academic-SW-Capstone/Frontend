@@ -1,7 +1,9 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { Screen } from '@/lib/types';
 import { HomeIcon, MagnifyingGlassIcon, TrophyIcon, ChartBarIcon, UserCircleIcon } from './icons/Icons';
+import { use2FA } from '@/lib/hooks/use2FA';
+import TwoFactorPrompt from './auth/TwoFactorPrompt';
 
 interface BottomNavBarProps {
   currentScreen: Screen;
@@ -18,15 +20,36 @@ const navItems: { screen: Screen; label: string; icon: React.FC<any> }[] = [
 ];
 
 const BottomNavBar: React.FC<BottomNavBarProps> = ({ currentScreen, setCurrentScreen, isStocksActive = false }) => {
+  const { config, isAuthValid } = use2FA();
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  const handleNavClick = (screen: Screen) => {
+    // 증권 탭 클릭 시 2FA 체크
+    if (screen === 'stocks' && (config.pinEnabled || config.biometricEnabled)) {
+      if (!isAuthValid()) {
+        setShowAuthPrompt(true);
+        return;
+      }
+    }
+    
+    setCurrentScreen(screen);
+  };
+
+  const handleAuthenticated = () => {
+    setShowAuthPrompt(false);
+    setCurrentScreen('stocks');
+  };
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto">
+    <>
+      <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto">
       <div className="bg-bg-secondary/95 backdrop-blur-xl border-t border-border-color px-4 pt-3 pb-5 flex justify-around rounded-t-3xl shadow-2xl">
         {navItems.map((item, index) => {
           const isActive = item.screen === 'stocks' ? isStocksActive : currentScreen === item.screen;
           return (
             <button
               key={item.screen}
-              onClick={() => setCurrentScreen(item.screen)}
+              onClick={() => handleNavClick(item.screen)}
               className={`flex flex-col items-center justify-center w-16 h-14 transition-all duration-300 ease-out rounded-xl relative group ${
                 isActive ? 'text-primary' : 'text-text-secondary hover:text-text-primary'
               }`}
@@ -52,6 +75,15 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ currentScreen, setCurrentSc
         })}
       </div>
     </div>
+
+    {/* 2FA 인증 프롬프트 */}
+    {showAuthPrompt && (
+      <TwoFactorPrompt
+        onAuthenticated={handleAuthenticated}
+        onCancel={() => setShowAuthPrompt(false)}
+      />
+    )}
+  </>
   );
 };
 

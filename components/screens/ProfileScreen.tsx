@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { MOCK_ACHIEVEMENTS } from '@/lib/constants';
 import { Achievement, User } from '@/lib/types';
 import * as Icons from '@/components/icons/Icons';
+import TwoFactorSettings from '@/components/settings/TwoFactorSettings';
 
 interface ProfileScreenProps {
   user: User;
@@ -356,6 +357,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isDarkMode, setIsDa
               </div>
               <Icons.ChevronRightIcon className="w-5 h-5 text-text-secondary"/>
             </button>
+            {/* 2차 인증 */}
+            <TwoFactorSettings />
             {/* Support */}
             <button className="w-full p-4 flex items-center justify-between hover:bg-bg-primary/50 transition-colors duration-200 active:bg-bg-primary">
               <div className="flex items-center gap-3">
