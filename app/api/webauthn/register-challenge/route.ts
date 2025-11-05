@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession, Authenticator } from '@/lib/session';
-import { generateRegistrationOptions } from '@simplewebauthn/server';
+import { 
+  generateRegistrationOptions,
+  type AuthenticatorTransportFuture 
+} from '@simplewebauthn/server';
 import { kv } from '@/lib/redis';
 
 // 환경 변수 검증
@@ -30,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // KV에서 기존 Authenticator 정보 가져와서 제외하기
     const authenticator = await kv.get<Authenticator>(user.id);
-    const excludeCredentials: Array<{ id: string; transports?: AuthenticatorTransport[] }> = [];
+    const excludeCredentials: Array<{ id: string; transports?: AuthenticatorTransportFuture[] }> = [];
     
     if (authenticator) {
       try {
@@ -38,7 +41,7 @@ export async function POST(request: NextRequest) {
         const idBuffer = Buffer.from(authenticator.credentialID, 'base64');
         excludeCredentials.push({
           id: idBuffer.toString('base64url'),
-          transports: ['internal', 'hybrid'],
+          transports: authenticator.transports ?? ['internal'], // 저장된 transports 사용
         });
       } catch (parseError) {
         console.error('기존 인증 정보 처리 실패:', parseError);
@@ -53,8 +56,9 @@ export async function POST(request: NextRequest) {
       userName: user.name,
       attestationType: 'none', // 대부분의 경우 'none'으로 충분
       authenticatorSelection: {
+        authenticatorAttachment: 'platform', // 같은 기기의 생체 인증만 사용
         residentKey: 'preferred',
-        userVerification: 'preferred',
+        userVerification: 'required', // 생체 인증 필수
       },
       excludeCredentials, // 이미 등록된 기기 제외
     });

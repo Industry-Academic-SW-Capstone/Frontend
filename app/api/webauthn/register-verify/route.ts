@@ -71,11 +71,15 @@ export async function POST(request: NextRequest) {
     // 4. 인증 정보 저장
     const credential = registrationInfo.credential;
 
+    // transports 정보 추출 (클라이언트에서 제공)
+    const transports = attestationResponse.response.transports;
+
     // Upstash Redis는 자동으로 JSON 직렬화를 처리하므로 객체를 직접 저장
     const newAuthenticator: Authenticator = {
       credentialID: Buffer.from(credential.id).toString('base64'),
       publicKey: Buffer.from(credential.publicKey).toString('base64'),
       counter: credential.counter,
+      transports: transports, // 실제 사용된 transports 저장
     };
 
     await kv.set(userId, newAuthenticator);
