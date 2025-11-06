@@ -105,7 +105,7 @@ const PopularStockCard: React.FC<{
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activePopularTab, setActivePopularTab] =
-    useState<PopularStockCategory>("amount");
+    useState<PopularStockCategory>("gainers");
   const [activeContentTab, setActiveContentTab] = useState<
     "sectors" | "favorites"
   >("sectors");
@@ -200,14 +200,14 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
             급락
           </button>
           <button
-            onClick={() => setActivePopularTab("amount")}
+            onClick={() => setActivePopularTab("volume")}
             className={`flex-1 py-2 text-sm font-semibold rounded-md ${
-              activePopularTab === "amount"
+              activePopularTab === "volume"
                 ? "bg-bg-primary text-primary shadow"
                 : "text-text-secondary"
             }`}
           >
-            거래대금
+            거래량
           </button>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 swiper-no-swiping">
