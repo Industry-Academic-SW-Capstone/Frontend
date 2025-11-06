@@ -218,7 +218,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ selectedAccount }) => {
             <StatCard
               title="오늘의 수익"
               value="+150,000"
-              change="+1.2%"
+              change={"+" + selectedAccount.changePercent + "%"}
               changeType="positive"
             >
               <div className="bg-positive/10 p-3 rounded-full">
