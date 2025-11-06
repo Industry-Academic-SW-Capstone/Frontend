@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/lib/providers/QueryProvider";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+const pretendard = localFont({
+  src: "../fonts/pretendard/PretendardVariable.woff2",
+  display: "swap",
+  weight: "100 900",
+  variable: "--font-pretendard",
 });
 
 export const metadata: Metadata = {
@@ -29,16 +31,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={`${pretendard.variable}`}>
       <head>
         <link rel="icon" type="image/svg+xml" href="/logo.svg" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="mask-icon" href="/logo.svg" color="#4f46e5" />
       </head>
-      <body className={`${inter.variable} antialiased`}>
-        <QueryProvider>
-          {children}
-        </QueryProvider>
+      <body className={`${pretendard.className} antialiased`}>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
