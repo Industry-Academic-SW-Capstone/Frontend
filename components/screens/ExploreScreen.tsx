@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   MagnifyingGlassIcon,
   ArrowTrendingUpIcon,
@@ -110,8 +110,17 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
     "sectors" | "favorites"
   >("sectors");
 
-  const { stocks: popularStocks, isLoading: isLoadingTopStocks } =
-    useTopStocks();
+  // const { stocks: popularStocks, isLoading: isLoadingTopStocks } =
+  //   useTopStocks();
+
+  const popularStocks = MOCK_POPULAR_STOCKS[activePopularTab];
+  const [isLoadingTopStocks, setIsLoadingTopStocks] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoadingTopStocks(false);
+    }, 1000);
+  }, []);
 
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (
