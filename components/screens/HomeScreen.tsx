@@ -82,7 +82,7 @@ const MissionSummary: React.FC<{ onOpenMissions: () => void }> = ({
   return (
     <div
       onClick={onOpenMissions}
-      className="p-5 rounded-2xl shadow-md border border-border-color flex flex-col card-hover cursor-pointer group overflow-hidden relative"
+      className="p-5 rounded-2xl shadow-md border border-border-color bg-bg-secondary flex flex-col card-hover cursor-pointer group overflow-hidden relative"
     >
       {/* <div className="absolute top-0 right-0 w-32 h-32 bg-white/30 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/30 rounded-full blur-2xl" /> */}
@@ -160,7 +160,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ selectedAccount }) => {
       <div className="space-y-4">
         {/* Total Assets Section with animated entrance */}
         <div
-          className={`p-5 rounded-2xl shadow-md border border-border-color flex flex-col card-hover cursor-pointer group overflow-hidden relative transition-opacity duration-500 ${
+          className={`p-5  bg-bg-secondary rounded-2xl shadow-md border border-border-color flex flex-col card-hover cursor-pointer group overflow-hidden relative transition-opacity duration-500 ${
             isMounted ? "animate-fadeInUp opacity-100" : "opacity-0"
           }`}
         >
