@@ -194,16 +194,15 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           <div className="mt-8">
             {(() => {
               const formatMarketCap = (v: number) => {
-                if (v >= 1e10) {
-                  return `${(v / 1e10).toFixed(2).replace(/\.00$/, "")}조`;
+                //v의 단위는 현재 '억 원' 임
+                if (v >= 1e8) {
+                  return `${(v / 1e8).toFixed(2).replace(/\.00$/, "")}경원`;
                 }
-                if (v >= 1e6) {
-                  return `${(v / 1e6).toFixed(2).replace(/\.00$/, "")}억`;
+                if (v >= 1e4) {
+                  return `${(v / 1e4).toFixed(2).replace(/\.00$/, "")}조원`;
                 }
-                if (v >= 1e5) {
-                  return `${(v / 1e5).toFixed(2).replace(/\.00$/, "")}천만`;
-                }
-                return `${v.toLocaleString()}원`;
+
+                return `${v.toLocaleString()}억원`;
               };
 
               return (
