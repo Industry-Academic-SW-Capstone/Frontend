@@ -7,7 +7,11 @@ import {
   FireIcon,
   BookmarkIcon,
 } from "@/components/icons/Icons";
-import { Sector, BasicStockInfo, PopularStockCategory } from "@/lib/types";
+import {
+  Sector,
+  BasicStockInfo,
+  PopularStockCategory,
+} from "@/lib/types/types";
 import {
   MOCK_SECTORS,
   MOCK_POPULAR_STOCKS,
@@ -110,17 +114,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
     "sectors" | "favorites"
   >("sectors");
 
-  // const { stocks: popularStocks, isLoading: isLoadingTopStocks } =
-  //   useTopStocks();
-
-  const popularStocks = MOCK_POPULAR_STOCKS[activePopularTab];
-  const [isLoadingTopStocks, setIsLoadingTopStocks] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoadingTopStocks(false);
-    }, 1000);
-  }, []);
+  const { stocks: popularStocks, isLoading: isLoadingTopStocks } =
+    useTopStocks();
 
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (

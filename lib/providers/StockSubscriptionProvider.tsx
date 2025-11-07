@@ -1,7 +1,14 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { BasicStockInfo } from '@/lib/types';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
+import { BasicStockInfo } from "@/lib/types/types";
 
 interface StockSubscriptionContextValue {
   subscribedStocks: Record<string, BasicStockInfo>;
@@ -10,11 +17,16 @@ interface StockSubscriptionContextValue {
   clearStocks: () => void;
 }
 
-const StockSubscriptionContext = createContext<StockSubscriptionContextValue | undefined>(undefined);
+const StockSubscriptionContext = createContext<
+  StockSubscriptionContextValue | undefined
+>(undefined);
 
 export function useStockSubscription() {
   const ctx = useContext(StockSubscriptionContext);
-  if (!ctx) throw new Error('useStockSubscription must be used within StockSubscriptionProvider');
+  if (!ctx)
+    throw new Error(
+      "useStockSubscription must be used within StockSubscriptionProvider"
+    );
   return ctx;
 }
 
@@ -23,8 +35,12 @@ interface StockSubscriptionProviderProps {
   socketUrl: string;
 }
 
-export const StockSubscriptionProvider: React.FC<StockSubscriptionProviderProps> = ({ children, socketUrl }) => {
-  const [subscribedStocks, setSubscribedStocks] = useState<Record<string, BasicStockInfo>>({});
+export const StockSubscriptionProvider: React.FC<
+  StockSubscriptionProviderProps
+> = ({ children, socketUrl }) => {
+  const [subscribedStocks, setSubscribedStocks] = useState<
+    Record<string, BasicStockInfo>
+  >({});
   const socketRef = useRef<WebSocket | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -40,7 +56,7 @@ export const StockSubscriptionProvider: React.FC<StockSubscriptionProviderProps>
       socketRef.current.onerror = () => stopTickerThread();
       socketRef.current.onmessage = (event) => {
         // 서버에서 오는 모든 메시지 로그
-        console.log('[SOCKET][RECV]', event.data);
+        console.log("[SOCKET][RECV]", event.data);
       };
     }
     return () => {
@@ -55,11 +71,14 @@ export const StockSubscriptionProvider: React.FC<StockSubscriptionProviderProps>
   const startTickerThread = useCallback(() => {
     if (intervalRef.current) return;
     intervalRef.current = setInterval(() => {
-      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      if (
+        socketRef.current &&
+        socketRef.current.readyState === WebSocket.OPEN
+      ) {
         const tickers = Object.keys(subscribedStocks);
         if (tickers.length > 0) {
-          socketRef.current.send(JSON.stringify({ type: 'TICKERS', tickers }));
-          console.log('[SOCKET][SEND]', tickers);
+          socketRef.current.send(JSON.stringify({ type: "TICKERS", tickers }));
+          console.log("[SOCKET][SEND]", tickers);
         }
       }
     }, 1000);
@@ -74,11 +93,11 @@ export const StockSubscriptionProvider: React.FC<StockSubscriptionProviderProps>
 
   // 구독 관리 함수들
   const addStock = useCallback((stock: BasicStockInfo) => {
-    setSubscribedStocks(prev => ({ ...prev, [stock.ticker]: stock }));
+    setSubscribedStocks((prev) => ({ ...prev, [stock.ticker]: stock }));
   }, []);
 
   const removeStock = useCallback((ticker: string) => {
-    setSubscribedStocks(prev => {
+    setSubscribedStocks((prev) => {
       const copy = { ...prev };
       delete copy[ticker];
       return copy;
@@ -96,10 +115,12 @@ export const StockSubscriptionProvider: React.FC<StockSubscriptionProviderProps>
       startTickerThread();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(subscribedStocks).join(',')]);
+  }, [Object.keys(subscribedStocks).join(",")]);
 
   return (
-    <StockSubscriptionContext.Provider value={{ subscribedStocks, addStock, removeStock, clearStocks }}>
+    <StockSubscriptionContext.Provider
+      value={{ subscribedStocks, addStock, removeStock, clearStocks }}
+    >
       {children}
     </StockSubscriptionContext.Provider>
   );

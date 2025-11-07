@@ -1,5 +1,10 @@
-export type Screen = 'home' | 'stocks' | 'competitions' | 'rankings' | 'profile';
-export type AccountType = 'regular' | 'competition';
+export type Screen =
+  | "home"
+  | "stocks"
+  | "competitions"
+  | "rankings"
+  | "profile";
+export type AccountType = "regular" | "competition";
 
 export interface User {
   username: string;
@@ -36,32 +41,32 @@ export interface StockHolding {
 }
 
 export interface Transaction {
-  id:string;
+  id: string;
   ticker: string;
   name: string;
-  type: 'buy' | 'sell';
+  type: "buy" | "sell";
   shares: number;
   price: number;
   date: string;
 }
 
 export interface Order {
-    id: string;
-    ticker: string;
-    name: string;
-    logo: string;
-    type: 'buy' | 'sell';
-    orderType: 'market' | 'limit';
-    shares: number;
-    price?: number;
-    status: 'pending';
-    date: string;
+  id: string;
+  ticker: string;
+  name: string;
+  logo: string;
+  type: "buy" | "sell";
+  orderType: "market" | "limit";
+  shares: number;
+  price?: number;
+  status: "pending";
+  date: string;
 }
 
 export interface CompetitionRules {
-    startingCapital: number;
-    maxInvestmentPerStock: number;
-    allowedSectors: string[];
+  startingCapital: number;
+  maxInvestmentPerStock: number;
+  allowedSectors: string[];
 }
 
 export interface Competition {
@@ -100,7 +105,13 @@ export interface CompetitionParticipant {
 export interface CompetitionLog {
   id: string;
   timestamp: Date;
-  type: 'join' | 'leave' | 'trade' | 'ranking_change' | 'setting_change' | 'announcement';
+  type:
+    | "join"
+    | "leave"
+    | "trade"
+    | "ranking_change"
+    | "setting_change"
+    | "announcement";
   userId?: string;
   username?: string;
   description: string;
@@ -129,12 +140,12 @@ export interface LeaderboardEntry {
   username: string;
   avatar: string;
   returnRate: number;
-  change: 'up' | 'down' | 'same';
+  change: "up" | "down" | "same";
   isRival?: boolean;
 }
 
 export interface AIPersonaLeaderboardEntry extends LeaderboardEntry {
-    personaName: string;
+  personaName: string;
 }
 export interface RivalLeaderboardEntry extends LeaderboardEntry {}
 
@@ -145,10 +156,10 @@ export interface ChartDataPoint {
 }
 
 export interface StockDetail {
-  ticker: string;
-  name: string;
+  stock_code: string;
+  stock_name: string;
   description: string;
-  currentPrice: number;
+  current_price: number;
   todayChange: number;
   todayChangePercent: number;
   marketCap: number;
@@ -164,19 +175,19 @@ export interface StockDetail {
 }
 
 export interface BasicStockInfo {
-    ticker: string;
-    name: string;
-    price: number;
-    changePercent: number;
-    logo: string;
+  ticker: string;
+  name: string;
+  price: number;
+  changePercent: number;
+  logo: string;
 }
 
 export interface Sector {
-    name: string;
-    stocks: BasicStockInfo[];
+  name: string;
+  stocks: BasicStockInfo[];
 }
 
-export type PopularStockCategory = 'gainers' | 'losers' | 'volume' | 'amount';
+export type PopularStockCategory = "gainers" | "losers" | "volume" | "amount";
 
 export interface InvestmentStyleAnalysis {
   personaName: string;
@@ -186,7 +197,12 @@ export interface InvestmentStyleAnalysis {
   radarChartData: { label: string; value: number }[]; // value should be 0 to 100
 }
 
-export type NotificationType = 'order_filled' | 'ranking_up' | 'achievement' | 'competition' | 'system';
+export type NotificationType =
+  | "order_filled"
+  | "ranking_up"
+  | "achievement"
+  | "competition"
+  | "system";
 
 export interface Notification {
   id: string;
@@ -198,7 +214,7 @@ export interface Notification {
   actionUrl?: string;
   metadata?: {
     ticker?: string;
-    orderType?: 'buy' | 'sell';
+    orderType?: "buy" | "sell";
     shares?: number;
     price?: number;
     rankChange?: number;
@@ -207,8 +223,8 @@ export interface Notification {
   };
 }
 
-export type MissionDifficulty = 'beginner' | 'intermediate' | 'advanced';
-export type MissionStatus = 'locked' | 'in_progress' | 'completed';
+export type MissionDifficulty = "beginner" | "intermediate" | "advanced";
+export type MissionStatus = "locked" | "in_progress" | "completed";
 
 export interface Mission {
   id: string;
@@ -249,10 +265,9 @@ export interface StockInfo {
   stock_name: string;
   volume: number;
   amount: number;
-  market_type: 'KOSPI' | 'KOSDAQ';
+  market_type: "KOSPI" | "KOSDAQ";
   current_price: number;
   change_amount: number;
   change_rate: number;
-  change_sign: '+' | '-';
+  change_sign: "+" | "-";
 }
-

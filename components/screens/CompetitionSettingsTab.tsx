@@ -1,14 +1,20 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Competition } from '@/lib/types';
-import { PencilSquareIcon, CheckCircleIcon, XMarkIcon } from '@/components/icons/Icons';
+import React, { useState } from "react";
+import { Competition } from "@/lib/types/types";
+import {
+  PencilSquareIcon,
+  CheckCircleIcon,
+  XMarkIcon,
+} from "@/components/icons/Icons";
 
 interface CompetitionSettingsTabProps {
   competition: Competition;
 }
 
-const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competition }) => {
+const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({
+  competition,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: competition.name,
@@ -22,7 +28,7 @@ const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competi
 
   const handleSave = () => {
     // TODO: API call to save settings
-    console.log('Saving settings:', formData);
+    console.log("Saving settings:", formData);
     setIsEditing(false);
   };
 
@@ -34,7 +40,8 @@ const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competi
       endDate: competition.endDate,
       totalPrize: competition.totalPrize,
       startingCapital: competition.rules?.startingCapital || 10000000,
-      maxInvestmentPerStock: competition.rules?.maxInvestmentPerStock || 2000000,
+      maxInvestmentPerStock:
+        competition.rules?.maxInvestmentPerStock || 2000000,
     });
     setIsEditing(false);
   };
@@ -77,12 +84,16 @@ const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competi
         <h3 className="font-bold text-text-primary mb-3">기본 정보</h3>
 
         <div>
-          <label className="block text-sm font-semibold text-text-secondary mb-2">대회명</label>
+          <label className="block text-sm font-semibold text-text-secondary mb-2">
+            대회명
+          </label>
           {isEditing ? (
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-4 py-2.5 bg-bg-primary border border-border-color rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
           ) : (
@@ -91,11 +102,15 @@ const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competi
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-text-secondary mb-2">설명</label>
+          <label className="block text-sm font-semibold text-text-secondary mb-2">
+            설명
+          </label>
           {isEditing ? (
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               rows={3}
               className="w-full px-4 py-2.5 bg-bg-primary border border-border-color rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
             />
@@ -106,44 +121,65 @@ const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competi
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-semibold text-text-secondary mb-2">시작일</label>
+            <label className="block text-sm font-semibold text-text-secondary mb-2">
+              시작일
+            </label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, startDate: e.target.value })
+                }
                 className="w-full px-4 py-2.5 bg-bg-primary border border-border-color rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
             ) : (
-              <p className="text-text-primary font-medium">{formData.startDate}</p>
+              <p className="text-text-primary font-medium">
+                {formData.startDate}
+              </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-semibold text-text-secondary mb-2">종료일</label>
+            <label className="block text-sm font-semibold text-text-secondary mb-2">
+              종료일
+            </label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.endDate}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, endDate: e.target.value })
+                }
                 className="w-full px-4 py-2.5 bg-bg-primary border border-border-color rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
             ) : (
-              <p className="text-text-primary font-medium">{formData.endDate}</p>
+              <p className="text-text-primary font-medium">
+                {formData.endDate}
+              </p>
             )}
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-text-secondary mb-2">총 상금</label>
+          <label className="block text-sm font-semibold text-text-secondary mb-2">
+            총 상금
+          </label>
           {isEditing ? (
             <input
               type="number"
               value={formData.totalPrize}
-              onChange={(e) => setFormData({ ...formData, totalPrize: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  totalPrize: parseInt(e.target.value),
+                })
+              }
               className="w-full px-4 py-2.5 bg-bg-primary border border-border-color rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
           ) : (
-            <p className="text-text-primary font-medium">₩{formData.totalPrize.toLocaleString()}</p>
+            <p className="text-text-primary font-medium">
+              ₩{formData.totalPrize.toLocaleString()}
+            </p>
           )}
         </div>
       </div>
@@ -153,18 +189,25 @@ const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competi
         <h3 className="font-bold text-text-primary mb-3">대회 규칙</h3>
 
         <div>
-          <label className="block text-sm font-semibold text-text-secondary mb-2">초기 자본금</label>
+          <label className="block text-sm font-semibold text-text-secondary mb-2">
+            초기 자본금
+          </label>
           {isEditing ? (
             <input
               type="number"
               value={formData.startingCapital}
               onChange={(e) =>
-                setFormData({ ...formData, startingCapital: parseInt(e.target.value) })
+                setFormData({
+                  ...formData,
+                  startingCapital: parseInt(e.target.value),
+                })
               }
               className="w-full px-4 py-2.5 bg-bg-primary border border-border-color rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
           ) : (
-            <p className="text-text-primary font-medium">₩{formData.startingCapital.toLocaleString()}</p>
+            <p className="text-text-primary font-medium">
+              ₩{formData.startingCapital.toLocaleString()}
+            </p>
           )}
         </div>
 
@@ -177,7 +220,10 @@ const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competi
               type="number"
               value={formData.maxInvestmentPerStock}
               onChange={(e) =>
-                setFormData({ ...formData, maxInvestmentPerStock: parseInt(e.target.value) })
+                setFormData({
+                  ...formData,
+                  maxInvestmentPerStock: parseInt(e.target.value),
+                })
               }
               className="w-full px-4 py-2.5 bg-bg-primary border border-border-color rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
@@ -189,16 +235,20 @@ const CompetitionSettingsTab: React.FC<CompetitionSettingsTabProps> = ({ competi
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-text-secondary mb-2">허용 섹터</label>
+          <label className="block text-sm font-semibold text-text-secondary mb-2">
+            허용 섹터
+          </label>
           <div className="flex flex-wrap gap-2">
-            {(competition.rules?.allowedSectors || ['전체']).map((sector, idx) => (
-              <span
-                key={idx}
-                className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold"
-              >
-                {sector}
-              </span>
-            ))}
+            {(competition.rules?.allowedSectors || ["전체"]).map(
+              (sector, idx) => (
+                <span
+                  key={idx}
+                  className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold"
+                >
+                  {sector}
+                </span>
+              )
+            )}
           </div>
         </div>
       </div>

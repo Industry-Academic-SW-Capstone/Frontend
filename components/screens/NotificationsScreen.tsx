@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import type { Notification as AppNotification } from '@/lib/types';
-import * as Icons from '@/components/icons/Icons';
+import React, { useState, useEffect } from "react";
+import type { Notification as AppNotification } from "@/lib/types/types";
+import * as Icons from "@/components/icons/Icons";
 import {
   getStoredNotifications,
   markNotificationAsRead,
@@ -10,11 +10,11 @@ import {
   clearAllNotifications,
   getNotificationConfig,
   sendTestNotification,
-} from '@/lib/services/notificationService';
+} from "@/lib/services/notificationService";
 
 const NotificationsScreen: React.FC = () => {
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [filter, setFilter] = useState<"all" | "unread">("all");
 
   const loadNotifications = () => {
     const stored = getStoredNotifications();
@@ -29,18 +29,19 @@ const NotificationsScreen: React.FC = () => {
       loadNotifications();
     };
 
-    window.addEventListener('notificationUpdate', handleNotificationUpdate);
+    window.addEventListener("notificationUpdate", handleNotificationUpdate);
     return () => {
-      window.removeEventListener('notificationUpdate', handleNotificationUpdate);
+      window.removeEventListener(
+        "notificationUpdate",
+        handleNotificationUpdate
+      );
     };
   }, []);
 
   const filteredNotifications =
-    filter === 'unread'
-      ? notifications.filter(n => !n.read)
-      : notifications;
+    filter === "unread" ? notifications.filter((n) => !n.read) : notifications;
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const handleMarkAsRead = (id: string) => {
     markNotificationAsRead(id);
@@ -58,7 +59,7 @@ const NotificationsScreen: React.FC = () => {
   };
 
   const handleClearAll = () => {
-    if (window.confirm('모든 알림을 삭제하시겠습니까?')) {
+    if (window.confirm("모든 알림을 삭제하시겠습니까?")) {
       clearAllNotifications();
       loadNotifications();
     }
@@ -76,38 +77,57 @@ const NotificationsScreen: React.FC = () => {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return '방금 전';
+    if (minutes < 1) return "방금 전";
     if (minutes < 60) return `${minutes}분 전`;
     if (hours < 24) return `${hours}시간 전`;
     if (days < 7) return `${days}일 전`;
-    
-    return date.toLocaleDateString('ko-KR', {
-      month: 'short',
-      day: 'numeric',
+
+    return date.toLocaleDateString("ko-KR", {
+      month: "short",
+      day: "numeric",
     });
   };
 
-  const getNotificationIcon = (type: AppNotification['type']) => {
+  const getNotificationIcon = (type: AppNotification["type"]) => {
     const config = getNotificationConfig(type);
-    
+
     switch (type) {
-      case 'order_filled':
-        return <Icons.CheckCircleIcon className="w-6 h-6" style={{ color: config.color }} />;
-      case 'ranking_up':
-        return <Icons.TrophyIcon className="w-6 h-6" style={{ color: config.color }} />;
-      case 'achievement':
-        return <Icons.SparklesIcon className="w-6 h-6" style={{ color: config.color }} />;
-      case 'competition':
-        return <Icons.FlagIcon className="w-6 h-6" style={{ color: config.color }} />;
+      case "order_filled":
+        return (
+          <Icons.CheckCircleIcon
+            className="w-6 h-6"
+            style={{ color: config.color }}
+          />
+        );
+      case "ranking_up":
+        return (
+          <Icons.TrophyIcon
+            className="w-6 h-6"
+            style={{ color: config.color }}
+          />
+        );
+      case "achievement":
+        return (
+          <Icons.SparklesIcon
+            className="w-6 h-6"
+            style={{ color: config.color }}
+          />
+        );
+      case "competition":
+        return (
+          <Icons.FlagIcon className="w-6 h-6" style={{ color: config.color }} />
+        );
       default:
-        return <Icons.BellIcon className="w-6 h-6" style={{ color: config.color }} />;
+        return (
+          <Icons.BellIcon className="w-6 h-6" style={{ color: config.color }} />
+        );
     }
   };
 
   return (
     <div className="h-full flex flex-col">
       {/* 헤더 */}
-  <div className="sticky top-0 bg-bg-primary backdrop-blur-xl z-10 border-b border-border-color shadow-lg">
+      <div className="sticky top-0 bg-bg-primary backdrop-blur-xl z-10 border-b border-border-color shadow-lg">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between mb-4 animate-fadeInUp">
             <h1 className="text-2xl font-bold text-text-primary">알림</h1>
@@ -120,24 +140,27 @@ const NotificationsScreen: React.FC = () => {
           </div>
 
           {/* 필터 및 액션 */}
-          <div className="flex items-center justify-between animate-fadeInUp" style={{ animationDelay: '100ms' }}>
+          <div
+            className="flex items-center justify-between animate-fadeInUp"
+            style={{ animationDelay: "100ms" }}
+          >
             <div className="flex gap-2">
               <button
-                onClick={() => setFilter('all')}
+                onClick={() => setFilter("all")}
                 className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 transform hover:scale-105 ${
-                  filter === 'all'
-                    ? 'bg-primary text-white shadow-lg'
-                    : 'text-text-secondary hover:bg-bg-secondary'
+                  filter === "all"
+                    ? "bg-primary text-white shadow-lg"
+                    : "text-text-secondary hover:bg-bg-secondary"
                 }`}
               >
                 전체 ({notifications.length})
               </button>
               <button
-                onClick={() => setFilter('unread')}
+                onClick={() => setFilter("unread")}
                 className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 transform hover:scale-105 relative ${
-                  filter === 'unread'
-                    ? 'bg-primary text-white shadow-lg'
-                    : 'text-text-secondary hover:bg-bg-secondary'
+                  filter === "unread"
+                    ? "bg-primary text-white shadow-lg"
+                    : "text-text-secondary hover:bg-bg-secondary"
                 }`}
               >
                 읽지 않음 ({unreadCount})
@@ -177,29 +200,35 @@ const NotificationsScreen: React.FC = () => {
               <Icons.BellIcon className="w-12 h-12 text-primary opacity-50" />
             </div>
             <h3 className="text-xl font-bold text-text-primary mb-3">
-              {filter === 'unread' ? '읽지 않은 알림이 없습니다' : '알림이 없습니다'}
+              {filter === "unread"
+                ? "읽지 않은 알림이 없습니다"
+                : "알림이 없습니다"}
             </h3>
             <p className="text-text-secondary">
-              {filter === 'unread'
-                ? '모든 알림을 확인했습니다.'
-                : '새로운 알림이 도착하면 여기에 표시됩니다.'}
+              {filter === "unread"
+                ? "모든 알림을 확인했습니다."
+                : "새로운 알림이 도착하면 여기에 표시됩니다."}
             </p>
           </div>
         ) : (
           <div className="divide-y divide-border-color">
             {filteredNotifications.map((notification, index) => {
               const config = getNotificationConfig(notification.type);
-              
+
               return (
                 <div
                   key={notification.id}
-                  className={`p-4 transition-all duration-300 card-hover cursor-pointer relative overflow-hidden group ${notification.read ? 'bg-bg-primary' : 'bg-primary/10'} animate-fadeInUp`}
+                  className={`p-4 transition-all duration-300 card-hover cursor-pointer relative overflow-hidden group ${
+                    notification.read ? "bg-bg-primary" : "bg-primary/10"
+                  } animate-fadeInUp`}
                   style={{ animationDelay: `${index * 50}ms` }}
-                  onClick={() => !notification.read && handleMarkAsRead(notification.id)}
+                  onClick={() =>
+                    !notification.read && handleMarkAsRead(notification.id)
+                  }
                 >
                   {/* Shimmer effect */}
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer pointer-events-none" />
-                  
+
                   <div className="flex gap-3 relative z-10">
                     {/* 아이콘 */}
                     <div className="flex-shrink-0 mt-1">
@@ -221,7 +250,7 @@ const NotificationsScreen: React.FC = () => {
                           <div className="w-2.5 h-2.5 bg-primary rounded-full flex-shrink-0 mt-1 animate-pulse shadow-lg" />
                         )}
                       </div>
-                      
+
                       <p className="text-sm text-text-secondary mb-2 leading-relaxed">
                         {notification.message}
                       </p>
@@ -251,7 +280,7 @@ const NotificationsScreen: React.FC = () => {
                         <span className="text-xs text-text-secondary font-medium">
                           {formatTimestamp(notification.timestamp)}
                         </span>
-                        
+
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -264,8 +293,6 @@ const NotificationsScreen: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  
-            
                 </div>
               );
             })}

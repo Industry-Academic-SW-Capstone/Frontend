@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { MOCK_TRANSACTIONS, MOCK_ANALYSIS_RESULT } from "@/lib/constants";
-import { InvestmentStyleAnalysis } from "@/lib/types";
+import { InvestmentStyleAnalysis } from "@/lib/types/types";
 import { analyzeInvestmentStyle } from "@/lib/services/geminiService";
 import * as Icons from "@/components/icons/Icons";
 import InvestmentAnalysisCard from "@/components/InvestmentAnalysisCard";

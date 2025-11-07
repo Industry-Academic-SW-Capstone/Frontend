@@ -1,18 +1,19 @@
 "use client";
-import React, { useState } from 'react';
-import { MOCK_COMPETITIONS } from '@/lib/constants';
-import { Competition } from '@/lib/types';
-import CompetitionCard from '@/components/CompetitionCard';
-import CreateCompetitionScreen from './CreateCompetitionScreen';
-import CompetitionAdminScreen from './CompetitionAdminScreen';
-import SlidingScreen from '@/components/navigation/SlidingScreen';
-import { PlusCircleIcon } from '@/components/icons/Icons';
+import React, { useState } from "react";
+import { MOCK_COMPETITIONS } from "@/lib/constants";
+import { Competition } from "@/lib/types/types";
+import CompetitionCard from "@/components/CompetitionCard";
+import CreateCompetitionScreen from "./CreateCompetitionScreen";
+import CompetitionAdminScreen from "./CompetitionAdminScreen";
+import SlidingScreen from "@/components/navigation/SlidingScreen";
+import { PlusCircleIcon } from "@/components/icons/Icons";
 
 const CompetitionsScreen: React.FC = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
-  const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
-  const [view, setView] = useState<'ongoing' | 'finished'>('ongoing');
+  const [selectedCompetition, setSelectedCompetition] =
+    useState<Competition | null>(null);
+  const [view, setView] = useState<"ongoing" | "finished">("ongoing");
 
   const handleAdminClick = (competition: Competition) => {
     setSelectedCompetition(competition);
@@ -23,7 +24,7 @@ const CompetitionsScreen: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-text-primary">대회</h1>
-        <button 
+        <button
           onClick={() => setShowCreate(true)}
           className="flex items-center gap-2 bg-primary text-white font-bold px-5 py-2.5 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 ripple overflow-hidden relative group"
         >
@@ -37,51 +38,51 @@ const CompetitionsScreen: React.FC = () => {
       {/* Tab Switcher with improved design */}
       <div className="flex bg-bg-secondary p-1.5 rounded-2xl shadow-sm border border-border-color animate-fadeInScale">
         <button
-          onClick={() => setView('ongoing')}
+          onClick={() => setView("ongoing")}
           className={`w-1/2 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative overflow-hidden ${
-            view === 'ongoing' 
-              ? 'bg-bg-primary text-text-primary shadow-sm transform scale-[1.02]' 
-              : 'text-text-secondary hover:text-text-primary hover:bg-bg-primary/50'
+            view === "ongoing"
+              ? "bg-bg-primary text-text-primary shadow-sm transform scale-[1.02]"
+              : "text-text-secondary hover:text-text-primary hover:bg-bg-primary/50"
           }`}
         >
-          {view === 'ongoing' && (
+          {view === "ongoing" && (
             <div className="absolute inset-0 animate-shimmer" />
           )}
           <span className="relative z-10">진행중인 대회</span>
         </button>
         <button
-          onClick={() => setView('finished')}
+          onClick={() => setView("finished")}
           className={`w-1/2 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative overflow-hidden ${
-            view === 'finished' 
-              ? 'bg-bg-primary text-text-primary shadow-sm transform scale-[1.02]' 
-              : 'text-text-secondary hover:text-text-primary hover:bg-bg-primary/50'
+            view === "finished"
+              ? "bg-bg-primary text-text-primary shadow-sm transform scale-[1.02]"
+              : "text-text-secondary hover:text-text-primary hover:bg-bg-primary/50"
           }`}
         >
-          {view === 'finished' && (
+          {view === "finished" && (
             <div className="absolute inset-0 animate-shimmer" />
           )}
           <span className="relative z-10">종료된 대회</span>
         </button>
       </div>
-      
+
       {/* Competition cards with stagger animation */}
       <div className="space-y-4">
         {MOCK_COMPETITIONS.map((comp, index) => (
-          <div 
-            key={comp.id} 
+          <div
+            key={comp.id}
             className="animate-fadeInUp"
             style={{ animationDelay: `${index * 100}ms` }}
           >
-            <CompetitionCard competition={comp} onAdminClick={handleAdminClick} />
+            <CompetitionCard
+              competition={comp}
+              onAdminClick={handleAdminClick}
+            />
           </div>
         ))}
       </div>
 
       {/* 대회 생성 화면 - 슬라이딩 패널 */}
-      <SlidingScreen
-        isOpen={showCreate}
-        onClose={() => setShowCreate(false)}
-      >
+      <SlidingScreen isOpen={showCreate} onClose={() => setShowCreate(false)}>
         <CreateCompetitionScreen onBack={() => setShowCreate(false)} />
       </SlidingScreen>
 

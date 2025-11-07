@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
-import { CompetitionAnnouncement } from '@/lib/types';
-import { PlusCircleIcon, MegaphoneIcon, PencilSquareIcon, XMarkIcon } from '@/components/icons/Icons';
+import React, { useState } from "react";
+import { CompetitionAnnouncement } from "@/lib/types/types";
+import {
+  PlusCircleIcon,
+  MegaphoneIcon,
+  PencilSquareIcon,
+  XMarkIcon,
+} from "@/components/icons/Icons";
 
 interface CompetitionAnnouncementsTabProps {
   competitionId: string;
@@ -11,31 +16,31 @@ interface CompetitionAnnouncementsTabProps {
 // Mock data
 const MOCK_ANNOUNCEMENTS: CompetitionAnnouncement[] = [
   {
-    id: '1',
-    title: '대회 규칙 변경 안내',
-    content: '종목당 최대 투자 금액이 200만원에서 300만원으로 변경되었습니다.',
-    createdAt: new Date('2024-01-15T10:00:00'),
+    id: "1",
+    title: "대회 규칙 변경 안내",
+    content: "종목당 최대 투자 금액이 200만원에서 300만원으로 변경되었습니다.",
+    createdAt: new Date("2024-01-15T10:00:00"),
     isPinned: true,
-    readBy: ['user1', 'user2'],
+    readBy: ["user1", "user2"],
   },
   {
-    id: '2',
-    title: '중간 순위 발표',
-    content: '현재까지의 순위를 확인하고 남은 기간 동안 전략을 세워보세요!',
-    createdAt: new Date('2024-01-14T15:30:00'),
+    id: "2",
+    title: "중간 순위 발표",
+    content: "현재까지의 순위를 확인하고 남은 기간 동안 전략을 세워보세요!",
+    createdAt: new Date("2024-01-14T15:30:00"),
     isPinned: false,
-    readBy: ['user1'],
+    readBy: ["user1"],
   },
 ];
 
-const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = ({
-  competitionId,
-}) => {
+const CompetitionAnnouncementsTab: React.FC<
+  CompetitionAnnouncementsTabProps
+> = ({ competitionId }) => {
   const [announcements, setAnnouncements] = useState(MOCK_ANNOUNCEMENTS);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newAnnouncement, setNewAnnouncement] = useState({
-    title: '',
-    content: '',
+    title: "",
+    content: "",
     isPinned: false,
   });
 
@@ -52,7 +57,7 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
     };
 
     setAnnouncements([announcement, ...announcements]);
-    setNewAnnouncement({ title: '', content: '', isPinned: false });
+    setNewAnnouncement({ title: "", content: "", isPinned: false });
     setShowCreateModal(false);
   };
 
@@ -62,17 +67,19 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
 
   const togglePin = (id: string) => {
     setAnnouncements(
-      announcements.map((a) => (a.id === id ? { ...a, isPinned: !a.isPinned } : a))
+      announcements.map((a) =>
+        a.id === id ? { ...a, isPinned: !a.isPinned } : a
+      )
     );
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Intl.DateTimeFormat("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(date);
   };
 
@@ -88,7 +95,9 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-lg font-bold text-text-primary">공지사항</h2>
-          <p className="text-sm text-text-secondary">참가자들에게 메시지를 전달하세요</p>
+          <p className="text-sm text-text-secondary">
+            참가자들에게 메시지를 전달하세요
+          </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
@@ -102,7 +111,9 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-bg-secondary border border-border-color rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-text-primary">{announcements.length}</p>
+          <p className="text-2xl font-bold text-text-primary">
+            {announcements.length}
+          </p>
           <p className="text-xs text-text-secondary mt-1">전체 공지</p>
         </div>
         <div className="bg-bg-secondary border border-border-color rounded-xl p-4 text-center">
@@ -119,26 +130,30 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
           <div
             key={announcement.id}
             className={`bg-bg-secondary border rounded-xl p-5 hover:shadow-md transition-all animate-fadeInUp ${
-              announcement.isPinned ? 'border-primary shadow-sm' : 'border-border-color'
+              announcement.isPinned
+                ? "border-primary shadow-sm"
+                : "border-border-color"
             }`}
             style={{ animationDelay: `${index * 50}ms` }}
           >
             <div className="flex items-start gap-3">
               <div
                 className={`p-2 rounded-lg ${
-                  announcement.isPinned ? 'bg-primary/10' : 'bg-accent/10'
+                  announcement.isPinned ? "bg-primary/10" : "bg-accent/10"
                 }`}
               >
                 <MegaphoneIcon
                   className={`w-5 h-5 ${
-                    announcement.isPinned ? 'text-primary' : 'text-accent'
+                    announcement.isPinned ? "text-primary" : "text-accent"
                   }`}
                 />
               </div>
               <div className="flex-1">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-text-primary">{announcement.title}</h3>
+                    <h3 className="font-bold text-text-primary">
+                      {announcement.title}
+                    </h3>
                     {announcement.isPinned && (
                       <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-bold">
                         고정
@@ -152,20 +167,26 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
                     <XMarkIcon className="w-4 h-4 text-negative" />
                   </button>
                 </div>
-                <p className="text-text-secondary text-sm mb-3">{announcement.content}</p>
+                <p className="text-text-secondary text-sm mb-3">
+                  {announcement.content}
+                </p>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-text-secondary">{formatDate(announcement.createdAt)}</span>
+                  <span className="text-text-secondary">
+                    {formatDate(announcement.createdAt)}
+                  </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-text-secondary">읽음: {announcement.readBy.length}명</span>
+                    <span className="text-text-secondary">
+                      읽음: {announcement.readBy.length}명
+                    </span>
                     <button
                       onClick={() => togglePin(announcement.id)}
                       className={`px-3 py-1 rounded-lg font-semibold transition-colors ${
                         announcement.isPinned
-                          ? 'bg-primary/10 text-primary'
-                          : 'bg-bg-primary text-text-secondary hover:bg-border-color'
+                          ? "bg-primary/10 text-primary"
+                          : "bg-bg-primary text-text-secondary hover:bg-border-color"
                       }`}
                     >
-                      {announcement.isPinned ? '고정 해제' : '고정'}
+                      {announcement.isPinned ? "고정 해제" : "고정"}
                     </button>
                   </div>
                 </div>
@@ -179,7 +200,9 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
         <div className="text-center py-12">
           <MegaphoneIcon className="w-16 h-16 text-text-secondary mx-auto mb-3 opacity-50" />
           <p className="text-text-secondary">작성된 공지사항이 없습니다</p>
-          <p className="text-text-secondary text-sm mt-1">새 공지사항을 작성해보세요</p>
+          <p className="text-text-secondary text-sm mt-1">
+            새 공지사항을 작성해보세요
+          </p>
         </div>
       )}
 
@@ -193,7 +216,9 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
             className="bg-bg-primary w-full max-w-md rounded-t-3xl p-6 animate-slideInUp"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-bold text-text-primary mb-6">새 공지사항</h3>
+            <h3 className="text-xl font-bold text-text-primary mb-6">
+              새 공지사항
+            </h3>
 
             <div className="space-y-4">
               <div>
@@ -204,7 +229,10 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
                   type="text"
                   value={newAnnouncement.title}
                   onChange={(e) =>
-                    setNewAnnouncement({ ...newAnnouncement, title: e.target.value })
+                    setNewAnnouncement({
+                      ...newAnnouncement,
+                      title: e.target.value,
+                    })
                   }
                   placeholder="공지사항 제목을 입력하세요"
                   className="w-full px-4 py-3 bg-bg-secondary border border-border-color rounded-xl text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -218,7 +246,10 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
                 <textarea
                   value={newAnnouncement.content}
                   onChange={(e) =>
-                    setNewAnnouncement({ ...newAnnouncement, content: e.target.value })
+                    setNewAnnouncement({
+                      ...newAnnouncement,
+                      content: e.target.value,
+                    })
                   }
                   placeholder="공지사항 내용을 입력하세요"
                   rows={5}
@@ -232,11 +263,17 @@ const CompetitionAnnouncementsTab: React.FC<CompetitionAnnouncementsTabProps> = 
                   id="isPinned"
                   checked={newAnnouncement.isPinned}
                   onChange={(e) =>
-                    setNewAnnouncement({ ...newAnnouncement, isPinned: e.target.checked })
+                    setNewAnnouncement({
+                      ...newAnnouncement,
+                      isPinned: e.target.checked,
+                    })
                   }
                   className="w-5 h-5 text-primary bg-bg-secondary border-border-color rounded focus:ring-primary"
                 />
-                <label htmlFor="isPinned" className="text-sm font-semibold text-text-primary">
+                <label
+                  htmlFor="isPinned"
+                  className="text-sm font-semibold text-text-primary"
+                >
                   상단에 고정
                 </label>
               </div>

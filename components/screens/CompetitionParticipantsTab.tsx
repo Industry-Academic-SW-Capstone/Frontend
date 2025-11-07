@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
-import { CompetitionParticipant } from '@/lib/types';
-import { MagnifyingGlassIcon, ChartBarIcon } from '@/components/icons/Icons';
+import React, { useState } from "react";
+import { CompetitionParticipant } from "@/lib/types/types";
+import { MagnifyingGlassIcon, ChartBarIcon } from "@/components/icons/Icons";
 
 interface CompetitionParticipantsTabProps {
   competitionId: string;
@@ -11,55 +11,58 @@ interface CompetitionParticipantsTabProps {
 // Mock data - 실제로는 API에서 가져와야 함
 const MOCK_PARTICIPANTS: CompetitionParticipant[] = [
   {
-    id: '1',
-    username: '투자왕김씨',
-    avatar: '👑',
-    joinDate: '2024.01.01',
+    id: "1",
+    username: "투자왕김씨",
+    avatar: "👑",
+    joinDate: "2024.01.01",
     currentRank: 1,
     totalValue: 12500000,
     returnPercent: 25.0,
     trades: 45,
-    lastActive: '5분 전',
+    lastActive: "5분 전",
     portfolio: [
-      { ticker: 'AAPL', shares: 50, value: 8750000 },
-      { ticker: 'TSLA', shares: 20, value: 3750000 },
+      { ticker: "AAPL", shares: 50, value: 8750000 },
+      { ticker: "TSLA", shares: 20, value: 3750000 },
     ],
   },
   {
-    id: '2',
-    username: '주식천재',
-    avatar: '🎯',
-    joinDate: '2024.01.02',
+    id: "2",
+    username: "주식천재",
+    avatar: "🎯",
+    joinDate: "2024.01.02",
     currentRank: 2,
     totalValue: 11800000,
     returnPercent: 18.0,
     trades: 38,
-    lastActive: '1시간 전',
+    lastActive: "1시간 전",
     portfolio: [
-      { ticker: 'GOOGL', shares: 30, value: 7080000 },
-      { ticker: 'NVDA', shares: 15, value: 4720000 },
+      { ticker: "GOOGL", shares: 30, value: 7080000 },
+      { ticker: "NVDA", shares: 15, value: 4720000 },
     ],
   },
   {
-    id: '3',
-    username: '데이트레이더',
-    avatar: '⚡',
-    joinDate: '2024.01.03',
+    id: "3",
+    username: "데이트레이더",
+    avatar: "⚡",
+    joinDate: "2024.01.03",
     currentRank: 3,
     totalValue: 11200000,
     returnPercent: 12.0,
     trades: 92,
-    lastActive: '30분 전',
+    lastActive: "30분 전",
     portfolio: [
-      { ticker: 'MSFT', shares: 40, value: 6720000 },
-      { ticker: 'AMZN', shares: 25, value: 4480000 },
+      { ticker: "MSFT", shares: 40, value: 6720000 },
+      { ticker: "AMZN", shares: 25, value: 4480000 },
     ],
   },
 ];
 
-const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({ competitionId }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedParticipant, setSelectedParticipant] = useState<CompetitionParticipant | null>(null);
+const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({
+  competitionId,
+}) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedParticipant, setSelectedParticipant] =
+    useState<CompetitionParticipant | null>(null);
 
   const filteredParticipants = MOCK_PARTICIPANTS.filter((p) =>
     p.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -82,7 +85,9 @@ const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({
       {/* Stats Summary */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-bg-secondary border border-border-color rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-text-primary">{MOCK_PARTICIPANTS.length}</p>
+          <p className="text-2xl font-bold text-text-primary">
+            {MOCK_PARTICIPANTS.length}
+          </p>
           <p className="text-xs text-text-secondary mt-1">총 참가자</p>
         </div>
         <div className="bg-bg-secondary border border-border-color rounded-xl p-4 text-center">
@@ -93,7 +98,10 @@ const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({
         </div>
         <div className="bg-bg-secondary border border-border-color rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-text-primary">
-            {(MOCK_PARTICIPANTS.reduce((sum, p) => sum + p.trades, 0) / MOCK_PARTICIPANTS.length).toFixed(0)}
+            {(
+              MOCK_PARTICIPANTS.reduce((sum, p) => sum + p.trades, 0) /
+              MOCK_PARTICIPANTS.length
+            ).toFixed(0)}
           </p>
           <p className="text-xs text-text-secondary mt-1">평균 거래</p>
         </div>
@@ -113,8 +121,12 @@ const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({
                 <div className="text-2xl">{participant.avatar}</div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-text-primary">{participant.username}</span>
-                    <span className="text-xs text-text-secondary">#{participant.currentRank}</span>
+                    <span className="font-bold text-text-primary">
+                      {participant.username}
+                    </span>
+                    <span className="text-xs text-text-secondary">
+                      #{participant.currentRank}
+                    </span>
                   </div>
                   <p className="text-xs text-text-secondary">
                     가입일: {participant.joinDate} • {participant.lastActive}
@@ -137,16 +149,20 @@ const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({
                 <p className="text-text-secondary text-xs">수익률</p>
                 <p
                   className={`font-bold ${
-                    participant.returnPercent >= 0 ? 'text-positive' : 'text-negative'
+                    participant.returnPercent >= 0
+                      ? "text-positive"
+                      : "text-negative"
                   }`}
                 >
-                  {participant.returnPercent > 0 ? '+' : ''}
+                  {participant.returnPercent > 0 ? "+" : ""}
                   {participant.returnPercent.toFixed(1)}%
                 </p>
               </div>
               <div>
                 <p className="text-text-secondary text-xs">거래 횟수</p>
-                <p className="font-bold text-text-primary">{participant.trades}</p>
+                <p className="font-bold text-text-primary">
+                  {participant.trades}
+                </p>
               </div>
             </div>
           </div>
@@ -170,7 +186,9 @@ const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({
                   <h3 className="text-xl font-bold text-text-primary">
                     {selectedParticipant.username}
                   </h3>
-                  <p className="text-sm text-text-secondary">순위 #{selectedParticipant.currentRank}</p>
+                  <p className="text-sm text-text-secondary">
+                    순위 #{selectedParticipant.currentRank}
+                  </p>
                 </div>
               </div>
             </div>
@@ -187,20 +205,26 @@ const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({
                 <p className="text-xs text-text-secondary mb-1">수익률</p>
                 <p
                   className={`text-lg font-bold ${
-                    selectedParticipant.returnPercent >= 0 ? 'text-positive' : 'text-negative'
+                    selectedParticipant.returnPercent >= 0
+                      ? "text-positive"
+                      : "text-negative"
                   }`}
                 >
-                  {selectedParticipant.returnPercent > 0 ? '+' : ''}
+                  {selectedParticipant.returnPercent > 0 ? "+" : ""}
                   {selectedParticipant.returnPercent.toFixed(1)}%
                 </p>
               </div>
               <div className="bg-bg-secondary rounded-xl p-4">
                 <p className="text-xs text-text-secondary mb-1">거래 횟수</p>
-                <p className="text-lg font-bold text-text-primary">{selectedParticipant.trades}</p>
+                <p className="text-lg font-bold text-text-primary">
+                  {selectedParticipant.trades}
+                </p>
               </div>
               <div className="bg-bg-secondary rounded-xl p-4">
                 <p className="text-xs text-text-secondary mb-1">마지막 활동</p>
-                <p className="text-lg font-bold text-text-primary">{selectedParticipant.lastActive}</p>
+                <p className="text-lg font-bold text-text-primary">
+                  {selectedParticipant.lastActive}
+                </p>
               </div>
             </div>
 
@@ -209,17 +233,28 @@ const CompetitionParticipantsTab: React.FC<CompetitionParticipantsTabProps> = ({
               <h4 className="font-bold text-text-primary mb-3">포트폴리오</h4>
               <div className="space-y-2">
                 {selectedParticipant.portfolio.map((stock, idx) => (
-                  <div key={idx} className="bg-bg-secondary rounded-xl p-3 flex justify-between">
+                  <div
+                    key={idx}
+                    className="bg-bg-secondary rounded-xl p-3 flex justify-between"
+                  >
                     <div>
-                      <p className="font-bold text-text-primary">{stock.ticker}</p>
-                      <p className="text-xs text-text-secondary">{stock.shares}주</p>
+                      <p className="font-bold text-text-primary">
+                        {stock.ticker}
+                      </p>
+                      <p className="text-xs text-text-secondary">
+                        {stock.shares}주
+                      </p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-text-primary">
                         ₩{stock.value.toLocaleString()}
                       </p>
                       <p className="text-xs text-text-secondary">
-                        {((stock.value / selectedParticipant.totalValue) * 100).toFixed(1)}%
+                        {(
+                          (stock.value / selectedParticipant.totalValue) *
+                          100
+                        ).toFixed(1)}
+                        %
                       </p>
                     </div>
                   </div>

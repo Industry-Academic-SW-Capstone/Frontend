@@ -1,30 +1,31 @@
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { StockInfo, BasicStockInfo } from '@/lib/types';
-import { generateLogo } from '../utils';
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { StockInfo, BasicStockInfo } from "@/lib/types/types";
+import { generateLogo } from "../utils";
 
 // 환경변수에서 API base URL을 읽음
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
 
 // API 호출 함수 (확장성 고려, 추후 파라미터 추가 가능)
-async function fetchTopStocks(params?: Record<string, any>): Promise<StockInfo[]> {
-  const query = params ? '?' + new URLSearchParams(params).toString() : '';
-  const res = await fetch(`${API_BASE_URL}/api/stocks/amount${query}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'accept': 'application/json',
-      },
-    }
-  );
-  if (!res.ok) throw new Error('Failed to fetch top stocks');
+async function fetchTopStocks(
+  params?: Record<string, any>
+): Promise<StockInfo[]> {
+  const query = params ? "?" + new URLSearchParams(params).toString() : "";
+  const res = await fetch(`${API_BASE_URL}/api/stocks/amount${query}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+  });
+  if (!res.ok) throw new Error("Failed to fetch top stocks");
   return res.json();
 }
 
 // StockInfo[] → BasicStockInfo[] 변환
 function mapStockInfoToBasic(stocks: StockInfo[]): BasicStockInfo[] {
-  return stocks.map(stock => ({
+  return stocks.map((stock) => ({
     ticker: stock.stock_code,
     name: stock.stock_name,
     price: stock.current_price,
@@ -39,7 +40,7 @@ function mapStockInfoToBasic(stocks: StockInfo[]): BasicStockInfo[] {
  */
 export function useTopStocks(params?: Record<string, any>) {
   const { data, isLoading, isError, refetch } = useQuery<StockInfo[]>({
-    queryKey: ['topStocks', params],
+    queryKey: ["topStocks", params],
     queryFn: () => fetchTopStocks(params),
   });
 

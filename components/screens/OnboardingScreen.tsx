@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { User, UserGroup } from "@/lib/types";
+import { User, UserGroup } from "@/lib/types/types";
 import * as Icons from "@/components/icons/Icons";
 import {
   requestNotificationPermission,
