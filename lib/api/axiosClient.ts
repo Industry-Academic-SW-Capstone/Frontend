@@ -57,8 +57,15 @@ export function createAxiosClient(
     (error: AxiosError) => {
       // 에러 응답의 데이터도 camelCase로 변환하여 호출자에서 일관된 형태로 처리할 수 있게 합니다.
       try {
-        if ((error as any).response && (error as any).response.data && typeof (error as any).response.data === "object") {
-          (error as any).response.data = camelcaseKeys((error as any).response.data, { deep: true });
+        if (
+          (error as any).response &&
+          (error as any).response.data &&
+          typeof (error as any).response.data === "object"
+        ) {
+          (error as any).response.data = camelcaseKeys(
+            (error as any).response.data,
+            { deep: true }
+          );
         }
       } catch (e) {
         // eslint-disable-next-line no-console
