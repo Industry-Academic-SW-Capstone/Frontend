@@ -24,11 +24,12 @@ const StockChart: React.FC<StockChartProps> = ({
   const [period, setPeriod] = useState<PeriodType>("1day");
   const [chartMode, setChartMode] = useState<"line" | "candle">("line");
 
+  // 빈 티커 코드가 오면 데이터 fetch 안 함
   const {
     data: chartDatas,
     isLoading: isChartLoading,
     refetch: refetchChartData,
-  } = useStockChart(stockCode, period);
+  } = useStockChart(stockCode || "", period);
 
   const sortedChartDatas = useMemo(() => {
     if (!chartDatas || chartDatas.length === 0 || isChartLoading) return [];

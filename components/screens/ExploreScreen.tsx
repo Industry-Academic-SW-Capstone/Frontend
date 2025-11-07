@@ -83,7 +83,7 @@ const PopularStockCard: React.FC<{
   return (
     <button
       onClick={onClick}
-      className="flex-shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between"
+      className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between"
     >
       <div className="flex justify-center">
         <img
@@ -116,6 +116,23 @@ const PopularStockCard: React.FC<{
   );
 };
 
+// 섹터별/관심종목 스켈레톤 컴포넌트
+const StockRowSkeleton = () => (
+  <div className="w-full flex items-center justify-between p-4 rounded-xl">
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-xl bg-gray-200 animate-pulse" />
+      <div>
+        <div className="h-5 w-24 bg-gray-200 rounded animate-pulse mb-1" />
+        <div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
+      </div>
+    </div>
+    <div className="text-right">
+      <div className="h-5 w-20 bg-gray-200 rounded animate-pulse mb-1" />
+      <div className="h-4 w-16 bg-gray-200 rounded animate-pulse ml-auto" />
+    </div>
+  </div>
+);
+
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activePopularTab, setActivePopularTab] =
@@ -131,17 +148,22 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
 
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (
-    <div className="flex-shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between items-center animate-pulse">
+    <div className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between items-center animate-pulse">
       <div className="w-16 h-16 rounded-3xl mb-2 bg-gray-200" />
-      <div className="h-[16px] bg-gray-200 rounded w-1/2 my-0.5" />
-      <div className="h-[20px] bg-gray-200 rounded w-3/5 my-0.5" />
-      <div className="h-[12px] bg-gray-200 rounded w-3/7 my-0.5" />
+      <div className="h-4 bg-gray-200 rounded w-1/2 my-0.5" />
+      <div className="h-5 bg-gray-200 rounded w-3/5 my-0.5" />
+      <div className="h-3 bg-gray-200 rounded w-3/7 my-0.5" />
     </div>
   );
 
   const filteredSectors = useMemo(() => {
     if (isLoadingIndustries || !industriesTopStocks) return [];
-    if (!searchTerm) return industriesTopStocks;
+    if (
+      !searchTerm ||
+      searchTerm.length === 0 ||
+      searchTerm.trim().length === 0
+    )
+      return industriesTopStocks;
     const lowercasedFilter = searchTerm.toLowerCase();
     return industriesTopStocks
       .map((sector) => {
@@ -167,7 +189,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
 
   return (
     <div className="space-y-6">
-      <div className="relative">
+      <div className="relative mt-4">
         <input
           type="text"
           placeholder="종목명 또는 티커 검색"
@@ -257,20 +279,38 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
         </div>
         {activeContentTab === "sectors" && (
           <div className="space-y-4">
-            {filteredSectors.map((sector) => (
-              <div key={sector.industryName}>
-                <h3 className="font-bold text-text-primary px-2 mb-1">
-                  {sector.industryName}
-                </h3>
-                {sector.stocks.map((stock) => (
-                  <StockRow
-                    key={stock.stockCode}
-                    stock={stock}
-                    onClick={() => onSelectStock(stock.stockCode)}
-                  />
+            {isLoadingIndustries || !industriesTopStocks ? (
+              // 섹터별 스켈레톤
+              <>
+                {[1, 2, 3].map((sectorIndex) => (
+                  <div key={sectorIndex}>
+                    <div className="h-6 w-32 bg-gray-200 rounded animate-pulse px-2 mb-1" />
+                    {[1, 2, 3].map((stockIndex) => (
+                      <StockRowSkeleton key={`${sectorIndex}-${stockIndex}`} />
+                    ))}
+                  </div>
                 ))}
+              </>
+            ) : filteredSectors.length > 0 ? (
+              filteredSectors.map((sector) => (
+                <div key={sector.industryName}>
+                  <h3 className="font-bold text-text-primary px-2 mb-1">
+                    {sector.industryName}
+                  </h3>
+                  {sector.stocks.map((stock) => (
+                    <StockRow
+                      key={stock.stockCode}
+                      stock={stock}
+                      onClick={() => onSelectStock(stock.stockCode)}
+                    />
+                  ))}
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 bg-bg-secondary rounded-lg">
+                <p className="text-text-secondary">검색 결과가 없습니다.</p>
               </div>
-            ))}
+            )}
           </div>
         )}
         {activeContentTab === "favorites" && (
@@ -283,6 +323,10 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
                   onClick={() => onSelectStock(stock.stockCode)}
                 />
               ))
+            ) : searchTerm ? (
+              <div className="text-center py-8 bg-bg-secondary rounded-lg">
+                <p className="text-text-secondary">검색 결과가 없습니다.</p>
+              </div>
             ) : (
               <div className="text-center py-8 bg-bg-secondary rounded-lg">
                 <BookmarkIcon className="w-12 h-12 text-text-secondary mx-auto mb-2" />
