@@ -74,39 +74,39 @@ const generateLogo = (ticker: string, name: string) =>
 
 export const MOCK_STOCK_HOLDINGS: StockHolding[] = [
   {
-    ticker: "005930",
-    name: "삼성전자",
+    stockCode: "005930",
+    stockName: "삼성전자",
     shares: 50,
     currentPrice: 82000,
     avgPrice: 78000,
-    logo: generateLogo("005930", "삼성전자"),
+    marketType: "KOSPI",
     todayChangePercent: 1.5,
   },
   {
-    ticker: "035720",
-    name: "카카오",
+    stockCode: "035720",
+    stockName: "카카오",
     shares: 30,
     currentPrice: 55000,
     avgPrice: 62000,
-    logo: generateLogo("035720", "카카오"),
+    marketType: "KOSDAQ",
     todayChangePercent: -2.1,
   },
   {
-    ticker: "035420",
-    name: "NAVER",
+    stockCode: "035420",
+    stockName: "NAVER",
     shares: 25,
     currentPrice: 190000,
     avgPrice: 185000,
-    logo: generateLogo("035420", "NAVER"),
+    marketType: "KOSDAQ",
     todayChangePercent: 0.8,
   },
   {
-    ticker: "005380",
-    name: "현대차",
+    stockCode: "005380",
+    stockName: "현대차",
     shares: 10,
     currentPrice: 250000,
     avgPrice: 240000,
-    logo: generateLogo("005380", "현대차"),
+    marketType: "KOSPI",
     todayChangePercent: 3.2,
   },
 ];
@@ -114,9 +114,9 @@ export const MOCK_STOCK_HOLDINGS: StockHolding[] = [
 export const MOCK_PENDING_ORDERS: Order[] = [
   {
     id: "o-1",
-    ticker: "373220",
-    name: "LG에너지솔루션",
-    logo: generateLogo("373220", "LG에너지솔루션"),
+    stockCode: "373220",
+    stockName: "LG에너지솔루션",
+    marketType: "KOSDAQ",
     type: "buy",
     orderType: "limit",
     shares: 5,
@@ -126,9 +126,9 @@ export const MOCK_PENDING_ORDERS: Order[] = [
   },
   {
     id: "o-2",
-    ticker: "000660",
-    name: "SK하이닉스",
-    logo: generateLogo("000660", "SK하이닉스"),
+    stockCode: "000660",
+    stockName: "SK하이닉스",
+    marketType: "KOSPI",
     type: "sell",
     orderType: "limit",
     shares: 10,
@@ -535,142 +535,24 @@ export const MOCK_STOCK_DETAILS: { [key: string]: StockDetailMockType } = {
   },
 };
 
-const SEMICONDUCTOR_STOCKS: BasicStockInfoMockType[] = [
-  {
-    stockCode: "005930",
-    stockName: "삼성전자",
-    currentPrice: 82000,
-    changeRate: 1.5,
-    logo: generateLogo("005930", "삼성전자"),
-  },
-  {
-    stockCode: "000660",
-    stockName: "SK하이닉스",
-    currentPrice: 130000,
-    changeRate: -1.5,
-    logo: generateLogo("000660", "SK하이닉스"),
-  },
-];
-const PLATFORM_STOCKS: BasicStockInfoMockType[] = [
-  {
-    stockCode: "035720",
-    stockName: "카카오",
-    currentPrice: 55000,
-    changeRate: -2.1,
-    logo: generateLogo("035720", "카카오"),
-  },
-  {
-    stockCode: "035420",
-    stockName: "NAVER",
-    currentPrice: 190000,
-    changeRate: 0.8,
-    logo: generateLogo("035420", "NAVER"),
-  },
-];
-const AUTOMOTIVE_STOCKS: BasicStockInfoMockType[] = [
-  {
-    stockCode: "005380",
-    stockName: "현대차",
-    currentPrice: 250000,
-    changeRate: 3.2,
-    logo: generateLogo("005380", "현대차"),
-  },
-  {
-    stockCode: "000270",
-    stockName: "기아",
-    currentPrice: 120000,
-    changeRate: 2.5,
-    logo: generateLogo("000270", "기아"),
-  },
-];
-export const MOCK_SECTORS: Sector[] = [
-  { name: "반도체", stocks: SEMICONDUCTOR_STOCKS },
-  { name: "플랫폼", stocks: PLATFORM_STOCKS },
-  { name: "자동차", stocks: AUTOMOTIVE_STOCKS },
-];
-
 export const MOCK_FAVORITE_STOCKS: BasicStockInfo[] = [
   {
     stockCode: "005930",
+    marketType: "KOSPI",
     stockName: "삼성전자",
     currentPrice: 82000,
     changeRate: 1.5,
-    changeSign: "EVEN",
+    changeSign: "RISE",
   },
   {
     stockCode: "035720",
     stockName: "카카오",
+    marketType: "KOSDAQ",
     currentPrice: 55000,
     changeRate: -2.1,
     changeSign: "FALL",
   },
 ];
-
-export const MOCK_POPULAR_STOCKS: { [key: string]: BasicStockInfoMockType[] } =
-  {
-    gainers: [
-      {
-        stockCode: "005380",
-        stockName: "현대차",
-        currentPrice: 250000,
-        changeRate: 3.2,
-        logo: generateLogo("005380", "현대차"),
-      },
-      {
-        stockCode: "000270",
-        stockName: "기아",
-        currentPrice: 120000,
-        changeRate: 2.5,
-        logo: generateLogo("000270", "기아"),
-      },
-      {
-        stockCode: "005930",
-        stockName: "삼성전자",
-        currentPrice: 82000,
-        changeRate: 1.5,
-        logo: generateLogo("005930", "삼성전자"),
-      },
-    ],
-    losers: [
-      {
-        stockCode: "035720",
-        stockName: "카카오",
-        currentPrice: 55000,
-        changeRate: -2.1,
-        logo: generateLogo("035720", "카카오"),
-      },
-      {
-        stockCode: "000660",
-        stockName: "SK하이닉스",
-        currentPrice: 130000,
-        changeRate: -1.5,
-        logo: generateLogo("000660", "SK하이닉스"),
-      },
-    ],
-    volume: [
-      {
-        stockCode: "005930",
-        stockName: "삼성전자",
-        currentPrice: 82000,
-        changeRate: 1.5,
-        logo: generateLogo("005930", "삼성전자"),
-      },
-      {
-        stockCode: "035720",
-        stockName: "카카오",
-        currentPrice: 55000,
-        changeRate: -2.1,
-        logo: generateLogo("035720", "카카오"),
-      },
-      {
-        stockCode: "000660",
-        stockName: "SK하이닉스",
-        currentPrice: 130000,
-        changeRate: -1.5,
-        logo: generateLogo("000660", "SK하이닉스"),
-      },
-    ],
-  };
 
 export const MOCK_ANALYSIS_RESULT: InvestmentStyleAnalysis = {
   personaName: "가치투자자 워렌 버핏",

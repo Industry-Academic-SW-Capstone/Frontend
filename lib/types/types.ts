@@ -30,13 +30,11 @@ export interface Account {
   chartData: ChartDataPoint[];
 }
 
-export interface StockHolding {
-  ticker: string;
-  name: string;
+export interface StockHolding extends StockLogoInfo {
+  stockName: string;
   shares: number;
   currentPrice: number;
   avgPrice: number;
-  logo: string;
   todayChangePercent: number;
 }
 
@@ -50,11 +48,9 @@ export interface Transaction {
   date: string;
 }
 
-export interface Order {
+export interface Order extends StockLogoInfo {
   id: string;
-  ticker: string;
-  name: string;
-  logo: string;
+  stockName: string;
   type: "buy" | "sell";
   orderType: "market" | "limit";
   shares: number;
@@ -176,11 +172,14 @@ export type ChangeSign =
 
 export type OrderType = "amount" | "volume" | "gainers" | "losers";
 
-export interface BasicStockInfo {
+export interface StockLogoInfo {
   stockCode: string;
+  marketType: "KOSPI" | "KOSDAQ";
+}
+
+export interface BasicStockInfo extends StockLogoInfo {
   stockName: string;
   currentPrice: number;
-  marketType: "KOSPI" | "KOSDAQ";
   changeRate: number;
   changeSign: ChangeSign;
 }
@@ -247,12 +246,11 @@ export interface StockDetailMockType {
 export interface BasicStockInfoMockType {
   stockCode: string;
   stockName: string;
-  logo: string;
   currentPrice: number;
   changeRate: number;
 }
 
-export type PeriodType = "1day" | "1week" | "1month" | "1year" | "5year";
+export type PeriodType = "1day" | "1week" | "3month" | "1year" | "5year";
 
 export interface ChartData {
   date: string; // "2025-11-06"

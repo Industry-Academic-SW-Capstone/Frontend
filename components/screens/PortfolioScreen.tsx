@@ -13,6 +13,7 @@ import {
   ClockIcon,
 } from "@/components/icons/Icons";
 import PortfolioDonutChart from "@/components/PortfolioDonutChart";
+import { generateLogo } from "@/lib/utils";
 
 interface PortfolioScreenProps {
   onSelectStock: (ticker: string) => void;
@@ -32,13 +33,17 @@ const StockRow: React.FC<{ holding: StockHolding; onClick: () => void }> = ({
     >
       <div className="flex items-center gap-4">
         <img
-          src={holding.logo}
-          alt={`${holding.name} logo`}
+          src={generateLogo(holding)}
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = generateLogo(holding, true);
+          }}
+          alt={`${holding.stockName} logo`}
           className="w-10 h-10 rounded-full bg-white object-cover"
         />
         <div>
           <p className="font-bold text-text-primary text-left">
-            {holding.name}
+            {holding.stockName}
           </p>
           <p className="text-sm text-text-secondary text-left">
             {holding.shares}주
@@ -69,12 +74,18 @@ const PendingOrderRow: React.FC<{ order: Order }> = ({ order }) => {
     <div className="w-full flex items-center justify-between p-4 rounded-xl bg-bg-secondary">
       <div className="flex items-center gap-4">
         <img
-          src={order.logo}
-          alt={`${order.name} logo`}
+          src={generateLogo(order)}
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = generateLogo(order, true);
+          }}
+          alt={`${order.stockName} logo`}
           className="w-10 h-10 rounded-full bg-white object-cover"
         />
         <div>
-          <p className="font-bold text-text-primary text-left">{order.name}</p>
+          <p className="font-bold text-text-primary text-left">
+            {order.stockName}
+          </p>
           <p
             className={`text-sm font-semibold ${
               order.type === "buy" ? "text-positive" : "text-negative"
@@ -110,9 +121,9 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({ onSelectStock }) => {
         <h3 className="text-lg font-bold text-text-primary px-2">보유 종목</h3>
         {MOCK_STOCK_HOLDINGS.map((holding) => (
           <StockRow
-            key={holding.ticker}
+            key={holding.stockCode}
             holding={holding}
-            onClick={() => onSelectStock(holding.ticker)}
+            onClick={() => onSelectStock(holding.stockCode)}
           />
         ))}
       </div>

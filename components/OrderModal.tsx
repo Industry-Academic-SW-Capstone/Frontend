@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { StockDetailMockType } from "@/lib/types/types";
+import { StockDetailInfo, StockDetailMockType } from "@/lib/types/types";
 import { XMarkIcon } from "./icons/Icons";
 
 interface OrderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  stock: StockDetailMockType;
+  stock: StockDetailInfo;
   orderType: "buy" | "sell";
   cashBalance: number;
 }
@@ -38,10 +38,10 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
   const totalOrderValue =
     selectedOrderType === "market"
-      ? stock.current_price * Number(quantity)
+      ? stock.currentPrice * Number(quantity)
       : Number(limitPrice) * Number(quantity);
 
-  const maxBuyableShares = Math.floor(cashBalance / stock.current_price);
+  const maxBuyableShares = Math.floor(cashBalance / stock.currentPrice);
 
   return (
     <div
@@ -140,7 +140,8 @@ const OrderModal: React.FC<OrderModalProps> = ({
             <div className="flex justify-between">
               <span className="text-text-secondary">주문 가능 수량</span>
               <span className="font-semibold text-text-primary">
-                {stock.shares.toLocaleString()}주
+                {/* {stock.shares.toLocaleString()}주 */}
+                {"3주"}
               </span>
             </div>
           )}

@@ -13,11 +13,7 @@ import {
   PopularStockCategory,
   BasicStockInfo,
 } from "@/lib/types/types";
-import {
-  MOCK_SECTORS,
-  MOCK_POPULAR_STOCKS,
-  MOCK_FAVORITE_STOCKS,
-} from "@/lib/constants";
+import { MOCK_FAVORITE_STOCKS } from "@/lib/constants";
 import { useTopStocks } from "@/lib/hooks/stock/useTopStocks";
 import { useIndustriesTopStocks } from "@/lib/hooks/stock/useIndustriesTopStocks";
 import { generateLogo } from "@/lib/utils";
@@ -44,7 +40,7 @@ const StockRow: React.FC<{
             event.currentTarget.src = generateLogo(stock, true);
           }}
           alt={`${stock.stockName} logo`}
-          className="w-10 h-10 rounded-full bg-white object-cover"
+          className="w-10 h-10 rounded-xl bg-white object-cover"
         />
         <div>
           <p className="font-bold text-text-primary text-left">
@@ -87,7 +83,7 @@ const PopularStockCard: React.FC<{
   return (
     <button
       onClick={onClick}
-      className="flex-shrink-0 w-36 bg-bg-secondary border border-border-color rounded-2xl p-4 flex flex-col justify-between"
+      className="flex-shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between"
     >
       <div className="flex justify-center">
         <img
@@ -135,15 +131,11 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
 
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (
-    <div className="flex-shrink-0 w-36 h-28 bg-bg-secondary border border-border-color rounded-2xl p-4 flex flex-col justify-between animate-pulse">
-      <div>
-        <div className="w-8 h-8 rounded-full mb-2 bg-gray-200" />
-        <div className="h-4 bg-gray-200 rounded w-3/4 mb-1" />
-      </div>
-      <div>
-        <div className="h-4 bg-gray-200 rounded w-2/3 mb-1" />
-        <div className="h-3 bg-gray-200 rounded w-1/3" />
-      </div>
+    <div className="flex-shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between items-center animate-pulse">
+      <div className="w-16 h-16 rounded-3xl mb-2 bg-gray-200" />
+      <div className="h-[16px] bg-gray-200 rounded w-1/2 my-0.5" />
+      <div className="h-[20px] bg-gray-200 rounded w-3/5 my-0.5" />
+      <div className="h-[12px] bg-gray-200 rounded w-3/7 my-0.5" />
     </div>
   );
 
@@ -161,7 +153,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
         return { ...sector, stocks: filteredStocks };
       })
       .filter((sector) => sector.stocks.length > 0);
-  }, [searchTerm]);
+  }, [searchTerm, isLoadingIndustries, industriesTopStocks]);
 
   const filteredFavorites = useMemo(() => {
     if (!searchTerm) return MOCK_FAVORITE_STOCKS;

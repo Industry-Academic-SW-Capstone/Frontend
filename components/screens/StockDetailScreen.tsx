@@ -1,10 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MOCK_STOCK_DETAILS, MOCK_ACCOUNTS } from "@/lib/constants";
 import { StockDetailMockType } from "@/lib/types/types";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
 import { ArrowLeftIcon } from "@/components/icons/Icons";
+import { useStockDetail } from "@/lib/hooks/stock/useStockDetail";
+import { generateLogo } from "@/lib/utils";
+import { useStockChart } from "@/lib/hooks/stock/useStockChart";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -27,14 +30,53 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 }) => {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
+  const [chartStartPrice, setChartStartPrice] = useState<number | null>(null);
+  const [chartChangedRate, setChartChangedRate] = useState<number | null>(null);
+  const [chartChangedAmount, setChartChangedAmount] = useState<number | null>(
+    null
+  );
+  const [isPositive, setIsPositive] = useState<boolean>(true);
+  const [changeString, setChangeString] = useState<string>("");
 
-  const stock = MOCK_STOCK_DETAILS[ticker];
+  const {
+    data: stock,
+    isLoading: isStockLoading,
+    refetch: refetchStockDetail,
+  } = useStockDetail(ticker);
+
   const account = MOCK_ACCOUNTS[0];
 
   const handleOpenOrderModal = (type: "buy" | "sell") => {
     setOrderType(type);
     setIsOrderModalOpen(true);
   };
+
+  useEffect(() => {
+    if (chartStartPrice === null && stock) {
+      setChartChangedAmount(stock.changeAmount);
+      setChartChangedRate(stock.changeRate);
+      setIsPositive(stock.changeAmount >= 0);
+      setChangeString(
+        `${
+          stock.changeAmount >= 0 ? "+" : ""
+        }${stock.changeAmount.toLocaleString()}원 (${
+          stock.changeRate >= 0 ? "+" : ""
+        }${stock.changeRate}%)`
+      );
+    } else if (chartStartPrice !== null && stock) {
+      const changedAmount = stock.currentPrice - chartStartPrice;
+      const changedRate = (changedAmount / chartStartPrice) * 100;
+
+      setChartChangedAmount(changedAmount);
+      setChartChangedRate(changedRate);
+      setIsPositive(changedAmount >= 0);
+      setChangeString(
+        `${changedAmount >= 0 ? "+" : ""}${changedAmount.toLocaleString()}원 (${
+          changedAmount >= 0 ? "+" : ""
+        }${changedRate.toFixed(2)}%)`
+      );
+    }
+  }, [chartStartPrice, stock]);
 
   if (!stock) {
     return (
@@ -47,13 +89,6 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     );
   }
 
-  const isPositive = stock.changeRate >= 0;
-  const changeString = `${
-    isPositive ? "+" : ""
-  }${stock.changeAmount.toLocaleString()}원 (${
-    isPositive ? "+" : ""
-  }${stock.changeRate.toFixed(2)}%)`;
-
   return (
     <>
       <div className="h-full flex flex-col">
@@ -63,7 +98,11 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           </button>
           <div className="flex items-center gap-2">
             <img
-              src={stock.logo}
+              src={generateLogo(stock)}
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = generateLogo(stock, true);
+              }}
               alt={stock.stockName}
               className="w-8 h-8 rounded-full bg-white object-cover"
             />
@@ -87,23 +126,46 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
             </p>
           </div>
 
-          <StockChart data={stock.chartData} isPositive={isPositive} />
-
+          <StockChart
+            setChartStartPrice={setChartStartPrice}
+            stockCode={stock.stockCode}
+            isPositive={isPositive}
+          />
           <div className="mt-8">
-            <InfoRow
-              label="시가총액"
-              value={` ${(stock.marketCap / 1000000000000).toFixed(2)}조원`}
-            />
-            <InfoRow
-              label="주가수익비율(PER)"
-              value={stock.peRatio.toFixed(2)}
-            />
-            <InfoRow label="보유 수량" value={`${stock.shares}주`} />
+            {(() => {
+              const formatMarketCap = (v: number) => {
+                if (v >= 1e10) {
+                  return `${(v / 1e10).toFixed(2).replace(/\.00$/, "")}조`;
+                }
+                if (v >= 1e6) {
+                  return `${(v / 1e6).toFixed(2).replace(/\.00$/, "")}억`;
+                }
+                if (v >= 1e5) {
+                  return `${(v / 1e5).toFixed(2).replace(/\.00$/, "")}천만`;
+                }
+                return `${v.toLocaleString()}원`;
+              };
+
+              return (
+                <>
+                  <InfoRow
+                    label="시가총액"
+                    value={formatMarketCap(stock.marketCap)}
+                  />
+                  <InfoRow label="주가수익비율(PER)" value={stock.per} />
+                </>
+              );
+            })()}
           </div>
 
           <div className="mt-8 p-4 bg-bg-secondary rounded-2xl border border-border-color">
             <h3 className="font-bold text-lg mb-2">기업 정보</h3>
-            <p className="text-text-secondary text-sm">{stock.description}</p>
+            <p className="text-text-secondary text-sm">
+              {
+                // stock.description
+                "설명이 들어갑니다"
+              }
+            </p>
           </div>
         </div>
 

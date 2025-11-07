@@ -25,7 +25,7 @@ const DonutChart: React.FC<PortfolioDonutChartProps> = ({ holdings, cash }) => {
   const data = [
     { name: "현금", value: cash, color: "#a5b4fc" },
     ...holdings.map((h, i) => ({
-      name: h.name,
+      name: h.stockName,
       value: h.shares * h.currentPrice,
       color: ["#f87171", "#fb923c", "#facc15", "#4ade80", "#38bdf8", "#c084fc"][
         i % 6

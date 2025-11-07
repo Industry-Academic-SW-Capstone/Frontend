@@ -184,11 +184,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ selectedAccount }) => {
               } animate-pulse`}
             />
           </div>
-
+          {/* 
           <AccountChart
             data={selectedAccount.chartData}
             isPositive={isPositive}
-          />
+          /> */}
         </div>
 
         {/* Conditional Section: Mission Summary or Featured Competition */}

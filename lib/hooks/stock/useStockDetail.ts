@@ -13,7 +13,7 @@ const API_BASE_URL =
 
 async function fetchStockDetailInfo(
   stockCode: string
-): Promise<StockDetailInfo[]> {
+): Promise<StockDetailInfo> {
   const res = await defaultClient.get(
     `${API_BASE_URL}/api/stocks/${stockCode}`
   );
@@ -24,7 +24,7 @@ async function fetchStockDetailInfo(
 }
 
 export function useStockDetail(stockCode: string) {
-  const { data, isLoading, isError, refetch } = useQuery<StockDetailInfo[]>({
+  const { data, isLoading, isError, refetch } = useQuery<StockDetailInfo>({
     queryKey: ["stockDetail", stockCode],
     queryFn: () => fetchStockDetailInfo(stockCode),
   });

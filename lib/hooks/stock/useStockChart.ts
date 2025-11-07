@@ -31,6 +31,12 @@ export function useStockChart(stockCode: string, periodType: PeriodType) {
   const { data, isLoading, isError, refetch } = useQuery<ChartData[]>({
     queryKey: ["stockChart", stockCode, periodType],
     queryFn: () => fetchStockChart(stockCode, periodType),
+    staleTime:
+      periodType === "1day"
+        ? 1 * 60 * 1000
+        : periodType === "1week"
+        ? 10 * 60 * 1000
+        : 30 * 60 * 1000,
   });
 
   return {

@@ -1,7 +1,7 @@
-import { BasicStockInfo } from "./types/types";
+import { BasicStockInfo, StockLogoInfo } from "./types/types";
 
 export const generateLogo = (
-  stock: BasicStockInfo,
+  stock: StockLogoInfo,
   needBackup: boolean = false
 ) => {
   if (!needBackup) {
