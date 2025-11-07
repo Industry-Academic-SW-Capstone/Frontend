@@ -155,36 +155,119 @@ export interface ChartDataPoint {
   volume?: number;
 }
 
-export interface StockDetail {
-  stock_code: string;
-  stock_name: string;
-  description: string;
-  current_price: number;
-  todayChange: number;
-  todayChangePercent: number;
-  marketCap: number;
-  peRatio: number;
-  shares: number; // shares owned by user
-  chartData: {
-    day: ChartDataPoint[];
-    week: ChartDataPoint[];
-    month: ChartDataPoint[];
-    year: ChartDataPoint[];
-  };
-  logo: string;
-}
+/**
+ * @param stockCode 주식코드
+ * @param stockName 주식명
+ * @param volume 거래량
+ * @param amount 거래대금
+ * @param marketType 시장구분 (KOSPI/KOSDAQ)
+ * @param currentPrice 현재가
+ * @param changeAmount 전일대비 금액
+ * @param changeRate 전일대비율
+ * @param changeSign 등락 부호
+ */
+
+export type ChangeSign =
+  | "FALL"
+  | "RISE"
+  | "UPPER_LIMIT"
+  | "LOWER_LIMIT"
+  | "EVEN";
+
+export type OrderType = "amount" | "volume" | "gainers" | "losers";
 
 export interface BasicStockInfo {
-  ticker: string;
-  name: string;
-  price: number;
-  changePercent: number;
+  stockCode: string;
+  stockName: string;
+  currentPrice: number;
+  marketType: "KOSPI" | "KOSDAQ";
+  changeRate: number;
+  changeSign: ChangeSign;
+}
+export interface StockInfo extends BasicStockInfo {
+  volume: number;
+  amount: number;
+  currentPrice: number;
+  changeAmount: number;
+}
+
+export interface StockDetailInfo extends StockInfo {
+  marketCap: number;
+  per: number;
+  eps: number;
+  pbr: number;
+  faceValue: number;
+  highPrice: number;
+  lowPrice: number;
+  openPrice: number;
+  previousClosePrice: number;
+}
+
+export interface IndustriesTopStocks {
+  industryCode: string;
+  industryName: string;
+  stocks: StockInfo[];
+}
+
+export interface StockDetailMockType {
+  stockCode: string;
+  stockName: string;
+  description: string;
+  currentPrice: number;
+  changeAmount: number;
+  changeRate: number;
+  marketCap: number;
+  peRatio: number;
+  shares: number;
   logo: string;
+  chartData: {
+    day: {
+      date: string;
+      price: number;
+      volume: number;
+    }[];
+    week: {
+      date: string;
+      price: number;
+      volume: number;
+    }[];
+    month: {
+      date: string;
+      price: number;
+      volume: number;
+    }[];
+    year: {
+      date: string;
+      price: number;
+      volume: number;
+    }[];
+  };
+}
+
+export interface BasicStockInfoMockType {
+  stockCode: string;
+  stockName: string;
+  logo: string;
+  currentPrice: number;
+  changeRate: number;
+}
+
+export type PeriodType = "1day" | "1week" | "1month" | "1year" | "5year";
+
+export interface ChartData {
+  date: string; // "2025-11-06"
+  time?: string; // "09:30:00"
+  openPrice: number;
+  highPrice: number;
+  lowPrice: number;
+  closePrice: number;
+  volume: number;
+  amount: number;
 }
 
 export interface Sector {
   name: string;
-  stocks: BasicStockInfo[];
+  stocks: BasicStockInfoMockType[];
 }
 
 export type PopularStockCategory = "gainers" | "losers" | "volume" | "amount";
@@ -247,27 +330,4 @@ export interface MissionProgress {
     advanced: { completed: number; total: number };
   };
   currentTheme: string;
-}
-
-/**
- * @param stockCode 주식코드
- * @param stockName 주식명
- * @param volume 거래량
- * @param amount 거래대금
- * @param marketType 시장구분 (KOSPI/KOSDAQ)
- * @param currentPrice 현재가
- * @param changeAmount 전일대비 금액
- * @param changeRate 전일대비율
- * @param changeSign 등락 부호
- */
-export interface StockInfo {
-  stock_code: string;
-  stock_name: string;
-  volume: number;
-  amount: number;
-  market_type: "KOSPI" | "KOSDAQ";
-  current_price: number;
-  change_amount: number;
-  change_rate: number;
-  change_sign: "+" | "-";
 }

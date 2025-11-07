@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { MOCK_STOCK_DETAILS, MOCK_ACCOUNTS } from "@/lib/constants";
-import { StockDetail } from "@/lib/types/types";
+import { StockDetailMockType } from "@/lib/types/types";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
 import { ArrowLeftIcon } from "@/components/icons/Icons";
@@ -47,12 +47,12 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     );
   }
 
-  const isPositive = stock.todayChangePercent >= 0;
+  const isPositive = stock.changeRate >= 0;
   const changeString = `${
     isPositive ? "+" : ""
-  }${stock.todayChange.toLocaleString()}원 (${
+  }${stock.changeAmount.toLocaleString()}원 (${
     isPositive ? "+" : ""
-  }${stock.todayChangePercent.toFixed(2)}%)`;
+  }${stock.changeRate.toFixed(2)}%)`;
 
   return (
     <>
@@ -64,11 +64,11 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           <div className="flex items-center gap-2">
             <img
               src={stock.logo}
-              alt={stock.stock_name}
+              alt={stock.stockName}
               className="w-8 h-8 rounded-full bg-white object-cover"
             />
             <h1 className="text-xl font-bold text-text-primary">
-              {stock.stock_name}
+              {stock.stockName}
             </h1>
           </div>
         </header>
@@ -76,7 +76,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         <div className="flex-1 overflow-y-auto px-4 pb-24">
           <div className="pt-4 pb-8">
             <p className="text-4xl font-bold text-text-primary">
-              {stock.current_price.toLocaleString()}원
+              {stock.currentPrice.toLocaleString()}원
             </p>
             <p
               className={`text-lg font-semibold ${

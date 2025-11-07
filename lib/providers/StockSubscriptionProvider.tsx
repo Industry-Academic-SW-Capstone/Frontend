@@ -8,11 +8,11 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { BasicStockInfo } from "@/lib/types/types";
+import { BasicStockInfoMockType } from "@/lib/types/types";
 
 interface StockSubscriptionContextValue {
-  subscribedStocks: Record<string, BasicStockInfo>;
-  addStock: (stock: BasicStockInfo) => void;
+  subscribedStocks: Record<string, BasicStockInfoMockType>;
+  addStock: (stock: BasicStockInfoMockType) => void;
   removeStock: (ticker: string) => void;
   clearStocks: () => void;
 }
@@ -39,7 +39,7 @@ export const StockSubscriptionProvider: React.FC<
   StockSubscriptionProviderProps
 > = ({ children, socketUrl }) => {
   const [subscribedStocks, setSubscribedStocks] = useState<
-    Record<string, BasicStockInfo>
+    Record<string, BasicStockInfoMockType>
   >({});
   const socketRef = useRef<WebSocket | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -92,8 +92,8 @@ export const StockSubscriptionProvider: React.FC<
   };
 
   // 구독 관리 함수들
-  const addStock = useCallback((stock: BasicStockInfo) => {
-    setSubscribedStocks((prev) => ({ ...prev, [stock.ticker]: stock }));
+  const addStock = useCallback((stock: BasicStockInfoMockType) => {
+    setSubscribedStocks((prev) => ({ ...prev, [stock.stockCode]: stock }));
   }, []);
 
   const removeStock = useCallback((ticker: string) => {

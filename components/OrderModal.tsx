@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { StockDetail } from "@/lib/types/types";
+import { StockDetailMockType } from "@/lib/types/types";
 import { XMarkIcon } from "./icons/Icons";
 
 interface OrderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  stock: StockDetail;
+  stock: StockDetailMockType;
   orderType: "buy" | "sell";
   cashBalance: number;
 }
@@ -58,7 +58,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
               orderType === "buy" ? "text-positive" : "text-negative"
             }`}
           >
-            {stock.stock_name} {orderType === "buy" ? "매수" : "매도"}
+            {stock.stockName} {orderType === "buy" ? "매수" : "매도"}
           </h2>
           <button
             onClick={onClose}

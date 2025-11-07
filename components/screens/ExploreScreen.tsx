@@ -9,25 +9,28 @@ import {
 } from "@/components/icons/Icons";
 import {
   Sector,
-  BasicStockInfo,
+  BasicStockInfoMockType,
   PopularStockCategory,
+  BasicStockInfo,
 } from "@/lib/types/types";
 import {
   MOCK_SECTORS,
   MOCK_POPULAR_STOCKS,
   MOCK_FAVORITE_STOCKS,
 } from "@/lib/constants";
-import { useTopStocks } from "@/lib/hooks/useTopStocks";
+import { useTopStocks } from "@/lib/hooks/stock/useTopStocks";
+import { useIndustriesTopStocks } from "@/lib/hooks/stock/useIndustriesTopStocks";
+import { generateLogo } from "@/lib/utils";
 
 interface ExploreScreenProps {
   onSelectStock: (ticker: string) => void;
 }
 
-const StockRow: React.FC<{ stock: BasicStockInfo; onClick: () => void }> = ({
-  stock,
-  onClick,
-}) => {
-  const isPositive = stock.changePercent >= 0;
+const StockRow: React.FC<{
+  stock: BasicStockInfo;
+  onClick: () => void;
+}> = ({ stock, onClick }) => {
+  const isPositive = stock.changeRate >= 0;
   return (
     <button
       onClick={onClick}
@@ -35,20 +38,26 @@ const StockRow: React.FC<{ stock: BasicStockInfo; onClick: () => void }> = ({
     >
       <div className="flex items-center gap-3">
         <img
-          src={stock.logo}
-          alt={`${stock.name} logo`}
+          src={generateLogo(stock)}
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = generateLogo(stock, true);
+          }}
+          alt={`${stock.stockName} logo`}
           className="w-10 h-10 rounded-full bg-white object-cover"
         />
         <div>
-          <p className="font-bold text-text-primary text-left">{stock.name}</p>
+          <p className="font-bold text-text-primary text-left">
+            {stock.stockName}
+          </p>
           <p className="text-sm text-text-secondary text-left">
-            {stock.ticker}
+            {stock.stockCode}
           </p>
         </div>
       </div>
       <div className="text-right">
         <p className="font-semibold text-text-primary">
-          {stock.price.toLocaleString()}원
+          {stock.currentPrice.toLocaleString()}원
         </p>
         <div
           className={`flex items-center justify-end gap-1 text-sm font-semibold ${
@@ -62,7 +71,7 @@ const StockRow: React.FC<{ stock: BasicStockInfo; onClick: () => void }> = ({
           )}
           <span>
             {isPositive ? "+" : ""}
-            {stock.changePercent.toFixed(2)}%
+            {stock.changeRate}%
           </span>
         </div>
       </div>
@@ -74,32 +83,37 @@ const PopularStockCard: React.FC<{
   stock: BasicStockInfo;
   onClick: () => void;
 }> = ({ stock, onClick }) => {
-  const isPositive = stock.changePercent >= 0;
+  const isPositive = stock.changeRate >= 0;
   return (
     <button
       onClick={onClick}
       className="flex-shrink-0 w-36 bg-bg-secondary border border-border-color rounded-2xl p-4 flex flex-col justify-between"
     >
-      <div>
+      <div className="flex justify-center">
         <img
-          src={stock.logo}
-          alt={stock.name}
-          className="w-8 h-8 rounded-full mb-2 bg-white object-cover"
+          src={generateLogo(stock)}
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = generateLogo(stock, true);
+          }}
+          alt={stock.stockName}
+          className="w-16 h-16 rounded-3xl mb-2 bg-white object-cover"
         />
-        <p className="font-bold text-sm text-text-primary truncate">
-          {stock.name}
-        </p>
       </div>
+
+      <p className="font-bold text-sm text-text-primary truncate">
+        {stock.stockName}
+      </p>
       <div>
         <p className="font-semibold text-text-primary">
-          {stock.price.toLocaleString()}원
+          {stock.currentPrice.toLocaleString()}원
         </p>
         <p
           className={`font-semibold text-xs ${
             isPositive ? "text-positive" : "text-negative"
           }`}
         >
-          {isPositive ? "▲" : "▼"} {stock.changePercent.toFixed(2)}%
+          {isPositive ? "▲" : "▼"} {stock.changeRate}%
         </p>
       </div>
     </button>
@@ -109,13 +123,15 @@ const PopularStockCard: React.FC<{
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activePopularTab, setActivePopularTab] =
-    useState<PopularStockCategory>("gainers");
+    useState<PopularStockCategory>("amount");
   const [activeContentTab, setActiveContentTab] = useState<
     "sectors" | "favorites"
   >("sectors");
 
-  const { stocks: popularStocks, isLoading: isLoadingTopStocks } =
-    useTopStocks();
+  const { data: popularStocks, isLoading: isLoadingTopStocks } =
+    useTopStocks(activePopularTab);
+  const { data: industriesTopStocks, isLoading: isLoadingIndustries } =
+    useIndustriesTopStocks(activePopularTab);
 
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (
@@ -132,16 +148,19 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
   );
 
   const filteredSectors = useMemo(() => {
-    if (!searchTerm) return MOCK_SECTORS;
+    if (isLoadingIndustries || !industriesTopStocks) return [];
+    if (!searchTerm) return industriesTopStocks;
     const lowercasedFilter = searchTerm.toLowerCase();
-    return MOCK_SECTORS.map((sector) => {
-      const filteredStocks = sector.stocks.filter(
-        (stock) =>
-          stock.name.toLowerCase().includes(lowercasedFilter) ||
-          stock.ticker.toLowerCase().includes(lowercasedFilter)
-      );
-      return { ...sector, stocks: filteredStocks };
-    }).filter((sector) => sector.stocks.length > 0);
+    return industriesTopStocks
+      .map((sector) => {
+        const filteredStocks = sector.stocks.filter(
+          (stock) =>
+            stock.stockName.toLowerCase().includes(lowercasedFilter) ||
+            stock.stockCode.toLowerCase().includes(lowercasedFilter)
+        );
+        return { ...sector, stocks: filteredStocks };
+      })
+      .filter((sector) => sector.stocks.length > 0);
   }, [searchTerm]);
 
   const filteredFavorites = useMemo(() => {
@@ -149,8 +168,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
     const lowercasedFilter = searchTerm.toLowerCase();
     return MOCK_FAVORITE_STOCKS.filter(
       (stock) =>
-        stock.name.toLowerCase().includes(lowercasedFilter) ||
-        stock.ticker.toLowerCase().includes(lowercasedFilter)
+        stock.stockName.toLowerCase().includes(lowercasedFilter) ||
+        stock.stockCode.toLowerCase().includes(lowercasedFilter)
     );
   }, [searchTerm]);
 
@@ -195,26 +214,26 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
             급락
           </button>
           <button
-            onClick={() => setActivePopularTab("volume")}
+            onClick={() => setActivePopularTab("amount")}
             className={`flex-1 py-2 text-sm font-semibold rounded-md ${
-              activePopularTab === "volume"
+              activePopularTab === "amount"
                 ? "bg-bg-primary text-primary shadow"
                 : "text-text-secondary"
             }`}
           >
-            거래량
+            거래대금
           </button>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 swiper-no-swiping">
-          {isLoadingTopStocks
+          {isLoadingTopStocks || !popularStocks
             ? Array.from({ length: 5 }).map((_, i) => (
                 <PopularStockSkeleton key={i} />
               ))
             : popularStocks.map((stock) => (
                 <PopularStockCard
-                  key={stock.ticker}
+                  key={stock.stockCode}
                   stock={stock}
-                  onClick={() => onSelectStock(stock.ticker)}
+                  onClick={() => onSelectStock(stock.stockCode)}
                 />
               ))}
         </div>
@@ -247,15 +266,15 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
         {activeContentTab === "sectors" && (
           <div className="space-y-4">
             {filteredSectors.map((sector) => (
-              <div key={sector.name}>
+              <div key={sector.industryName}>
                 <h3 className="font-bold text-text-primary px-2 mb-1">
-                  {sector.name}
+                  {sector.industryName}
                 </h3>
                 {sector.stocks.map((stock) => (
                   <StockRow
-                    key={stock.ticker}
+                    key={stock.stockCode}
                     stock={stock}
-                    onClick={() => onSelectStock(stock.ticker)}
+                    onClick={() => onSelectStock(stock.stockCode)}
                   />
                 ))}
               </div>
@@ -267,9 +286,9 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
             {filteredFavorites.length > 0 ? (
               filteredFavorites.map((stock) => (
                 <StockRow
-                  key={stock.ticker}
+                  key={stock.stockCode}
                   stock={stock}
-                  onClick={() => onSelectStock(stock.ticker)}
+                  onClick={() => onSelectStock(stock.stockCode)}
                 />
               ))
             ) : (
