@@ -1,18 +1,16 @@
-import axios, { AxiosInstance, AxiosError } from "axios";
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  InternalAxiosRequestConfig,
+} from "axios";
 import camelcaseKeys from "camelcase-keys";
-
-/**
- * 중앙화된 axios 클라이언트
- * - 기본 baseURL은 환경변수 NEXT_PUBLIC_API_URL 또는 '/api'를 사용합니다.
- * - 브라우저에서 쿠키 기반 인증을 사용하는 경우를 대비해 withCredentials를 true로 설정합니다.
- * - 요청 인터셉터에서 필요 시 Authorization 헤더를 붙일 수 있도록 훅을 제공합니다.
- */
+import decamelizeKeys from "decamelize-keys";
+import { getAuthToken, clearAuthToken } from "@/lib/stores/useAuthStore";
 
 const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 export interface CreateClientOptions {
   baseURL?: string;
-  getToken?: () => string | null | undefined;
 }
 
 export function createAxiosClient(
@@ -28,50 +26,81 @@ export function createAxiosClient(
     },
   });
 
-  // 요청 인터셉터: getToken이 전달되면 Authorization 헤더 추가
-  client.interceptors.request.use((config: any) => {
-    const token = options?.getToken?.();
-    if (token) {
-      config.headers = config.headers ?? {};
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
-    return config;
-  });
+  // 요청 인터셉터: (Zustand 스토어에서 토큰을 가져옴)
+  client.interceptors.request.use(
+    (config: InternalAxiosRequestConfig) => {
+      // Zustand 스토어에서 직접 토큰을 가져옵니다.
+      const token = getAuthToken();
+      if (token) {
+        config.headers = config.headers ?? {};
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
 
-  // 응답 인터셉터: 에러 표준화 및 401 처리용 훅
+      // 요청 데이터 PascalCase로 변환
+      try {
+        if (
+          config.data &&
+          (typeof config.data === "object" || Array.isArray(config.data))
+        ) {
+          config.data = decamelizeKeys(config.data, { deep: true });
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn("decamelize-keys 변환 실패:", e);
+      }
+
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  // 응답 인터셉터:
   client.interceptors.response.use(
     (res) => {
-      // 응답 데이터의 키들을 재귀적으로 camelCase로 변환합니다.
+      // 응답 데이터 camelCase로 변환
       try {
-        if (res && res.data && typeof res.data === "object") {
+        if (
+          res &&
+          res.data &&
+          (typeof res.data === "object" || Array.isArray(res.data))
+        ) {
           res.data = camelcaseKeys(res.data, { deep: true });
         }
       } catch (e) {
-        // 변환 중 문제가 생기면 원본 데이터를 그대로 반환합니다.
-        // (변환 실패가 요청 자체 실패로 이어지지 않도록 방어)
         // eslint-disable-next-line no-console
         console.warn("camelcase-keys 변환 실패:", e);
       }
       return res;
     },
     (error: AxiosError) => {
-      // 에러 응답의 데이터도 camelCase로 변환하여 호출자에서 일관된 형태로 처리할 수 있게 합니다.
+      // 401 Unauthorized 에러 발생 시 자동 로그아웃 처리
+      if (error.response?.status === 401) {
+        clearAuthToken();
+
+        // 로그인 페이지로 리디렉션
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+      }
+
+      // 에러 응답 데이터 camelCase로 변환
       try {
         if (
-          (error as any).response &&
-          (error as any).response.data &&
-          typeof (error as any).response.data === "object"
+          error.response &&
+          error.response.data &&
+          (typeof error.response.data === "object" ||
+            Array.isArray(error.response.data))
         ) {
-          (error as any).response.data = camelcaseKeys(
-            (error as any).response.data,
-            { deep: true }
-          );
+          (error.response as any).data = camelcaseKeys(error.response.data, {
+            deep: true,
+          });
         }
       } catch (e) {
         // eslint-disable-next-line no-console
         console.warn("camelcase-keys 변환 실패(에러 응답):", e);
       }
-      // 여기서 공통 에러 처리 (로그아웃, 토큰 리프레시 시도 등)를 추가할 수 있습니다.
       return Promise.reject(error);
     }
   );
@@ -79,7 +108,6 @@ export function createAxiosClient(
   return client;
 }
 
-// 기본 익스포트: 단순한 사용성을 위해 프로젝트 전역에서 재사용 가능한 인스턴스를 제공합니다.
 const defaultClient = createAxiosClient();
 
 export default defaultClient;

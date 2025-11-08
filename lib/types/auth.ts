@@ -1,6 +1,6 @@
 // 2차 인증 관련 타입 정의
 
-export type TwoFactorMethod = 'pin' | 'biometric' | 'both' | null;
+export type TwoFactorMethod = "pin" | "biometric" | "both" | null;
 
 export interface TwoFactorConfig {
   pinEnabled: boolean;
@@ -15,6 +15,13 @@ export interface AuthState {
   isAuthenticated: boolean;
   authenticatedAt?: number;
   method?: TwoFactorMethod;
+}
+
+export interface SigninData {
+  email: string;
+  password: string;
+  name?: string;
+  profile_image?: string;
 }
 
 export const DEFAULT_SESSION_TIMEOUT = 5 * 60 * 1000; // 5분
