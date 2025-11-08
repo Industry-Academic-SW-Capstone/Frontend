@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { StockHolding } from "@/lib/types/types";
+import { StockHolding } from "@/lib/types/stock";
 
 interface PortfolioDonutChartProps {
   holdings: StockHolding[];

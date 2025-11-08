@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { User, UserGroup } from "@/lib/types/types";
+import { User, UserGroup } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import {
   requestNotificationPermission,
@@ -9,6 +9,8 @@ import {
 } from "@/lib/services/notificationService";
 import TwoFactorSettings from "../settings/TwoFactorSettings";
 import TFARegisterPage from "../auth/TFARegisterPage";
+import { LoginRequest } from "@/lib/types/auth";
+import { useLogin } from "@/lib/hooks/auth/useLogin";
 
 type AuthStep =
   | "welcome"
@@ -84,6 +86,11 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     avatar: "https://picsum.photos/seed/avatar1/100",
     group: undefined,
   });
+  const [loginRequest, setLoginRequest] = useState<LoginRequest>({
+    email: "",
+    password: "",
+  });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
 
   const handleNext = () => {
@@ -92,7 +99,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         setStep("signup");
         break;
       case "login":
-        onLoginSuccess({});
+        handleLogin();
         break; // Mock login
       case "signup":
         setStep("pass");
@@ -143,6 +150,11 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         setStep("notification");
         break;
     }
+  };
+  const { mutate: doLogin } = useLogin();
+  const handleLogin = async () => {
+    const result = await doLogin(loginRequest);
+    console.log("Login result:", result);
   };
 
   const handlePassVerify = () => {
@@ -225,6 +237,13 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                     <input
                       type="email"
                       placeholder="이메일"
+                      onChange={(e) =>
+                        setLoginRequest({
+                          ...loginRequest,
+                          email: e.target.value,
+                        })
+                      }
+                      value={loginRequest.email}
                       className="w-full bg-bg-secondary border-2 border-border-color rounded-lg p-3.5 pl-11 focus:border-primary outline-none"
                     />
                   </div>
@@ -233,6 +252,13 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                     <input
                       type="password"
                       placeholder="비밀번호"
+                      onChange={(e) =>
+                        setLoginRequest({
+                          ...loginRequest,
+                          password: e.target.value,
+                        })
+                      }
+                      value={loginRequest.password}
                       className="w-full bg-bg-secondary border-2 border-border-color rounded-lg p-3.5 pl-11 focus:border-primary outline-none"
                     />
                   </div>

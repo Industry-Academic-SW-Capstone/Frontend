@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { use2FA } from "@/lib/hooks/use2FA";
+import { use2FA } from "@/lib/hooks/auth/use2FA";
 import { startAuthentication } from "@simplewebauthn/browser";
 
 interface TwoFactorPromptProps {

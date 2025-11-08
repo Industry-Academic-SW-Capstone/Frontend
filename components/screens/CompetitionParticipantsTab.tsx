@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CompetitionParticipant } from "@/lib/types/types";
+import { CompetitionParticipant } from "@/lib/types/stock";
 import { MagnifyingGlassIcon, ChartBarIcon } from "@/components/icons/Icons";
 
 interface CompetitionParticipantsTabProps {

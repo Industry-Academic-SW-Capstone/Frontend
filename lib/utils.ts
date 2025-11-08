@@ -1,4 +1,4 @@
-import { BasicStockInfo, StockLogoInfo } from "./types/types";
+import { BasicStockInfo, StockLogoInfo } from "./types/stock";
 
 export const generateLogo = (
   stock: StockLogoInfo,

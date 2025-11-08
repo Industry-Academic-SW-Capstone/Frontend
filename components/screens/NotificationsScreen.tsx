@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import type { Notification as AppNotification } from "@/lib/types/types";
+import type { Notification as AppNotification } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import {
   getStoredNotifications,

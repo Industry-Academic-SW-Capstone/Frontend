@@ -17,11 +17,29 @@ export interface AuthState {
   method?: TwoFactorMethod;
 }
 
-export interface SigninData {
+export interface SignUpRequest {
   email: string;
   password: string;
-  name?: string;
-  profile_image?: string;
+  name: string;
+  profile_image: string;
 }
 
-export const DEFAULT_SESSION_TIMEOUT = 5 * 60 * 1000; // 5분
+export interface SignUpResponse {
+  email: string;
+  memberId: string;
+  name: string;
+  profile_image: string;
+  provider: string;
+  createdAt: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+}
+
+export const DEFAULT_SESSION_TIMEOUT = 15 * 24 * 60 * 60 * 1000; // 15일

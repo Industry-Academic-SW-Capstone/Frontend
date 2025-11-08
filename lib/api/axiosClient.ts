@@ -7,16 +7,14 @@ import camelcaseKeys from "camelcase-keys";
 import decamelizeKeys from "decamelize-keys";
 import { getAuthToken, clearAuthToken } from "@/lib/stores/useAuthStore";
 
-const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
+const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
 export interface CreateClientOptions {
   baseURL?: string;
 }
 
-export function createAxiosClient(
-  options?: CreateClientOptions
-): AxiosInstance {
-  const baseURL = options?.baseURL ?? DEFAULT_BASE_URL;
+export function createAxiosClient(): AxiosInstance {
+  const baseURL = DEFAULT_BASE_URL;
 
   const client = axios.create({
     baseURL,

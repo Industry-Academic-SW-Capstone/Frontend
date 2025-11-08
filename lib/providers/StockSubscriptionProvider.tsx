@@ -8,7 +8,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { BasicStockInfoMockType } from "@/lib/types/types";
+import { BasicStockInfoMockType } from "@/lib/types/stock";
 
 interface StockSubscriptionContextValue {
   subscribedStocks: Record<string, BasicStockInfoMockType>;

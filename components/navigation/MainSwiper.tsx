@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
-import { Screen, Account, User } from "@/lib/types/types";
+import { Screen, Account, User } from "@/lib/types/stock";
 
 // Swiper styles
 import "swiper/css";

@@ -1,7 +1,7 @@
 import type {
   Notification as AppNotification,
   NotificationType,
-} from "../types/types";
+} from "../types/stock";
 
 // 알림 권한 상태 확인
 export const checkNotificationPermission = (): NotificationPermission => {

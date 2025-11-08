@@ -6,7 +6,7 @@ import {
   MOCK_PENDING_ORDERS,
   MOCK_CASH_BALANCE,
 } from "@/lib/constants";
-import { StockHolding, Order } from "@/lib/types/types";
+import { StockHolding, Order } from "@/lib/types/stock";
 import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,

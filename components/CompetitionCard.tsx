@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Competition } from "@/lib/types/types";
+import { Competition } from "@/lib/types/stock";
 import { CalendarIcon, UsersIcon, GiftIcon, CogIcon } from "./icons/Icons";
 
 interface CompetitionCardProps {

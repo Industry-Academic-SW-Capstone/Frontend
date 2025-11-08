@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Account, Competition } from "@/lib/types/types";
+import { Account, Competition } from "@/lib/types/stock";
 import StatCard from "@/components/StatCard";
 import AccountChart from "@/components/AccountChart";
 import { MOCK_COMPETITIONS, MOCK_MISSION_PROGRESS } from "@/lib/constants";

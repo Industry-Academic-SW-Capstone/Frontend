@@ -1,11 +1,6 @@
 import create from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-// SSR 환경을 고려하여 localStorage를 사용하되, 클라이언트에서만 접근하도록 함
-const storage = createJSONStorage(() =>
-  typeof window !== "undefined" ? window.localStorage : undefined
-);
-
 interface AuthState {
   token: string | null;
   setToken: (token: string) => void;
@@ -31,7 +26,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-token", // localStorage에 저장될 키 이름
-      storage: storage, // 위에서 정의한 storage 사용
+      storage: createJSONStorage(() => localStorage), // localStorage 사용
     }
   )
 );

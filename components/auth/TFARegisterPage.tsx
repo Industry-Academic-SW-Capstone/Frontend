@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import PinInput from "@/components/auth/PinInput";
 import BiometricSetup from "@/components/auth/BiometricSetup";
-import { use2FA } from "@/lib/hooks/use2FA";
+import { use2FA } from "@/lib/hooks/auth/use2FA";
 import * as Icons from "@/components/icons/Icons";
 import Portal from "@/components/Portal";
 

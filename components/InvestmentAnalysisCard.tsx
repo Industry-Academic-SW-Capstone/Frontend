@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { InvestmentStyleAnalysis } from "@/lib/types/types";
+import { InvestmentStyleAnalysis } from "@/lib/types/stock";
 import RadarChart from "./RadarChart";
 import { CheckCircleIcon } from "./icons/Icons";
 

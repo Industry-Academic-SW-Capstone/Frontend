@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CompetitionLog } from "@/lib/types/types";
+import { CompetitionLog } from "@/lib/types/stock";
 import { ClockIcon } from "@/components/icons/Icons";
 
 interface CompetitionLogsTabProps {

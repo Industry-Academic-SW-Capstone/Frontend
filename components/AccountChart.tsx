@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ChartDataPoint } from "@/lib/types/types";
+import { ChartDataPoint } from "@/lib/types/stock";
 
 interface AccountChartProps {
   data: ChartDataPoint[];

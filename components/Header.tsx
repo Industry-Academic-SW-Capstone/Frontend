@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Account, User } from "@/lib/types/types";
+import { Account, User } from "@/lib/types/stock";
 import { ChevronDownIcon, BuildingOffice2Icon, BellIcon } from "./icons/Icons";
 
 interface HeaderProps {

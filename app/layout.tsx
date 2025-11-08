@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/lib/providers/QueryProvider";
+import ToastProvider from "@/lib/providers/ToastProvider";
 
 const pretendard = localFont({
   src: "../fonts/pretendard/PretendardVariable.woff2",
@@ -38,7 +39,10 @@ export default function RootLayout({
         <link rel="mask-icon" href="/logo.svg" color="#4f46e5" />
       </head>
       <body className={`${pretendard.className} antialiased`}>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          {children}
+          <ToastProvider />
+        </QueryProvider>
       </body>
     </html>
   );

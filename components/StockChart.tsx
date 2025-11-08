@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { ChartData, ChartDataPoint, PeriodType } from "@/lib/types/types";
+import { ChartData, ChartDataPoint, PeriodType } from "@/lib/types/stock";
 import { useStockChart } from "@/lib/hooks/stock/useStockChart";
 import { FaChartLine } from "react-icons/fa6";
 import { FaChartColumn } from "react-icons/fa6";

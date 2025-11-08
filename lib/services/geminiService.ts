@@ -1,4 +1,4 @@
-import { Transaction, InvestmentStyleAnalysis } from "../types/types";
+import { Transaction, InvestmentStyleAnalysis } from "../types/stock";
 import { GoogleGenAI, Type } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_API_KEY || "" });

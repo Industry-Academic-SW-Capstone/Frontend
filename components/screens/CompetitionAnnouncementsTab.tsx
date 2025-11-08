@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CompetitionAnnouncement } from "@/lib/types/types";
+import { CompetitionAnnouncement } from "@/lib/types/stock";
 import {
   PlusCircleIcon,
   MegaphoneIcon,

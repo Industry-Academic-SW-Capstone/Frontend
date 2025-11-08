@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { MOCK_STOCK_DETAILS, MOCK_ACCOUNTS } from "@/lib/constants";
-import { StockDetailMockType } from "@/lib/types/types";
+import { StockDetailMockType } from "@/lib/types/stock";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
 import { ArrowLeftIcon } from "@/components/icons/Icons";

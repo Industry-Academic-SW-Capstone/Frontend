@@ -6,7 +6,7 @@ import {
   OrderType,
   PeriodType,
   ChartData,
-} from "@/lib/types/types";
+} from "@/lib/types/stock";
 import defaultClient from "../../api/axiosClient";
 
 // 환경변수에서 API base URL을 읽음
@@ -19,7 +19,7 @@ async function fetchStockChart(
   periodType: PeriodType
 ): Promise<ChartData[]> {
   const res = await defaultClient.get(
-    `${API_BASE_URL}/api/stocks/${stockCode}/chart?periodType=${periodType}`
+    `/api/stocks/${stockCode}/chart?periodType=${periodType}`
   );
   if (res.status !== 200) {
     throw new Error("Failed to fetch stock chart");

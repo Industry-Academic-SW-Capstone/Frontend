@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { LeaderboardEntry, Achievement } from "@/lib/types/types";
+import { LeaderboardEntry, Achievement } from "@/lib/types/stock";
 import * as Icons from "./icons/Icons";
 import { MOCK_ACHIEVEMENTS } from "@/lib/constants";
 import { Drawer } from "vaul";

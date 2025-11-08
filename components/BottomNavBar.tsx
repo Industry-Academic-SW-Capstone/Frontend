@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Screen } from "@/lib/types/types";
+import { Screen } from "@/lib/types/stock";
 import {
   HomeIcon,
   MagnifyingGlassIcon,
@@ -8,7 +8,7 @@ import {
   ChartBarIcon,
   UserCircleIcon,
 } from "./icons/Icons";
-import { use2FA } from "@/lib/hooks/use2FA";
+import { use2FA } from "@/lib/hooks/auth/use2FA";
 import TwoFactorPrompt from "./auth/TwoFactorPrompt";
 
 interface BottomNavBarProps {

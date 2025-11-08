@@ -18,7 +18,7 @@ import {
   Mission,
   MissionProgress,
   BasicStockInfo,
-} from "./types/types";
+} from "./types/stock";
 
 export const MOCK_USER: User = {
   username: "주린이탈출",

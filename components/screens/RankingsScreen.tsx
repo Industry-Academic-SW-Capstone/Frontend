@@ -13,7 +13,7 @@ import {
   Account,
   User,
   AIPersonaLeaderboardEntry,
-} from "@/lib/types/types";
+} from "@/lib/types/stock";
 import UserProfileModal from "@/components/UserProfileModal";
 import {
   ArrowTrendingUpIcon,

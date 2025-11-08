@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Account } from "@/lib/types/types";
+import { Account } from "@/lib/types/stock";
 import { CheckCircleIcon, XMarkIcon } from "./icons/Icons";
 import { Drawer } from "vaul";
 

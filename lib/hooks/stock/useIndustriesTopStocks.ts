@@ -5,7 +5,7 @@ import {
   BasicStockInfoMockType,
   OrderType,
   IndustriesTopStocks,
-} from "@/lib/types/types";
+} from "@/lib/types/stock";
 import defaultClient from "../../api/axiosClient";
 
 // 환경변수에서 API base URL을 읽음
@@ -16,7 +16,7 @@ const API_BASE_URL =
 async function fetchTopStocks(
   OrderBy: OrderType
 ): Promise<IndustriesTopStocks[]> {
-  const res = await defaultClient.get(`${API_BASE_URL}/api/stocks/industries`);
+  const res = await defaultClient.get(`/api/stocks/industries`);
   if (res.status !== 200) {
     throw new Error("Failed to fetch top stocks");
   }

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { MOCK_COMPETITIONS } from "@/lib/constants";
-import { Competition } from "@/lib/types/types";
+import { Competition } from "@/lib/types/stock";
 import CompetitionCard from "@/components/CompetitionCard";
 import CreateCompetitionScreen from "./CreateCompetitionScreen";
 import CompetitionAdminScreen from "./CompetitionAdminScreen";

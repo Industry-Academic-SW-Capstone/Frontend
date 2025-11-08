@@ -10,7 +10,7 @@ import StocksContainerScreen from "@/components/screens/StocksContainerScreen";
 import NotificationsScreen from "@/components/screens/NotificationsScreen";
 import AccountSwitcher from "@/components/AccountSwitcher";
 import OnboardingScreen from "@/components/screens/OnboardingScreen";
-import { Screen, Account, User } from "@/lib/types/types";
+import { Screen, Account, User } from "@/lib/types/stock";
 import { MOCK_ACCOUNTS, MOCK_USER } from "@/lib/constants";
 import {
   getUnreadCount,

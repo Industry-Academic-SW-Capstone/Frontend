@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Competition } from "@/lib/types/types";
+import { Competition } from "@/lib/types/stock";
 import {
   ChevronLeftIcon,
   UsersIcon,

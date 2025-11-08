@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Mission, MissionProgress } from "@/lib/types/types";
+import { Mission, MissionProgress } from "@/lib/types/stock";
 import { MOCK_MISSIONS, MOCK_MISSION_PROGRESS } from "@/lib/constants";
 import Portal from "@/components/Portal";
 

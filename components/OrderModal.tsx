@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { StockDetailInfo, StockDetailMockType } from "@/lib/types/types";
+import { StockDetailInfo, StockDetailMockType } from "@/lib/types/stock";
 import { XMarkIcon } from "./icons/Icons";
 
 interface OrderModalProps {

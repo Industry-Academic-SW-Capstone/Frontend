@@ -12,7 +12,7 @@ import {
   BasicStockInfoMockType,
   PopularStockCategory,
   BasicStockInfo,
-} from "@/lib/types/types";
+} from "@/lib/types/stock";
 import { MOCK_FAVORITE_STOCKS } from "@/lib/constants";
 import { useTopStocks } from "@/lib/hooks/stock/useTopStocks";
 import { useIndustriesTopStocks } from "@/lib/hooks/stock/useIndustriesTopStocks";

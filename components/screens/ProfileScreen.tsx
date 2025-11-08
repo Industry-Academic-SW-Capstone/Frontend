@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { MOCK_ACHIEVEMENTS } from "@/lib/constants";
-import { Achievement, User } from "@/lib/types/types";
+import { Achievement, User } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import TwoFactorSettings from "@/components/settings/TwoFactorSettings";
 
