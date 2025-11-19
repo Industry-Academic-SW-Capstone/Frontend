@@ -360,7 +360,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             안녕하세요, {userInfo?.name || "투자자"}님 👋
           </h1>
           <p className="text-text-secondary text-sm mt-1">
-            오늘도 성공적인 투자를 응원해요!
+            오늘도 스톡잇과 함께 배워봐요!
           </p>
         </div>
 
