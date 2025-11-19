@@ -10,6 +10,8 @@ import { ChartData, ChartDataPoint, PeriodType } from "@/lib/types/stock";
 import { useStockChart } from "@/lib/hooks/stock/useStockChart";
 import { FaChartLine } from "react-icons/fa6";
 import { FaChartColumn } from "react-icons/fa6";
+import { useWebSocket } from "@/lib/providers/SocketProvider";
+import { useChartStore } from "@/lib/stores/useChartStore";
 interface StockChartProps {
   stockCode: string;
   isPositive: boolean;
@@ -24,6 +26,15 @@ const StockChart: React.FC<StockChartProps> = ({
   const [period, setPeriod] = useState<PeriodType>("1day");
   const [chartMode, setChartMode] = useState<"line" | "candle">("line");
 
+  // Socket & Store
+  const { setSubscribeSet } = useWebSocket();
+  const {
+    chartDatas: realTimeChartDatas,
+    setPeriodType,
+    initializeChartData,
+    reset: resetChartStore,
+  } = useChartStore();
+
   // 빈 티커 코드가 오면 데이터 fetch 안 함
   const {
     data: chartDatas,
@@ -31,17 +42,63 @@ const StockChart: React.FC<StockChartProps> = ({
     refetch: refetchChartData,
   } = useStockChart(stockCode || "", period);
 
-  const sortedChartDatas = useMemo(() => {
-    if (!chartDatas || chartDatas.length === 0 || isChartLoading) return [];
-    if (
-      new Date(chartDatas[0].date) >
-      new Date(chartDatas[chartDatas.length - 1].date)
-    ) {
-      return [...chartDatas].reverse();
-    } else {
-      return chartDatas;
+  // Subscribe to socket on mount or stockCode change
+  useEffect(() => {
+    if (stockCode) {
+      setSubscribeSet([stockCode]);
     }
-  }, [chartDatas]);
+    return () => {
+      // Optional: Unsubscribe or clear store on unmount
+      // resetChartStore(); // Might not want to reset if we want to keep cache, but usually good to reset
+    };
+  }, [stockCode, setSubscribeSet]);
+
+  // Handle period change
+  useEffect(() => {
+    setPeriodType(period);
+    // When period changes, we wait for new chartDatas to initialize
+  }, [period, setPeriodType]);
+
+  // Initialize store when chartDatas is loaded
+  useEffect(() => {
+    if (chartDatas && chartDatas.length > 0) {
+      initializeChartData(chartDatas);
+    }
+  }, [chartDatas, initializeChartData]);
+
+  const sortedChartDatas = useMemo(() => {
+    // Merge historical and real-time data
+    // historical: chartDatas
+    // realTime: realTimeChartDatas
+
+    let historical = chartDatas || [];
+
+    // Ensure historical data is sorted chronologically (oldest first)
+    // The API seems to return data, check if it needs sorting.
+    // Existing code checked for reverse:
+    if (
+      historical.length > 1 &&
+      new Date(historical[0].date) >
+        new Date(historical[historical.length - 1].date)
+    ) {
+      historical = [...historical].reverse();
+    }
+
+    if (realTimeChartDatas.length > 0) {
+      // If we have real-time data, we replace the last part of historical data
+      // or append to it.
+      // Strategy: Take historical data up to the point where real-time data starts.
+      // Since initializeChartData takes the *last* element of historical as the first of realTime,
+      // we can just take historical.slice(0, -1) and concat realTimeChartDatas.
+
+      if (historical.length > 0) {
+        return [...historical.slice(0, -1), ...realTimeChartDatas];
+      }
+      return realTimeChartDatas;
+    }
+
+    return historical;
+  }, [chartDatas, realTimeChartDatas]);
 
   useEffect(() => {
     if (sortedChartDatas && sortedChartDatas.length > 0) {
@@ -67,7 +124,7 @@ const StockChart: React.FC<StockChartProps> = ({
 
   const { path, volumeBars, minPrice, maxPrice, maxVolume, candlesticks } =
     useMemo(() => {
-      if (!sortedChartDatas || sortedChartDatas.length === 0 || isChartLoading)
+      if (!sortedChartDatas || sortedChartDatas.length === 0)
         return {
           path: "",
           volumeBars: [],
@@ -78,12 +135,18 @@ const StockChart: React.FC<StockChartProps> = ({
           maxPriceIndex: 0,
           minPriceIndex: 0,
         };
-      const closePrices = sortedChartDatas.map((p) => p.closePrice);
-      const highPrices = sortedChartDatas.map((p) => p.highPrice || 0);
-      const lowPrices = sortedChartDatas.map((p) => p.lowPrice || 0);
-      const volumes = sortedChartDatas.map((p) => p.volume || 0);
-      const min = Math.min(...closePrices);
-      const max = Math.max(...closePrices);
+      const closePrices = sortedChartDatas.map((p: ChartData) => p.closePrice);
+      const highPrices = sortedChartDatas.map(
+        (p: ChartData) => p.highPrice || p.closePrice
+      ); // Fallback to close if high is missing
+      const lowPrices = sortedChartDatas.map(
+        (p: ChartData) => p.lowPrice || p.closePrice
+      );
+      const volumes = sortedChartDatas.map((p: ChartData) => p.volume || 0);
+
+      // Calculate min/max with some padding or exact
+      const min = Math.min(...lowPrices);
+      const max = Math.max(...highPrices);
       const maxVol = Math.max(...volumes);
       const range = max - min === 0 ? 1 : max - min;
 
@@ -91,15 +154,16 @@ const StockChart: React.FC<StockChartProps> = ({
       const maxPriceIndex = highPrices.indexOf(max);
       const minPriceIndex = lowPrices.indexOf(min);
 
-      const points = sortedChartDatas.map((point, i) => {
+      const points = sortedChartDatas.map((point: ChartData, i: number) => {
         const x = (i / (sortedChartDatas.length - 1)) * width;
         const y = mainHeight - ((point.closePrice - min) / range) * mainHeight;
         return { x, y };
       });
 
-      const vBars = sortedChartDatas.map((point, i) => {
+      const vBars = sortedChartDatas.map((point: ChartData, i: number) => {
         const x = (i / (sortedChartDatas.length - 1)) * width;
-        const barHeight = ((point.volume || 0) / maxVol) * volumeHeight;
+        const barHeight =
+          maxVol === 0 ? 0 : ((point.volume || 0) / maxVol) * volumeHeight;
         return {
           x: x - width / sortedChartDatas.length / 2 + 1,
           y: volumeHeight - barHeight,
@@ -109,15 +173,15 @@ const StockChart: React.FC<StockChartProps> = ({
       });
 
       // Candlestick 데이터 생성
-      const candles = sortedChartDatas.map((point, i) => {
+      const candles = sortedChartDatas.map((point: ChartData, i: number) => {
         const x = (i / (sortedChartDatas.length - 1)) * width;
         const candleWidth = Math.max(2, width / sortedChartDatas.length - 1);
 
         // 시가, 종가, 고가, 저가 (실제 데이터가 없으면 closePrice로 대체)
-        const open = point.openPrice; // 실제로는 openPrice 사용
+        const open = point.openPrice || point.closePrice;
         const close = point.closePrice;
-        const high = point.highPrice || 0;
-        const low = point.lowPrice || 0;
+        const high = point.highPrice || point.closePrice;
+        const low = point.lowPrice || point.closePrice;
 
         const isUp = close >= open;
 
@@ -142,7 +206,10 @@ const StockChart: React.FC<StockChartProps> = ({
 
       return {
         path: `M ${points
-          .map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`)
+          .map(
+            (p: { x: number; y: number }) =>
+              `${p.x.toFixed(2)},${p.y.toFixed(2)}`
+          )
           .join(" L ")}`,
         volumeBars: vBars,
         minPrice: min,
@@ -171,7 +238,9 @@ const StockChart: React.FC<StockChartProps> = ({
 
       if (index >= 0 && index < sortedChartDatas.length) {
         const chartData = sortedChartDatas[index];
-        const closePrices = sortedChartDatas.map((p) => p.closePrice);
+        const closePrices = sortedChartDatas.map(
+          (p: ChartData) => p.closePrice
+        );
         const min = Math.min(...closePrices);
         const max = Math.max(...closePrices);
         const range = max - min === 0 ? 1 : max - min;
@@ -205,7 +274,9 @@ const StockChart: React.FC<StockChartProps> = ({
 
       if (index >= 0 && index < sortedChartDatas.length) {
         const chartData = sortedChartDatas[index];
-        const closePrices = sortedChartDatas.map((p) => p.closePrice);
+        const closePrices = sortedChartDatas.map(
+          (p: ChartData) => p.closePrice
+        );
         const min = Math.min(...closePrices);
         const max = Math.max(...closePrices);
         const range = max - min === 0 ? 1 : max - min;
@@ -284,7 +355,7 @@ const StockChart: React.FC<StockChartProps> = ({
             ) : (
               <>
                 {/* Candlestick Chart */}
-                {candlesticks.map((candle, i) => (
+                {candlesticks.map((candle: any, i: number) => (
                   <g key={i}>
                     {/* High-Low Line (심지) */}
                     <line
@@ -396,7 +467,7 @@ const StockChart: React.FC<StockChartProps> = ({
 
           {/* Volume Chart */}
           <g transform={`translate(0, ${mainHeight + 10})`}>
-            {volumeBars.map((bar, i) => (
+            {volumeBars.map((bar: any, i: number) => (
               <rect
                 key={i}
                 x={bar.x}

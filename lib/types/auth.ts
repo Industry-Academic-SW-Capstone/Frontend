@@ -21,16 +21,25 @@ export interface SignUpRequest {
   email: string;
   password: string;
   name: string;
-  profile_image: string;
+  profileImage: string;
+  twoFactorEnabled: boolean;
+  notificationAgreement: boolean;
+}
+
+export interface UpdateInfoRequest {
+  name?: string;
+  profileImage?: string;
 }
 
 export interface SignUpResponse {
   email: string;
-  memberId: string;
+  memberId: number;
   name: string;
-  profile_image: string;
+  profileImage: string;
   provider: string;
   createdAt: string;
+  twoFactorEnabled: boolean;
+  notificationAgreement: boolean;
 }
 
 export interface LoginRequest {
@@ -45,7 +54,7 @@ export interface LoginResponse {
 export interface KakaoSignupRequest {
   email: string;
   name: string;
-  profile_image: string;
+  profileImage: string;
 }
 
 export interface KakaoCallbackResponse {

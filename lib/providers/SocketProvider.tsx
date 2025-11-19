@@ -11,6 +11,7 @@ import React, {
 import { Client, IMessage, Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { useStockStore } from "../stores/useStockStore"; // 1. Zustand 스토어 import
+import { useChartStore } from "../stores/useChartStore";
 
 interface WebSocketContextType {
   isConnected: boolean;
@@ -97,6 +98,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
           // 3. (핵심) 소켓 데이터를 받으면 Zustand 스토어를 업데이트!
           updateTickerFromSocket(stockCode, data);
+
+          // 4. 차트 스토어 업데이트
+          useChartStore.getState().updateTickerFromSocket(stockCode, data);
         } catch (e) {
           console.error("소켓 메시지 파싱 오류:", e);
         }

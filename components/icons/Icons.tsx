@@ -38,6 +38,8 @@ import {
   HiCog,
   HiMegaphone,
   HiChevronRight,
+  HiChevronUp,
+  HiCamera,
   HiUser,
   HiMoon,
   HiSun,
@@ -49,6 +51,10 @@ import {
   HiXCircle,
   HiExclamationTriangle,
   HiInformationCircle,
+  HiArrowPath,
+  HiExclamationCircle,
+  HiArrowRight,
+  HiHeart,
 } from "react-icons/hi2";
 import { MdPhone, MdKey, MdEmail, MdError } from "react-icons/md";
 import { IconBaseProps } from "react-icons";
@@ -203,6 +209,24 @@ export const MegaphoneIcon = (props: IconProps) => <HiMegaphone {...props} />;
 export const ChevronRightIcon = (props: IconProps) => (
   <HiChevronRight {...props} />
 );
+export const ArrowPathIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    {...props}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+    />
+  </svg>
+);
+export const ChevronUpIcon = (props: IconProps) => <HiChevronUp {...props} />;
+export const CameraIcon = (props: IconProps) => <HiCamera {...props} />;
 export const UserIcon = (props: IconProps) => <HiUser {...props} />;
 export const MoonIcon = (props: IconProps) => <HiMoon {...props} />;
 export const SunIcon = (props: IconProps) => <HiSun {...props} />;
@@ -222,3 +246,8 @@ export const ExclamationTriangleIcon = (props: IconProps) => (
 export const InformationCircleIcon = (props: IconProps) => (
   <HiInformationCircle {...props} />
 );
+export const ExclamationCircleIcon = (props: IconProps) => (
+  <HiExclamationCircle {...props} />
+);
+export const ArrowRightIcon = (props: IconProps) => <HiArrowRight {...props} />;
+export const HeartIcon = (props: IconProps) => <HiHeart {...props} />;

@@ -145,98 +145,117 @@ export default function TwoFactorSettings() {
   }
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-bold text-text-primary mb-4">2차 인증</h3>
-
+    <div className="space-y-1">
       {/* PIN 설정 */}
-      <div className="bg-bg-primary rounded-2xl p-4 border border-border-color">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                config.pinEnabled
-                  ? "bg-green-500/20 text-green-400"
-                  : "bg-gray-500/20 text-gray-400"
-              }`}
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div>
-              <p className="font-semibold text-text-primary">보안 PIN</p>
-              <p className="text-xs text-text-secondary">
-                {config.pinEnabled
-                  ? "PIN이 설정되어 있습니다"
-                  : "PIN을 설정해주세요"}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={handlePinSetupStart}
-            className={`px-4 py-2 rounded-xl font-medium text-sm transition-all ${
+      <button
+        onClick={handlePinSetupStart}
+        className="w-full p-4 flex items-center justify-between hover:bg-bg-primary/50 rounded-xl transition-colors group"
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className={`p-2 rounded-lg transition-colors ${
               config.pinEnabled
-                ? "bg-blue-500/20 text-blue-400 hover:bg-blue-500/30"
-                : "bg-accent text-white hover:bg-accent/90"
+                ? "bg-green-500/10 text-green-500"
+                : "bg-bg-primary text-text-secondary group-hover:text-primary"
             }`}
           >
-            {config.pinEnabled ? "변경" : "설정"}
-          </button>
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+          </div>
+          <div className="text-left">
+            <p className="text-text-primary font-semibold">보안 PIN</p>
+            <p className="text-xs text-text-secondary">
+              {config.pinEnabled ? "설정됨" : "미설정"}
+            </p>
+          </div>
         </div>
-      </div>
+        <div
+          className={`text-sm font-medium ${
+            config.pinEnabled ? "text-green-500" : "text-accent"
+          }`}
+        >
+          {config.pinEnabled ? "변경" : "설정"}
+        </div>
+      </button>
 
       {/* 생체 인증 설정 */}
-      <div className="bg-bg-primary rounded-2xl p-4 border border-border-color">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                config.biometricEnabled
-                  ? "bg-purple-500/20 text-purple-400"
-                  : "bg-gray-500/20 text-gray-400"
-              }`}
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div>
-              <p className="font-semibold text-text-primary">생체 인증</p>
-              <p className="text-xs text-text-secondary">
-                {config.biometricEnabled
-                  ? "FaceID/TouchID 사용 가능"
-                  : "생체 인증을 설정해주세요"}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowBiometricSetup(true)}
-            className={`px-4 py-2 rounded-xl font-medium text-sm transition-all ${
+      <button
+        onClick={() => setShowBiometricSetup(true)}
+        className="w-full p-4 flex items-center justify-between hover:bg-bg-primary/50 rounded-xl transition-colors group"
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className={`p-2 rounded-lg transition-colors ${
               config.biometricEnabled
-                ? "bg-purple-500/20 text-purple-400 hover:bg-purple-500/30"
-                : "bg-accent text-white hover:bg-accent/90"
+                ? "bg-purple-500/10 text-purple-500"
+                : "bg-bg-primary text-text-secondary group-hover:text-primary"
             }`}
           >
-            {config.biometricEnabled ? "재설정" : "설정"}
-          </button>
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"
+              />
+            </svg>
+          </div>
+          <div className="text-left">
+            <p className="text-text-primary font-semibold">생체 인증</p>
+            <p className="text-xs text-text-secondary">
+              {config.biometricEnabled ? "사용 가능" : "미설정"}
+            </p>
+          </div>
         </div>
-      </div>
+        <div
+          className={`text-sm font-medium ${
+            config.biometricEnabled ? "text-purple-500" : "text-accent"
+          }`}
+        >
+          {config.biometricEnabled ? "재설정" : "설정"}
+        </div>
+      </button>
 
       {/* 전체 초기화 */}
       {(config.pinEnabled || config.biometricEnabled) && (
         <button
           onClick={handleResetAll}
-          className="w-full py-3 rounded-xl bg-red-500/10 text-red-400 font-medium text-sm hover:bg-red-500/20 transition-all"
+          className="w-full p-4 flex items-center justify-between hover:bg-red-500/10 rounded-xl transition-colors group"
         >
-          모든 2차 인증 설정 삭제
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-red-500/10 rounded-lg text-red-500">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </div>
+            <span className="text-red-500 font-semibold">2차 인증 초기화</span>
+          </div>
         </button>
       )}
     </div>

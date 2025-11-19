@@ -74,7 +74,10 @@ const StocksSwiper: React.FC<StocksSwiperProps> = ({
     >
       <SwiperSlide>
         <div className="h-full overflow-y-auto px-4 pb-24">
-          <PortfolioScreen onSelectStock={onSelectStock} />
+          <PortfolioScreen
+            onSelectStock={onSelectStock}
+            onNavigateToExplore={() => onSlideChange("explore")}
+          />
         </div>
       </SwiperSlide>
 

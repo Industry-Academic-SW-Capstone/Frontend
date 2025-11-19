@@ -17,10 +17,11 @@ import {
   KakaoSignupRequest,
 } from "@/lib/types/auth";
 import { useLogin } from "@/lib/hooks/auth/useLogin";
-import { useSignup, useTestUnique } from "@/lib/hooks/auth/useSignup";
+import { useSignup } from "@/lib/hooks/auth/useSignup";
 import useKakaoOAuth from "@/lib/hooks/auth/useKakaoOAuth";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
+import { usePutInfo } from "@/lib/hooks/me/useInfo";
 
 type AuthStep =
   | "welcome"
@@ -108,7 +109,9 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     email: "",
     password: "",
     name: "",
-    profile_image: "",
+    profileImage: "",
+    twoFactorEnabled: false,
+    notificationAgreement: false,
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -182,7 +185,9 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         email: "",
         password: "",
         name: "",
-        profile_image: "",
+        profileImage: "",
+        twoFactorEnabled: false,
+        notificationAgreement: false,
       });
     }
   }, [step]);
@@ -196,7 +201,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         handleLogin();
         break; // Mock login
       case "signup":
-        handleUniqueTest();
+        handleSignup();
         break;
       case "pass":
         setStep("username");
@@ -205,17 +210,13 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         setStep("avatar");
         break;
       case "avatar":
-        handleSignup();
-
+        setStep("notification");
         break;
-      // case "group":
-      //   setStep("notification");
-      //   break;
       case "notification":
         setStep("2FA");
         break;
       case "2FA":
-        setStep("complete");
+        handleRegister();
         break;
     }
   };
@@ -235,11 +236,8 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
       case "avatar":
         setStep("username");
         break;
-      // case "group":
-      //   setStep("avatar");
-      //   break;
       case "notification":
-        setStep("notification");
+        setStep("avatar");
         break;
       case "2FA":
         setStep("notification");
@@ -293,70 +291,64 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   } = useSignup();
 
   const {
-    mutate: doUniqueTest,
-    isPending: isUniqueTestPending,
-    isError: isUniqueTestError,
-    error: uniqueTestError,
-  } = useTestUnique();
+    mutate: doPutInfo,
+    isPending: isPutInfoPending,
+    isError: isPutInfoError,
+    error: putInfoError,
+  } = usePutInfo();
 
   const signupRequestRef = React.useRef(signupRequest);
   useEffect(() => {
     signupRequestRef.current = signupRequest;
     setErrorMessage(null);
   }, [signupRequest]);
-  const handleUniqueTest = () => {
+  const handleSignup = () => {
     // Mock signup process
-    if (!signupRequest.email || !signupRequest.password) {
+    if (!signupRequestRef.current.email || !signupRequestRef.current.password) {
       setErrorMessage("이메일과 비밀번호를 입력해주세요.");
       return;
-    } else if (signupRequest.password.length < 6) {
+    } else if (signupRequestRef.current.password.length < 6) {
       setErrorMessage("비밀번호는 최소 6자 이상이어야 합니다.");
       return;
-    } else if (!/\S+@\S+\.\S+/.test(signupRequest.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(signupRequestRef.current.email)) {
       setErrorMessage("유효한 이메일 주소를 입력해주세요.");
       return;
-    } else if (signupRequest.password.includes(" ")) {
+    } else if (signupRequestRef.current.password.includes(" ")) {
       setErrorMessage("비밀번호에 공백이 포함될 수 없습니다.");
       return;
     }
-    setStep("username");
 
-    // const latestRequest = signupRequestRef.current;
-    // doUniqueTest(latestRequest, {
-    //   onSuccess: (isUnique) => {
-    //     if (!isUnique) {
-    //       setErrorMessage("이미 사용 중인 이메일입니다.");
-    //       return;
-    //     }
-    //     setErrorMessage(null);
-    //     setStep("username");
-    //   },
-    //   onError: (err: any) => {
-    //     const data = err?.response?.data;
-    //     const message =
-    //       typeof data === "string"
-    //         ? data
-    //         : data?.message ||
-    //           (data && typeof data === "object"
-    //             ? JSON.stringify(data)
-    //             : null) ||
-    //           "회원가입에 실패했습니다.";
-    //     setErrorMessage(message);
-    //   },
-    // });
+    doSignup(signupRequestRef.current, {
+      onSuccess: () => {
+        doLogin(signupRequestRef.current);
+        setStep("username");
+      },
+      onError: (err: any) => {
+        const data = err?.response?.data;
+        const message =
+          typeof data === "string"
+            ? data
+            : data?.message ||
+              (data && typeof data === "object"
+                ? JSON.stringify(data)
+                : null) ||
+              "회원가입에 실패했습니다.";
+        setErrorMessage(message);
+      },
+    });
   };
-  const handleSignup = async () => {
+  const handleRegister = async () => {
     // Mock register process
-    if (!signupRequest.name) {
+    if (!signupRequestRef.current.name) {
       setErrorMessage("이름을 입력해주세요.");
       return;
-    } else if (signupRequest.name.length < 2) {
+    } else if (signupRequestRef.current.name.length < 2) {
       setErrorMessage("이름은 최소 2자 이상이어야 합니다.");
       return;
-    } else if (signupRequest.name.length > 20) {
+    } else if (signupRequestRef.current.name.length > 20) {
       setErrorMessage("이름은 최대 20자 이하여야 합니다.");
       return;
-    } else if (/[^a-zA-Z0-9가-힣]/.test(signupRequest.name)) {
+    } else if (/[^a-zA-Z0-9가-힣]/.test(signupRequestRef.current.name)) {
       setErrorMessage("이름에 특수문자는 사용할 수 없습니다.");
       return;
     }
@@ -364,20 +356,20 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     if (isKakaoSignup) {
       try {
         await axios.post(`/api/auth/kakao/signup/complete`, {
-          email: signupRequest.email,
-          name: signupRequest.name,
-          profile_image: signupRequest.profile_image,
+          email: signupRequestRef.current.email,
+          name: signupRequestRef.current.name,
+          profileImage: signupRequestRef.current.profileImage,
         });
         setErrorMessage(null);
         setNewUser((prev) => ({
           ...prev,
-          username: signupRequest.name,
+          username: signupRequestRef.current.name,
           group: { id: "hsu", name: "한성대학교", averageReturn: 18.5 },
-          avatar: signupRequest.profile_image,
+          avatar: signupRequestRef.current.profileImage,
         }));
         // 카카오 로그인은 비밀번호가 없으므로 자동 로그인 처리가 필요할 수 있음
         // 여기서는 일단 완료 단계로 이동
-        setStep("notification");
+        setStep("complete");
       } catch (error) {
         console.error("Kakao Signup Complete Error:", error);
         setErrorMessage("카카오 회원가입 완료 중 오류가 발생했습니다.");
@@ -387,20 +379,20 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
 
     const latestRequest = signupRequestRef.current;
 
-    doSignup(latestRequest, {
+    doPutInfo(latestRequest, {
       onSuccess: () => {
         setErrorMessage(null);
         setNewUser((prev) => ({
           ...prev,
           username: signupRequest.name,
           group: { id: "hsu", name: "한성대학교", averageReturn: 18.5 },
-          avatar: signupRequest.profile_image,
+          avatar: signupRequest.profileImage,
         }));
         setLoginRequest({
           email: signupRequest.email,
           password: signupRequest.password,
         });
-        setStep("notification");
+        setStep("complete");
       },
       onError: (err: any) => {
         const data = err?.response?.data;
@@ -953,6 +945,10 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                         const registration = await registerServiceWorker();
                         if (registration) {
                           await subscribeToPush(registration);
+                          setSignupRequest((prev) => ({
+                            ...prev,
+                            notification_agreement: true,
+                          }));
                         }
                       }
                       handleNext();
@@ -974,7 +970,12 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         );
       case "2FA":
         return (
-          <TFARegisterPage handleNext={handleNext} handleBack={handleBack}>
+          <TFARegisterPage
+            handleNext={handleNext}
+            handleBack={handleBack}
+            signupRequest={signupRequest}
+            setSignupRequest={setSignupRequest}
+          >
             <div className="mb-4">
               <ProgressBar step={4} totalSteps={4} />
             </div>

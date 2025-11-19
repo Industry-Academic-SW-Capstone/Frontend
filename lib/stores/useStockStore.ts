@@ -1,5 +1,5 @@
 // store/stockStore.ts
-import create from "zustand";
+import { create } from "zustand";
 import { StockInfo, StockDetailInfo } from "@/lib/types/stock";
 import camelcaseKeys from "camelcase-keys";
 

@@ -7,6 +7,7 @@ import BiometricSetup from "@/components/auth/BiometricSetup";
 import { use2FA } from "@/lib/hooks/auth/use2FA";
 import * as Icons from "@/components/icons/Icons";
 import Portal from "@/components/Portal";
+import { SignUpRequest } from "@/lib/types/auth";
 
 type Step =
   | "welcome"
@@ -19,10 +20,14 @@ export default function TFARegisterPage({
   handleNext,
   children,
   handleBack,
+  signupRequest,
+  setSignupRequest,
 }: {
   handleNext: () => void;
   children: React.ReactNode;
   handleBack: () => void;
+  signupRequest: SignUpRequest;
+  setSignupRequest: React.Dispatch<React.SetStateAction<SignUpRequest>>;
 }) {
   const router = useRouter();
   const { setupPin, setupBiometric } = use2FA();
@@ -58,11 +63,19 @@ export default function TFARegisterPage({
   const handleBiometricSuccess = (credentialId: string) => {
     setupBiometric(credentialId);
     handleNext();
+    setSignupRequest((prev) => ({
+      ...prev,
+      two_factor_enabled: true,
+    }));
   };
 
   // 생체 인증 건너뛰기
   const handleSkipBiometric = () => {
     handleNext();
+    setSignupRequest((prev) => ({
+      ...prev,
+      two_factor_enabled: false,
+    }));
   };
 
   // Welcome 화면

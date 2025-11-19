@@ -33,7 +33,7 @@ const FeaturedCompetition: React.FC<{ competition: Competition }> = ({
         <div className="bg-white/20 p-3 rounded-xl shadow-lg transition-transform duration-300">
           <TrophyIcon className="w-6 h-6" />
         </div>
-        <h3 className="font-bold text-lg">{competition.name}</h3>
+        <h3 className="font-bold text-lg">{competition.contestName}</h3>
       </div>
 
       <div className="grid grid-cols-2 gap-4 text-sm relative z-10">

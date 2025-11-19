@@ -5,14 +5,6 @@ import defaultClient from "@/lib/api/axiosClient"; // 생성한 axios 클라이�
 import { SignUpRequest, SignUpResponse } from "@/lib/types/auth"; // 위에서 정의한 타입
 import { AxiosError } from "axios";
 
-const testUniqueApi = async (credentials: SignUpRequest): Promise<boolean> => {
-  const response = await defaultClient.post<boolean>(
-    "/api/members/exists",
-    credentials
-  );
-  return response.data;
-};
-
 const signupApi = async (
   credentials: SignUpRequest
 ): Promise<SignUpResponse> => {
@@ -21,24 +13,6 @@ const signupApi = async (
     credentials
   );
   return response.data;
-};
-
-/**
- *  이메일 중복 확인 뮤테이션을 위한 커스텀 훅
- * - 이메일 중복 확인 성공 시 true를 반환합니다.
- */
-export const useTestUnique = () => {
-  return useMutation<
-    boolean, // 성공 시 반환될 타입
-    AxiosError, // 에러 타입 (axios 기준)
-    SignUpRequest // mutation 함수에 전달될 변수(Variables) 타입
-  >({
-    mutationFn: testUniqueApi, // API 호출 함수
-    onSuccess: (data: boolean) => {},
-    onError: (error) => {
-      console.error("Login failed:", error);
-    },
-  });
 };
 
 /**

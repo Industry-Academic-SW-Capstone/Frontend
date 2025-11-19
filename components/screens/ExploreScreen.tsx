@@ -14,9 +14,9 @@ import {
   BasicStockInfo,
   IndustriesTopStocks,
 } from "@/lib/types/stock";
-import { MOCK_FAVORITE_STOCKS } from "@/lib/constants";
 import { useTopStocks } from "@/lib/hooks/stock/useTopStocks";
 import { useIndustriesTopStocks } from "@/lib/hooks/stock/useIndustriesTopStocks";
+import { useFavoriteStocks } from "@/lib/hooks/stock/useFavoriteStock";
 import { generateLogo } from "@/lib/utils";
 import { useStockStore } from "@/lib/stores/useStockStore";
 import { useWebSocket } from "@/lib/providers/SocketProvider";
@@ -167,6 +167,15 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
     }
   }, [industriesTopStocks, upsertTickers]); // data가 바뀔 때마다 실행됨
 
+  const { data: favoriteStocks, isLoading: isLoadingFavorites } =
+    useFavoriteStocks();
+
+  useEffect(() => {
+    if (favoriteStocks) {
+      upsertTickers(favoriteStocks);
+    }
+  }, [favoriteStocks, upsertTickers]);
+
   const { setSubscribeSet } = useWebSocket();
 
   useEffect(() => {
@@ -175,8 +184,9 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
     industriesTopStocks?.forEach((sector) =>
       sector.stocks.forEach((stock) => tickers.add(stock.stockCode))
     );
+    favoriteStocks?.forEach((stock) => tickers.add(stock.stockCode));
     setSubscribeSet(Array.from(tickers));
-  }, [popularStocks, industriesTopStocks]);
+  }, [popularStocks, industriesTopStocks, favoriteStocks]);
 
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (
@@ -316,8 +326,15 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
         )}
         {activeContentTab === "favorites" && (
           <div className="space-y-2">
-            {favorites.length > 0 ? (
-              favorites.map((stock) => (
+            {isLoadingFavorites ? (
+              // 관심종목 스켈레톤
+              <>
+                {[1, 2, 3].map((i) => (
+                  <StockRowSkeleton key={i} />
+                ))}
+              </>
+            ) : favoriteStocks && favoriteStocks.length > 0 ? (
+              favoriteStocks.map((stock) => (
                 <StockRow
                   key={stock.stockCode}
                   stock={stock}
@@ -329,9 +346,16 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
                 <p className="text-text-secondary">검색 결과가 없습니다.</p>
               </div>
             ) : (
-              <div className="text-center py-8 bg-bg-secondary rounded-lg">
-                <BookmarkIcon className="w-12 h-12 text-text-secondary mx-auto mb-2" />
-                <p className="text-text-secondary">관심 종목을 추가해보세요.</p>
+              <div className="flex flex-col items-center justify-center py-12 bg-bg-secondary/30 rounded-2xl border border-dashed border-border-color">
+                <div className="w-16 h-16 bg-bg-secondary rounded-full flex items-center justify-center mb-4">
+                  <BookmarkIcon className="w-8 h-8 text-text-tertiary" />
+                </div>
+                <p className="text-text-primary font-bold text-lg mb-1">
+                  관심 종목이 없습니다
+                </p>
+                <p className="text-text-secondary text-sm text-center max-w-[200px]">
+                  종목을 검색하고 별 아이콘을 눌러 관심 종목으로 등록해보세요.
+                </p>
               </div>
             )}
           </div>

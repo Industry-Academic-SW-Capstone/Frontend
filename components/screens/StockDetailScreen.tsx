@@ -4,10 +4,20 @@ import { MOCK_STOCK_DETAILS, MOCK_ACCOUNTS } from "@/lib/constants";
 import { StockDetailMockType } from "@/lib/types/stock";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
-import { ArrowLeftIcon } from "@/components/icons/Icons";
+import {
+  ArrowLeftIcon,
+  BookmarkIcon,
+  HeartIcon,
+} from "@/components/icons/Icons";
 import { useStockDetail } from "@/lib/hooks/stock/useStockDetail";
 import { generateLogo } from "@/lib/utils";
 import { useStockChart } from "@/lib/hooks/stock/useStockChart";
+import {
+  useFavoriteStocks,
+  useAddFavorite,
+  useDeleteFavorite,
+} from "@/lib/hooks/stock/useFavoriteStock";
+import Toast, { ToastType } from "@/components/ui/Toast";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -37,12 +47,54 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   );
   const [isPositive, setIsPositive] = useState<boolean>(true);
   const [changeString, setChangeString] = useState<string>("");
+  const [toastState, setToastState] = useState<{
+    isVisible: boolean;
+    message: string;
+    type: ToastType;
+  }>({
+    isVisible: false,
+    message: "",
+    type: "success",
+  });
+
+  const showToast = (message: string, type: ToastType = "success") => {
+    setToastState({ isVisible: true, message, type });
+  };
 
   const {
     data: stock,
     isLoading: isStockLoading,
     refetch: refetchStockDetail,
   } = useStockDetail(ticker);
+
+  const { data: favoriteStocks } = useFavoriteStocks();
+  const addFavoriteMutation = useAddFavorite();
+  const deleteFavoriteMutation = useDeleteFavorite();
+
+  const isFavorite =
+    favoriteStocks?.some((fav) => fav.stockCode === ticker) ?? false;
+
+  const handleToggleFavorite = async () => {
+    if (isFavorite) {
+      deleteFavoriteMutation.mutate(ticker, {
+        onSuccess: () => {
+          showToast("관심 종목에서 삭제되었습니다.", "success");
+        },
+        onError: () => {
+          showToast("관심 종목 삭제에 실패했습니다.", "error");
+        },
+      });
+    } else {
+      addFavoriteMutation.mutate(ticker, {
+        onSuccess: () => {
+          showToast("관심 종목에 추가되었습니다.", "success");
+        },
+        onError: () => {
+          showToast("관심 종목 추가에 실패했습니다.", "error");
+        },
+      });
+    }
+  };
 
   const account = MOCK_ACCOUNTS[0];
 
@@ -152,24 +204,36 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   return (
     <>
       <div className="h-full flex flex-col">
-        <header className="sticky top-0 z-10 bg-bg-primary/80 backdrop-blur-sm p-4 flex items-center gap-4">
-          <button onClick={onBack} className="p-1">
-            <ArrowLeftIcon className="w-6 h-6 text-text-primary" />
-          </button>
-          <div className="flex items-center gap-2">
-            <img
-              src={generateLogo(stock)}
-              onError={(event) => {
-                event.currentTarget.onerror = null;
-                event.currentTarget.src = generateLogo(stock, true);
-              }}
-              alt={stock.stockName}
-              className="w-8 h-8 rounded-full bg-white object-cover"
-            />
-            <h1 className="text-xl font-bold text-text-primary">
-              {stock.stockName}
-            </h1>
+        <header className="sticky top-0 z-10 bg-bg-primary/80 backdrop-blur-sm p-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button onClick={onBack} className="p-1">
+              <ArrowLeftIcon className="w-6 h-6 text-text-primary" />
+            </button>
+            <div className="flex items-center gap-2">
+              <img
+                src={generateLogo(stock)}
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = generateLogo(stock, true);
+                }}
+                alt={stock.stockName}
+                className="w-8 h-8 rounded-full bg-white object-cover"
+              />
+              <h1 className="text-xl font-bold text-text-primary">
+                {stock.stockName}
+              </h1>
+            </div>
           </div>
+          <button
+            onClick={handleToggleFavorite}
+            className="p-2 rounded-full hover:bg-bg-secondary transition-colors"
+          >
+            {isFavorite ? (
+              <HeartIcon className="w-6 h-6 text-red-500 fill-current" />
+            ) : (
+              <HeartIcon className="w-6 h-6 text-text-tertiary" />
+            )}
+          </button>
         </header>
 
         <div className="flex-1 overflow-y-auto px-4 pb-24">
@@ -252,6 +316,12 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         stock={stock}
         orderType={orderType}
         cashBalance={account.cashBalance}
+      />
+      <Toast
+        message={toastState.message}
+        type={toastState.type}
+        isVisible={toastState.isVisible}
+        onClose={() => setToastState((prev) => ({ ...prev, isVisible: false }))}
       />
     </>
   );

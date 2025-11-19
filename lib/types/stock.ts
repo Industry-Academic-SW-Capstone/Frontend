@@ -221,6 +221,8 @@ export interface StockDetailInfo extends StockInfo {
   lowPrice: number;
   openPrice: number;
   previousClosePrice: number;
+  changeAmount: number;
+  changeRate: number;
 }
 
 export interface IndustriesTopStocks {

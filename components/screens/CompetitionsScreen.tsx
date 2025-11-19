@@ -119,9 +119,7 @@ const CompetitionsScreen: React.FC = () => {
                   : "종료된 대회가 없습니다"}
               </h3>
               <p className="text-text-secondary text-sm max-w-xs">
-                {view === "ongoing"
-                  ? "새로운 대회를 만들어 친구들과 경쟁해보세요!"
-                  : "아직 종료된 대회가 없습니다."}
+                {view === "ongoing" ? "첫번째 대회를 만들어보세요!" : ""}
               </p>
               {view === "ongoing" && (
                 <button
