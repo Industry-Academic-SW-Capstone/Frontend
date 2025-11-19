@@ -5,7 +5,6 @@ import QueryProvider from "@/lib/providers/QueryProvider";
 import Script from "next/script";
 import { WebSocketProvider } from "@/lib/providers/SocketProvider";
 import PreventContextMenu from "@/components/PreventContextMenu";
-import { PostHogProvider } from "./providers/PostHogProvider";
 
 const pretendard = localFont({
   src: "../fonts/pretendard/PretendardVariable.woff2",
@@ -49,11 +48,9 @@ export default function RootLayout({
           strategy="lazyOnload"
         />
         <PreventContextMenu />
-        <PostHogProvider>
-          <QueryProvider>
-            <WebSocketProvider>{children}</WebSocketProvider>
-          </QueryProvider>
-        </PostHogProvider>
+        <QueryProvider>
+          <WebSocketProvider>{children}</WebSocketProvider>
+        </QueryProvider>
       </body>
     </html>
   );
