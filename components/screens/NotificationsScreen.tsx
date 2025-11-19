@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import type { Notification as AppNotification } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import {
@@ -9,7 +9,6 @@ import {
   deleteNotification,
   clearAllNotifications,
   getNotificationConfig,
-  sendTestNotification,
 } from "@/lib/services/notificationService";
 
 const NotificationsScreen: React.FC = () => {
@@ -18,13 +17,18 @@ const NotificationsScreen: React.FC = () => {
 
   const loadNotifications = () => {
     const stored = getStoredNotifications();
-    setNotifications(stored);
+    // Sort by timestamp descending
+    setNotifications(
+      stored.sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      )
+    );
   };
 
   useEffect(() => {
     loadNotifications();
 
-    // 알림 업데이트 이벤트 리스너
     const handleNotificationUpdate = () => {
       loadNotifications();
     };
@@ -38,8 +42,11 @@ const NotificationsScreen: React.FC = () => {
     };
   }, []);
 
-  const filteredNotifications =
-    filter === "unread" ? notifications.filter((n) => !n.read) : notifications;
+  const filteredNotifications = useMemo(() => {
+    return filter === "unread"
+      ? notifications.filter((n) => !n.read)
+      : notifications;
+  }, [notifications, filter]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -65,238 +72,216 @@ const NotificationsScreen: React.FC = () => {
     }
   };
 
-  const handleSendTest = async () => {
-    await sendTestNotification();
-    // 이벤트가 발생하면 자동으로 loadNotifications 호출됨
-  };
-
-  const formatTimestamp = (date: Date) => {
+  // Group notifications by date
+  const groupedNotifications = useMemo(() => {
+    const groups: { [key: string]: AppNotification[] } = {};
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
-    if (minutes < 1) return "방금 전";
-    if (minutes < 60) return `${minutes}분 전`;
-    if (hours < 24) return `${hours}시간 전`;
-    if (days < 7) return `${days}일 전`;
+    filteredNotifications.forEach((notification) => {
+      const date = new Date(notification.timestamp);
+      const dateStr = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      ).toDateString();
 
-    return date.toLocaleDateString("ko-KR", {
-      month: "short",
-      day: "numeric",
+      let groupKey = "";
+      if (dateStr === today.toDateString()) {
+        groupKey = "오늘";
+      } else if (dateStr === yesterday.toDateString()) {
+        groupKey = "어제";
+      } else if (date > new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)) {
+        groupKey = "이번 주";
+      } else {
+        groupKey = `${date.getMonth() + 1}월 ${date.getDate()}일`;
+      }
+
+      if (!groups[groupKey]) {
+        groups[groupKey] = [];
+      }
+      groups[groupKey].push(notification);
     });
-  };
+
+    return groups;
+  }, [filteredNotifications]);
 
   const getNotificationIcon = (type: AppNotification["type"]) => {
     const config = getNotificationConfig(type);
+    const iconClass = "w-6 h-6 text-white";
 
+    let IconComponent;
     switch (type) {
       case "order_filled":
-        return (
-          <Icons.CheckCircleIcon
-            className="w-6 h-6"
-            style={{ color: config.color }}
-          />
-        );
+        IconComponent = Icons.CheckCircleIcon;
+        break;
       case "ranking_up":
-        return (
-          <Icons.TrophyIcon
-            className="w-6 h-6"
-            style={{ color: config.color }}
-          />
-        );
+        IconComponent = Icons.TrophyIcon;
+        break;
       case "achievement":
-        return (
-          <Icons.SparklesIcon
-            className="w-6 h-6"
-            style={{ color: config.color }}
-          />
-        );
+        IconComponent = Icons.SparklesIcon;
+        break;
       case "competition":
-        return (
-          <Icons.FlagIcon className="w-6 h-6" style={{ color: config.color }} />
-        );
+        IconComponent = Icons.FlagIcon;
+        break;
       default:
-        return (
-          <Icons.BellIcon className="w-6 h-6" style={{ color: config.color }} />
-        );
+        IconComponent = Icons.BellIcon;
+        break;
     }
+
+    return (
+      <div
+        className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
+        style={{ backgroundColor: config.color }}
+      >
+        <IconComponent className={iconClass} />
+      </div>
+    );
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
 
   return (
-    <div className="h-full flex flex-col">
-      {/* 헤더 */}
-      <div className="sticky top-0 bg-bg-primary backdrop-blur-xl z-10 border-b border-border-color shadow-lg">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between mb-4 animate-fadeInUp">
-            <h1 className="text-2xl font-bold text-text-primary">알림</h1>
+    <div className="h-full flex flex-col bg-bg-primary">
+      {/* Header */}
+      <div className="sticky top-0 bg-bg-primary/90 backdrop-blur-md z-10 px-5 py-4 flex items-center justify-between border-b border-border-color/50">
+        <h1 className="text-2xl font-bold text-text-primary">알림</h1>
+        <div className="flex gap-3">
+          {unreadCount > 0 && (
             <button
-              onClick={handleSendTest}
-              className="px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95 ripple"
+              onClick={handleMarkAllAsRead}
+              className="text-sm font-medium text-primary hover:opacity-80 transition-opacity"
             >
-              <span className="relative z-10">테스트 알림</span>
+              모두 읽음
             </button>
-          </div>
-
-          {/* 필터 및 액션 */}
-          <div
-            className="flex items-center justify-between animate-fadeInUp"
-            style={{ animationDelay: "100ms" }}
-          >
-            <div className="flex gap-2">
-              <button
-                onClick={() => setFilter("all")}
-                className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 transform hover:scale-105 ${
-                  filter === "all"
-                    ? "bg-primary text-white shadow-lg"
-                    : "text-text-secondary hover:bg-bg-secondary"
-                }`}
-              >
-                전체 ({notifications.length})
-              </button>
-              <button
-                onClick={() => setFilter("unread")}
-                className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 transform hover:scale-105 relative ${
-                  filter === "unread"
-                    ? "bg-primary text-white shadow-lg"
-                    : "text-text-secondary hover:bg-bg-secondary"
-                }`}
-              >
-                읽지 않음 ({unreadCount})
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-negative rounded-full animate-pulse" />
-                )}
-              </button>
-            </div>
-
-            {notifications.length > 0 && (
-              <div className="flex gap-2">
-                {unreadCount > 0 && (
-                  <button
-                    onClick={handleMarkAllAsRead}
-                    className="text-sm text-primary font-bold hover:underline"
-                  >
-                    모두 읽음
-                  </button>
-                )}
-                <button
-                  onClick={handleClearAll}
-                  className="text-sm text-text-secondary font-bold hover:text-negative"
-                >
-                  전체 삭제
-                </button>
-              </div>
-            )}
-          </div>
+          )}
+          {notifications.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              className="text-sm font-medium text-text-tertiary hover:text-negative transition-colors"
+            >
+              지우기
+            </button>
+          )}
         </div>
       </div>
 
-      {/* 알림 목록 */}
-      <div className="flex-1 overflow-y-auto">
-        {filteredNotifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center p-8 animate-fadeInScale">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-float">
-              <Icons.BellIcon className="w-12 h-12 text-primary opacity-50" />
+      {/* Filters */}
+      <div className="px-5 py-3 flex gap-2 sticky top-[65px] bg-bg-primary z-10">
+        <button
+          onClick={() => setFilter("all")}
+          className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+            filter === "all"
+              ? "bg-text-primary text-bg-primary"
+              : "bg-bg-secondary text-text-secondary hover:bg-bg-tertiary"
+          }`}
+        >
+          전체
+        </button>
+        <button
+          onClick={() => setFilter("unread")}
+          className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+            filter === "unread"
+              ? "bg-text-primary text-bg-primary"
+              : "bg-bg-secondary text-text-secondary hover:bg-bg-tertiary"
+          }`}
+        >
+          읽지 않음
+          {unreadCount > 0 && filter !== "unread" && (
+            <span className="ml-1.5 inline-block w-1.5 h-1.5 bg-negative rounded-full align-middle mb-0.5" />
+          )}
+        </button>
+      </div>
+
+      {/* Notification List */}
+      <div className="flex-1 overflow-y-auto px-5 pb-10">
+        {Object.keys(groupedNotifications).length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <div className="w-16 h-16 bg-bg-secondary rounded-full flex items-center justify-center mb-4">
+              <Icons.BellIcon className="w-8 h-8 text-text-tertiary" />
             </div>
-            <h3 className="text-xl font-bold text-text-primary mb-3">
+            <p className="text-lg font-bold text-text-secondary">
               {filter === "unread"
                 ? "읽지 않은 알림이 없습니다"
-                : "알림이 없습니다"}
-            </h3>
-            <p className="text-text-secondary">
-              {filter === "unread"
-                ? "모든 알림을 확인했습니다."
-                : "새로운 알림이 도착하면 여기에 표시됩니다."}
+                : "새로운 알림이 없습니다"}
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-border-color">
-            {filteredNotifications.map((notification, index) => {
-              const config = getNotificationConfig(notification.type);
-
-              return (
-                <div
-                  key={notification.id}
-                  className={`p-4 transition-all duration-300 card-hover cursor-pointer relative overflow-hidden group ${
-                    notification.read ? "bg-bg-primary" : "bg-primary/10"
-                  } animate-fadeInUp`}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                  onClick={() =>
-                    !notification.read && handleMarkAsRead(notification.id)
-                  }
-                >
-                  {/* Shimmer effect */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer pointer-events-none" />
-
-                  <div className="flex gap-3 relative z-10">
-                    {/* 아이콘 */}
+          Object.entries(groupedNotifications).map(([dateGroup, items]) => (
+            <div key={dateGroup} className="mb-6 animate-fadeIn">
+              <h3 className="text-lg font-bold text-text-primary mb-3 mt-2">
+                {dateGroup}
+              </h3>
+              <div className="space-y-4">
+                {items.map((notification) => (
+                  <div
+                    key={notification.id}
+                    onClick={() =>
+                      !notification.read && handleMarkAsRead(notification.id)
+                    }
+                    className={`flex gap-4 p-1 rounded-2xl transition-all duration-200 ${
+                      !notification.read ? "opacity-100" : "opacity-60"
+                    } hover:bg-bg-secondary/50 cursor-pointer group relative`}
+                  >
+                    {/* Icon */}
                     <div className="flex-shrink-0 mt-1">
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-110"
-                        style={{ backgroundColor: `${config.color}20` }}
-                      >
-                        {getNotificationIcon(notification.type)}
-                      </div>
+                      {getNotificationIcon(notification.type)}
                     </div>
 
-                    {/* 내용 */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <h4 className="font-bold text-text-primary transition-colors duration-300 group-hover:text-primary">
+                    {/* Content */}
+                    <div className="flex-1 min-w-0 py-1">
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-base font-bold text-text-primary leading-tight mb-1">
                           {notification.title}
                         </h4>
-                        {!notification.read && (
-                          <div className="w-2.5 h-2.5 bg-primary rounded-full flex-shrink-0 mt-1 animate-pulse shadow-lg" />
-                        )}
+                        <span className="text-xs text-text-tertiary whitespace-nowrap ml-2">
+                          {formatTime(new Date(notification.timestamp))}
+                        </span>
                       </div>
-
-                      <p className="text-sm text-text-secondary mb-2 leading-relaxed">
+                      <p className="text-sm text-text-secondary leading-relaxed line-clamp-2">
                         {notification.message}
                       </p>
 
-                      {/* 메타데이터 표시 */}
+                      {/* Metadata Chips */}
                       {notification.metadata && (
-                        <div className="flex flex-wrap gap-2 mb-2">
+                        <div className="flex flex-wrap gap-2 mt-2">
                           {notification.metadata.ticker && (
-                            <span className="px-2.5 py-1 bg-primary/10 rounded-lg text-xs font-bold text-primary border border-primary/20">
+                            <span className="px-2 py-0.5 bg-bg-secondary rounded-md text-xs font-medium text-text-secondary">
                               {notification.metadata.ticker}
                             </span>
                           )}
-                          {notification.metadata.shares && (
-                            <span className="px-2.5 py-1 bg-bg-secondary rounded-lg text-xs font-medium text-text-secondary">
-                              {notification.metadata.shares}주
-                            </span>
-                          )}
                           {notification.metadata.price && (
-                            <span className="px-2.5 py-1 bg-bg-secondary rounded-lg text-xs font-medium text-text-secondary">
+                            <span className="px-2 py-0.5 bg-bg-secondary rounded-md text-xs font-medium text-text-secondary">
                               {notification.metadata.price.toLocaleString()}원
                             </span>
                           )}
                         </div>
                       )}
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-text-secondary font-medium">
-                          {formatTimestamp(notification.timestamp)}
-                        </span>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(notification.id);
-                          }}
-                          className="p-1.5 text-text-secondary hover:text-negative transition-all duration-300 hover:scale-110 hover:rotate-90 rounded-full hover:bg-negative/10"
-                        >
-                          <Icons.XMarkIcon className="w-5 h-5" />
-                        </button>
-                      </div>
                     </div>
+
+                    {/* Delete Button (Hover only) */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(notification.id);
+                      }}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-text-tertiary hover:text-negative opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Icons.XMarkIcon className="w-5 h-5" />
+                    </button>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                ))}
+              </div>
+            </div>
+          ))
         )}
       </div>
     </div>
