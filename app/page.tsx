@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import Header from "@/components/Header";
 import BottomNavBar from "@/components/BottomNavBar";
@@ -153,11 +153,19 @@ export default function Home() {
 
   // If not logged in and not loading (or if we know there's no token), show Onboarding
   if (!token && !isLoggedIn) {
-    return <OnboardingScreen onLoginSuccess={handleLoginSuccess} />;
+    return (
+      <Suspense fallback={null}>
+        <OnboardingScreen onLoginSuccess={handleLoginSuccess} />
+      </Suspense>
+    );
   }
 
   if ((!isLoggedIn || !userInfo) && !isUserLoading && !token) {
-    return <OnboardingScreen onLoginSuccess={handleLoginSuccess} />;
+    return (
+      <Suspense fallback={null}>
+        <OnboardingScreen onLoginSuccess={handleLoginSuccess} />
+      </Suspense>
+    );
   }
 
   // Show loading if data is loading and we have a token (so we expect data)
