@@ -5,8 +5,10 @@ import UserProfileModal from "@/components/UserProfileModal";
 import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
+  ArrowPathIcon,
 } from "@/components/icons/Icons";
 import { useRanking, useMyRanking } from "@/lib/hooks/useRanking";
+import { useQueryClient } from "@tanstack/react-query";
 
 const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
   change,
@@ -106,6 +108,14 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<RankingEntry | null>(null);
+
+  // Pull to Refresh State
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullStartY, setPullStartY] = useState(0);
+  const [pullCurrentY, setPullCurrentY] = useState(0);
+  const PULL_THRESHOLD = 80;
+  const queryClient = useQueryClient();
+
   const { data: rankingData, isLoading: isRankingLoading } = useRanking();
   const { data: myRankingData, isLoading: isMyRankingLoading } = useMyRanking();
 
@@ -122,6 +132,38 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
     setSelectedUser(null);
   };
 
+  // Pull to Refresh Handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const scrollContainer = e.currentTarget.closest(".overflow-y-auto");
+    if (scrollContainer && scrollContainer.scrollTop === 0) {
+      setPullStartY(e.touches[0].clientY);
+    } else if (!scrollContainer && window.scrollY === 0) {
+      setPullStartY(e.touches[0].clientY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const currentY = e.touches[0].clientY;
+    if (pullStartY > 0 && currentY > pullStartY) {
+      setPullCurrentY(currentY - pullStartY);
+    }
+  };
+
+  const handleTouchEnd = async () => {
+    if (pullCurrentY > PULL_THRESHOLD) {
+      setIsRefreshing(true);
+      try {
+        await queryClient.invalidateQueries();
+      } catch (error) {
+        console.error("Refresh failed", error);
+      } finally {
+        setIsRefreshing(false);
+      }
+    }
+    setPullStartY(0);
+    setPullCurrentY(0);
+  };
+
   if (isRankingLoading) {
     return (
       <div className="flex justify-center py-20">
@@ -132,7 +174,37 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
 
   return (
     <>
-      <div className="space-y-6 pb-10">
+      <div
+        className="space-y-6 pb-10 relative min-h-full"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Pull to Refresh Indicator */}
+        <div
+          className="absolute top-0 left-0 w-full flex justify-center pointer-events-none transition-all duration-300 ease-out z-10"
+          style={{
+            transform: `translateY(${
+              pullCurrentY > 0 ? Math.min(pullCurrentY / 2, 60) : 0
+            }px)`,
+            opacity:
+              pullCurrentY > 0 ? Math.min(pullCurrentY / PULL_THRESHOLD, 1) : 0,
+          }}
+        >
+          <div
+            className={`p-2 rounded-full bg-bg-secondary shadow-md border border-border-color flex items-center justify-center ${
+              isRefreshing ? "animate-spin" : ""
+            }`}
+          >
+            <ArrowPathIcon
+              className={`w-6 h-6 text-primary ${
+                pullCurrentY > PULL_THRESHOLD
+                  ? "rotate-180 transition-transform duration-300"
+                  : ""
+              }`}
+            />
+          </div>
+        </div>
         {/* My Ranking Summary */}
         <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-500 to-blue-600 p-7 shadow-lg shadow-blue-200 transition-transform hover:scale-[1.01] active:scale-[0.99]">
           {/* Background Patterns */}

@@ -5,8 +5,13 @@ import CompetitionCard from "@/components/CompetitionCard";
 import CreateCompetitionScreen from "./CreateCompetitionScreen";
 import CompetitionDetailScreen from "./CompetitionDetailScreen";
 import SlidingScreen from "@/components/navigation/SlidingScreen";
-import { PlusCircleIcon, SpinnerIcon } from "@/components/icons/Icons";
+import {
+  PlusCircleIcon,
+  SpinnerIcon,
+  ArrowPathIcon,
+} from "@/components/icons/Icons";
 import { useContests } from "@/lib/hooks/useContest";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CompetitionsScreen: React.FC = () => {
   const [showCreate, setShowCreate] = useState(false);
@@ -15,6 +20,13 @@ const CompetitionsScreen: React.FC = () => {
   const [selectedCompetition, setSelectedCompetition] =
     useState<Competition | null>(null);
   const [view, setView] = useState<"ongoing" | "finished">("ongoing");
+
+  // Pull to Refresh State
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullStartY, setPullStartY] = useState(0);
+  const [pullCurrentY, setPullCurrentY] = useState(0);
+  const PULL_THRESHOLD = 80;
+  const queryClient = useQueryClient();
 
   const { data: competitions, isLoading, error } = useContests();
 
@@ -42,8 +54,70 @@ const CompetitionsScreen: React.FC = () => {
     }
   });
 
+  // Pull to Refresh Handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const scrollContainer = e.currentTarget.closest(".overflow-y-auto");
+    if (scrollContainer && scrollContainer.scrollTop === 0) {
+      setPullStartY(e.touches[0].clientY);
+    } else if (!scrollContainer && window.scrollY === 0) {
+      setPullStartY(e.touches[0].clientY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const currentY = e.touches[0].clientY;
+    if (pullStartY > 0 && currentY > pullStartY) {
+      setPullCurrentY(currentY - pullStartY);
+    }
+  };
+
+  const handleTouchEnd = async () => {
+    if (pullCurrentY > PULL_THRESHOLD) {
+      setIsRefreshing(true);
+      try {
+        await queryClient.invalidateQueries();
+      } catch (error) {
+        console.error("Refresh failed", error);
+      } finally {
+        setIsRefreshing(false);
+      }
+    }
+    setPullStartY(0);
+    setPullCurrentY(0);
+  };
+
   return (
-    <div className="space-y-6">
+    <div
+      className="space-y-6 relative min-h-full"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Pull to Refresh Indicator */}
+      <div
+        className="absolute top-0 left-0 w-full flex justify-center pointer-events-none transition-all duration-300 ease-out z-10"
+        style={{
+          transform: `translateY(${
+            pullCurrentY > 0 ? Math.min(pullCurrentY / 2, 60) : 0
+          }px)`,
+          opacity:
+            pullCurrentY > 0 ? Math.min(pullCurrentY / PULL_THRESHOLD, 1) : 0,
+        }}
+      >
+        <div
+          className={`p-2 rounded-full bg-bg-secondary shadow-md border border-border-color flex items-center justify-center ${
+            isRefreshing ? "animate-spin" : ""
+          }`}
+        >
+          <ArrowPathIcon
+            className={`w-6 h-6 text-primary ${
+              pullCurrentY > PULL_THRESHOLD
+                ? "rotate-180 transition-transform duration-300"
+                : ""
+            }`}
+          />
+        </div>
+      </div>
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-text-primary">대회</h1>
         <button
