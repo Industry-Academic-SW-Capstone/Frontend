@@ -19,6 +19,10 @@ interface TickerState {
 
   // 소켓에서 오는 실시간 단일 업데이트용
   updateTickerFromSocket: (stockCode: string, socketData: any) => void;
+
+  // Navigation State
+  stocksView: "portfolio" | "explore" | "analysis";
+  setStocksView: (view: "portfolio" | "explore" | "analysis") => void;
 }
 
 export const useStockStore = create<TickerState>((set) => ({
@@ -59,4 +63,8 @@ export const useStockStore = create<TickerState>((set) => ({
       };
     });
   },
+  // Navigation State
+  stocksView: "portfolio" as "portfolio" | "explore" | "analysis",
+  setStocksView: (view: "portfolio" | "explore" | "analysis") =>
+    set({ stocksView: view }),
 }));

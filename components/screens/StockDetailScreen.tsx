@@ -1,7 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { MOCK_STOCK_DETAILS, MOCK_ACCOUNTS } from "@/lib/constants";
-import { StockDetailMockType } from "@/lib/types/stock";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
 import {
@@ -17,7 +15,9 @@ import {
   useAddFavorite,
   useDeleteFavorite,
 } from "@/lib/hooks/stock/useFavoriteStock";
+import { useAccountAssets } from "@/lib/hooks/useAccount";
 import Toast, { ToastType } from "@/components/ui/Toast";
+import OrderBook from "@/components/OrderBook";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -56,6 +56,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     message: "",
     type: "success",
   });
+  const [activeTab, setActiveTab] = useState<"chart" | "orderbook">("chart");
 
   const showToast = (message: string, type: ToastType = "success") => {
     setToastState({ isVisible: true, message, type });
@@ -96,11 +97,21 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     }
   };
 
-  const account = MOCK_ACCOUNTS[0];
+  const { data: accountAssets } = useAccountAssets(1); // Assuming accountId 1 for now
+  const cashBalance = accountAssets?.cash || 0;
+  const ownedStock = accountAssets?.holdings.find(
+    (h) => h.stockCode === ticker
+  );
+  const ownedQuantity = ownedStock?.quantity || 0;
 
-  const handleOpenOrderModal = (type: "buy" | "sell") => {
+  const handleOpenOrderModal = (type: "buy" | "sell", price?: number) => {
     setOrderType(type);
+    // If price is provided, we might want to set it in the modal state (not implemented in modal yet, but prepared)
     setIsOrderModalOpen(true);
+  };
+
+  const handleOrderBookPriceClick = (price: number, type: "buy" | "sell") => {
+    handleOpenOrderModal(type, price); // Open order modal
   };
 
   useEffect(() => {
@@ -203,26 +214,12 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
   return (
     <>
-      <div className="h-full flex flex-col">
-        <header className="sticky top-0 z-10 bg-bg-primary/80 backdrop-blur-sm p-4 flex items-center justify-between">
+      <div className="h-full flex flex-col bg-bg-primary">
+        <header className="sticky top-0 z-20 bg-bg-primary/95 backdrop-blur-sm p-4 pb-2 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button onClick={onBack} className="p-1">
               <ArrowLeftIcon className="w-6 h-6 text-text-primary" />
             </button>
-            <div className="flex items-center gap-2">
-              <img
-                src={generateLogo(stock)}
-                onError={(event) => {
-                  event.currentTarget.onerror = null;
-                  event.currentTarget.src = generateLogo(stock, true);
-                }}
-                alt={stock.stockName}
-                className="w-8 h-8 rounded-full bg-white object-cover"
-              />
-              <h1 className="text-xl font-bold text-text-primary">
-                {stock.stockName}
-              </h1>
-            </div>
           </div>
           <button
             onClick={handleToggleFavorite}
@@ -236,13 +233,18 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-4 pb-24">
-          <div className="pt-4 pb-8">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="px-4 pb-2 shrink-0">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-text-primary">
+                {stock.stockName}
+              </h1>
+            </div>
             <p className="text-4xl font-bold text-text-primary">
               {stock.currentPrice.toLocaleString()}원
             </p>
             <p
-              className={`text-lg font-semibold ${
+              className={`text-md font-semibold ${
                 isPositive ? "text-positive" : "text-negative"
               }`}
             >
@@ -250,64 +252,115 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
             </p>
           </div>
 
-          <StockChart
-            setChartStartPrice={setChartStartPrice}
-            stockCode={stock.stockCode}
-            isPositive={isPositive}
-          />
-          <div className="mt-8">
-            {(() => {
-              const formatMarketCap = (v: number) => {
-                //v의 단위는 현재 '억 원' 임
-                if (v >= 1e8) {
-                  return `${(v / 1e8).toFixed(2).replace(/\.00$/, "")}경원`;
-                }
-                if (v >= 1e4) {
-                  return `${(v / 1e4).toFixed(2).replace(/\.00$/, "")}조원`;
-                }
-
-                return `${v.toLocaleString()}억원`;
-              };
-
-              return (
-                <>
-                  <InfoRow
-                    label="시가총액"
-                    value={formatMarketCap(stock.marketCap)}
-                  />
-                  <InfoRow label="주가수익비율(PER)" value={stock.per} />
-                </>
-              );
-            })()}
+          {/* Tab Navigation */}
+          <div className="flex border-b border-border-color relative px-4 mt-2 shrink-0">
+            <button
+              onClick={() => setActiveTab("chart")}
+              className={`flex-1 py-3 text-center font-bold transition-colors ${
+                activeTab === "chart"
+                  ? "text-text-primary"
+                  : "text-text-tertiary"
+              }`}
+            >
+              차트
+            </button>
+            <button
+              onClick={() => setActiveTab("orderbook")}
+              className={`flex-1 py-3 text-center font-bold transition-colors ${
+                activeTab === "orderbook"
+                  ? "text-text-primary"
+                  : "text-text-tertiary"
+              }`}
+            >
+              호가
+            </button>
+            {/* Sliding Indicator */}
+            <div
+              className="absolute bottom-0 h-0.5 bg-text-primary transition-all duration-300 ease-in-out"
+              style={{
+                width: "calc(50% - 16px)", // 50% minus padding
+                left: activeTab === "chart" ? "16px" : "calc(50%)",
+              }}
+            />
           </div>
 
-          <div className="mt-8 p-4 bg-bg-secondary rounded-2xl border border-border-color">
-            <h3 className="font-bold text-lg mb-2">기업 정보</h3>
-            <p className="text-text-secondary text-sm">
-              {
-                // stock.description
-                "설명이 들어갑니다"
-              }
-            </p>
+          {/* Content Area */}
+          <div className="flex-1 overflow-y-auto relative">
+            {activeTab === "chart" ? (
+              <div className="px-4 pb-24 mt-6">
+                <StockChart
+                  setChartStartPrice={setChartStartPrice}
+                  stockCode={stock.stockCode}
+                  isPositive={isPositive}
+                />
+                <div className="mt-8">
+                  {(() => {
+                    const formatMarketCap = (v: number) => {
+                      if (v >= 1e8) {
+                        return `${(v / 1e8)
+                          .toFixed(2)
+                          .replace(/\.00$/, "")}경원`;
+                      }
+                      if (v >= 1e4) {
+                        return `${(v / 1e4)
+                          .toFixed(2)
+                          .replace(/\.00$/, "")}조원`;
+                      }
+                      return `${v.toLocaleString()}억원`;
+                    };
+
+                    return (
+                      <>
+                        <InfoRow
+                          label="시가총액"
+                          value={formatMarketCap(stock.marketCap)}
+                        />
+                        <InfoRow label="주가수익비율(PER)" value={stock.per} />
+                      </>
+                    );
+                  })()}
+                </div>
+
+                <div className="mt-8 p-4 bg-bg-secondary rounded-2xl border border-border-color">
+                  <h3 className="font-bold text-lg mb-2">기업 정보</h3>
+                  <p className="text-text-secondary text-sm">
+                    {
+                      // stock.description
+                      "설명이 들어갑니다"
+                    }
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="h-full">
+                <OrderBook
+                  stockCode={stock.stockCode}
+                  onPriceClick={handleOrderBookPriceClick}
+                />
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto p-4 bg-bg-primary border-t border-border-color">
-          <div className="flex gap-3">
-            <button
-              onClick={() => handleOpenOrderModal("sell")}
-              className="w-full py-3 bg-negative text-white font-bold rounded-lg"
-            >
-              매도
-            </button>
-            <button
-              onClick={() => handleOpenOrderModal("buy")}
-              className="w-full py-3 bg-positive text-white font-bold rounded-lg"
-            >
-              매수
-            </button>
+        {/* Bottom Buttons - Only visible in Chart tab */}
+        {activeTab === "chart" && (
+          <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto p-4 bg-bg-primary border-t border-border-color">
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleOpenOrderModal("sell")}
+                className="w-full py-3 bg-negative text-white font-bold rounded-lg"
+              >
+                매도
+              </button>
+              <button
+                onClick={() => handleOpenOrderModal("buy")}
+                className="w-full py-3 bg-positive text-white font-bold rounded-lg"
+              >
+                매수
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <OrderModal
@@ -315,7 +368,9 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         onClose={() => setIsOrderModalOpen(false)}
         stock={stock}
         orderType={orderType}
-        cashBalance={account.cashBalance}
+        cashBalance={cashBalance}
+        ownedQuantity={ownedQuantity}
+        accountId={1}
       />
       <Toast
         message={toastState.message}

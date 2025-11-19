@@ -60,7 +60,25 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  /* font-family: 'Pretendard', 'Inter', ui-sans-serif, system-ui, sans-serif; */
+  -webkit-touch-callout: none; /* iOS: 롱터치 시 팝업 메뉴(링크 복사 등) 방지 */
+  -webkit-user-select: none; /* Safari: 텍스트 선택 방지 */
+  -khtml-user-select: none; /* 구형 브라우저 호환 */
+  -moz-user-select: none; /* Firefox: 텍스트 선택 방지 */
+  -ms-user-select: none; /* IE/Edge: 텍스트 선택 방지 */
+  user-select: none; /* 표준: 텍스트 선택 방지 */
+
+  /* 모바일에서 클릭 시 번쩍거리는 하이라이트 제거 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 2. 중요: 입력창은 선택이 가능해야 함! (이거 안 하면 input 입력 불가) */
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 ::-webkit-scrollbar {

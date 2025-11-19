@@ -13,10 +13,12 @@ import {
   PopularStockCategory,
   BasicStockInfo,
   IndustriesTopStocks,
+  StockSearchResult,
 } from "@/lib/types/stock";
 import { useTopStocks } from "@/lib/hooks/stock/useTopStocks";
 import { useIndustriesTopStocks } from "@/lib/hooks/stock/useIndustriesTopStocks";
 import { useFavoriteStocks } from "@/lib/hooks/stock/useFavoriteStock";
+import { useStockSearch } from "@/lib/hooks/useStockSearch";
 import { generateLogo } from "@/lib/utils";
 import { useStockStore } from "@/lib/stores/useStockStore";
 import { useWebSocket } from "@/lib/providers/SocketProvider";
@@ -33,7 +35,8 @@ const StockRow: React.FC<{
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between p-4 rounded-xl hover:bg-border-color/50 transition-colors"
+      className="w-full flex items-center justify-between p-4 rounded-xl active:bg-border-color/50 active:scale-98 transition-all ease-in-out duration-200"
+      onTouchStart={() => {}}
     >
       <div className="flex items-center gap-3">
         <img
@@ -86,7 +89,8 @@ const PopularStockCard: React.FC<{
   return (
     <button
       onClick={onClick}
-      className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between"
+      className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between active:scale-98 transition-all ease-in-out duration-200"
+      onTouchStart={() => {}}
     >
       <div className="flex justify-center">
         <img
@@ -135,6 +139,32 @@ const StockRowSkeleton = () => (
     </div>
   </div>
 );
+
+const SearchResultRow: React.FC<{
+  result: StockSearchResult;
+  onClick: () => void;
+}> = ({ result, onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center justify-between p-4 hover:bg-bg-secondary/50 active:bg-bg-secondary rounded-xl transition-all"
+    >
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-bg-secondary flex items-center justify-center">
+          <MagnifyingGlassIcon className="w-5 h-5 text-text-secondary" />
+        </div>
+        <div>
+          <p className="font-bold text-text-primary text-left">
+            {result.stockName}
+          </p>
+          <p className="text-sm text-text-secondary text-left">
+            {result.stockCode}
+          </p>
+        </div>
+      </div>
+    </button>
+  );
+};
 
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -188,6 +218,10 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
     setSubscribeSet(Array.from(tickers));
   }, [popularStocks, industriesTopStocks, favoriteStocks]);
 
+  // Search Hook
+  const { data: searchResults, isLoading: isSearching } =
+    useStockSearch(searchTerm);
+
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (
     <div className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between items-center animate-pulse">
@@ -199,8 +233,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="relative mt-4">
+    <div className="space-y-6 relative">
+      <div className="relative mt-4 z-20">
         <input
           type="text"
           placeholder="종목명 또는 티커 검색"
@@ -210,6 +244,42 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
         />
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
       </div>
+
+      {/* Search Results Overlay */}
+      {searchTerm && (
+        <div className="absolute top-16 left-0 right-0 bg-bg-primary border border-border-color rounded-xl shadow-lg z-10 max-h-[60vh] overflow-y-auto">
+          {isSearching ? (
+            <div className="p-4 space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="w-full flex items-center gap-3 p-2 animate-pulse"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gray-200" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-1/3 bg-gray-200 rounded" />
+                    <div className="h-3 w-1/4 bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : searchResults && searchResults.length > 0 ? (
+            <div className="py-2">
+              {searchResults.map((result) => (
+                <SearchResultRow
+                  key={result.stockCode}
+                  result={result}
+                  onClick={() => onSelectStock(result.stockCode)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="p-8 text-center text-text-secondary">
+              검색 결과가 없습니다.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Popular Stocks */}
       <div className="space-y-3">
@@ -341,10 +411,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
                   onClick={() => onSelectStock(stock.stockCode)}
                 />
               ))
-            ) : searchTerm ? (
-              <div className="text-center py-8 bg-bg-secondary rounded-lg">
-                <p className="text-text-secondary">검색 결과가 없습니다.</p>
-              </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 bg-bg-secondary/30 rounded-2xl border border-dashed border-border-color">
                 <div className="w-16 h-16 bg-bg-secondary rounded-full flex items-center justify-center mb-4">

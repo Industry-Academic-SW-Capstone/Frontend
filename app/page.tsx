@@ -10,22 +10,50 @@ import StocksContainerScreen from "@/components/screens/StocksContainerScreen";
 import NotificationsScreen from "@/components/screens/NotificationsScreen";
 import AccountSwitcher from "@/components/AccountSwitcher";
 import OnboardingScreen from "@/components/screens/OnboardingScreen";
+import HomeScreenSkeleton from "@/components/screens/HomeScreenSkeleton";
+import HeaderSkeleton from "@/components/HeaderSkeleton";
 import { Screen, Account, User } from "@/lib/types/stock";
-import { MOCK_ACCOUNTS, MOCK_USER } from "@/lib/constants";
+import { MOCK_USER } from "@/lib/constants";
 import {
   getUnreadCount,
   getStoredNotifications,
   saveNotification,
 } from "@/lib/services/notificationService";
 import { MOCK_NOTIFICATIONS } from "@/lib/constants";
+import { useAccounts } from "@/lib/hooks/useAccounts";
+import { useAccountStore } from "@/lib/store/useAccountStore";
+import { useFetchInfo } from "@/lib/hooks/me/useInfo";
+import { useAuthStore } from "@/lib/stores/useAuthStore";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<Screen>("home");
-  const [selectedAccount, setSelectedAccount] = useState<Account>(
-    MOCK_ACCOUNTS[0]
-  );
-  const [user, setUser] = useState<User>(MOCK_USER);
+
+  // Use global store for accounts
+  const token = useAuthStore((state) => state.token);
+  const { selectedAccount, setSelectedAccount, accounts } = useAccountStore();
+  const { isLoading: isAccountsLoading } = useAccounts({ enabled: !!token });
+
+  // Use hook for user info
+  const { data: userInfo, isLoading: isUserLoading } = useFetchInfo({
+    enabled: !!token,
+  });
+
+  // Transform userInfo to match User interface if necessary, or use directly if compatible
+  // Assuming userInfo matches or we map it.
+  // The User interface in types/stock.ts: { username, avatar, title, group: { id, name, averageReturn } }
+  // The SignUpResponse (userInfo) might be different. Let's check types later.
+  // For now, we'll assume we need to map or it matches partially.
+  // Let's use a default user if loading or not found for safety during transition.
+  const user: User = userInfo
+    ? {
+        username: userInfo.name,
+        avatar: userInfo.profileImage,
+        title: "초보 투자자", // Mock or derive from data
+        group: { id: "1", name: "새싹 투자자", averageReturn: 0 }, // Mock or derive
+      }
+    : MOCK_USER;
+
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAccountSwitcherOpen, setIsAccountSwitcherOpen] = useState(false);
   const [isStocksViewActive, setIsStocksViewActive] = useState(false);
@@ -72,6 +100,13 @@ export default function Home() {
     }
   }, [isDarkMode]);
 
+  // Check login status based on user info availability or token
+  useEffect(() => {
+    if (userInfo) {
+      setIsLoggedIn(true);
+    }
+  }, [userInfo]);
+
   const handleSetCurrentScreen = (screen: Screen) => {
     if (screen === "stocks") {
       setIsStocksViewActive(true);
@@ -85,13 +120,9 @@ export default function Home() {
     setIsStocksViewActive(false);
   };
 
-  const handleSelectAccount = (account: Account) => {
-    setSelectedAccount(account);
-    setIsAccountSwitcherOpen(false);
-  };
-
   const handleLoginSuccess = (newUser: Partial<User>) => {
-    setUser((prevUser) => ({ ...prevUser, ...newUser }));
+    // Refetch user info or handle login success
+    // For now, just set logged in
     setIsLoggedIn(true);
   };
 
@@ -110,15 +141,61 @@ export default function Home() {
     }
   };
 
-  if (!isLoggedIn) {
+  // Initial token check to avoid waiting for useFetchInfo if no token exists
+  useEffect(() => {
+    if (!token) {
+      setIsLoggedIn(false);
+    } else {
+      // If token exists, we assume logged in until 401 happens or user info loads
+      setIsLoggedIn(true);
+    }
+  }, [token]);
+
+  // If not logged in and not loading (or if we know there's no token), show Onboarding
+  if (!token && !isLoggedIn) {
     return <OnboardingScreen onLoginSuccess={handleLoginSuccess} />;
   }
+
+  if ((!isLoggedIn || !userInfo) && !isUserLoading && !token) {
+    return <OnboardingScreen onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  // Show loading if data is loading and we have a token (so we expect data)
+  if ((isAccountsLoading || isUserLoading) && token) {
+    return (
+      <div className="max-w-md mx-auto bg-bg-primary text-text-primary min-h-screen font-sans relative overflow-hidden">
+        <HeaderSkeleton />
+        <main className="h-screen p-4 pt-20">
+          <HomeScreenSkeleton />
+        </main>
+        <BottomNavBar
+          currentScreen={currentScreen}
+          setCurrentScreen={handleSetCurrentScreen}
+          isStocksActive={isStocksViewActive}
+        />
+      </div>
+    );
+  }
+
+  const currentAccount: Account = selectedAccount || {
+    id: 1,
+    memberId: 1,
+    contestId: 1,
+    name: "urous3814 기본계좌",
+    type: "regular",
+    totalValue: 1000000,
+    cashBalance: 1000000,
+    change: 0,
+    changePercent: 0,
+    isDefault: true,
+    chartData: [],
+  };
 
   return (
     <>
       <div className="max-w-md mx-auto bg-bg-primary text-text-primary min-h-screen font-sans relative overflow-hidden">
         <Header
-          selectedAccount={selectedAccount}
+          selectedAccount={currentAccount}
           user={user}
           onAccountSwitch={() => setIsAccountSwitcherOpen(true)}
           onNotificationClick={() => setIsNotificationsOpen(true)}
@@ -127,12 +204,12 @@ export default function Home() {
 
         <main className="h-screen">
           <MainSwiper
-            selectedAccount={selectedAccount}
+            selectedAccount={currentAccount}
             user={user}
             isDarkMode={isDarkMode}
             setIsDarkMode={setIsDarkMode}
             currentScreen={currentScreen}
-            onSlideChange={setCurrentScreen}
+            onSlideChange={handleSetCurrentScreen}
           />
         </main>
 
@@ -150,9 +227,6 @@ export default function Home() {
         <AccountSwitcher
           isOpen={isAccountSwitcherOpen}
           onClose={() => setIsAccountSwitcherOpen(false)}
-          accounts={MOCK_ACCOUNTS}
-          selectedAccount={selectedAccount}
-          onSelect={handleSelectAccount}
         />
 
         {/* 알림 화면 - 오른쪽에서 슬라이딩 */}

@@ -1,30 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import {
-  MOCK_LEADERBOARD,
-  MOCK_COMPETITION_LEADERBOARD,
-  MOCK_AI_LEADERBOARD,
-  MOCK_RIVAL_LEADERBOARD,
-  MOCK_GROUP_LEADERBOARD,
-  MOCK_USER,
-} from "@/lib/constants";
-import {
-  LeaderboardEntry,
-  Account,
-  User,
-  AIPersonaLeaderboardEntry,
-} from "@/lib/types/stock";
+import { Account, User, RankingEntry } from "@/lib/types/stock";
 import UserProfileModal from "@/components/UserProfileModal";
 import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
-  TrophyIcon,
-  UsersIcon,
-  CpuChipIcon,
-  BuildingOffice2Icon,
 } from "@/components/icons/Icons";
-
-type RankView = "overall" | "rivals" | "ai" | "group";
+import { useRanking, useMyRanking } from "@/lib/hooks/useRanking";
 
 const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
   change,
@@ -37,90 +19,77 @@ const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
 };
 
 interface LeaderboardRowProps {
-  entry: LeaderboardEntry;
+  entry: RankingEntry;
   isMe: boolean;
   onClick: () => void;
+  showReturnRate: boolean;
 }
 
 const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
   entry,
   isMe,
   onClick,
+  showReturnRate,
 }) => {
-  const isAI = "personaName" in entry;
   return (
     <button
       onClick={onClick}
       disabled={isMe}
-      className={`w-full flex items-center p-4 rounded-2xl text-left transition-all duration-300 card-hover overflow-hidden relative group ${
-        isMe
-          ? "bg-primary/10 border-2 border-primary shadow-lg"
-          : "bg-bg-secondary hover:bg-primary/5 border border-border-color"
+      className={`w-full flex items-center px-5 py-4 text-left transition-colors duration-200 ${
+        isMe ? "bg-blue-50/50" : "hover:bg-gray-50"
       }`}
     >
-      {/* Shimmer effect on hover */}
-      {!isMe && (
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer" />
-      )}
-
-      {/* Rank number with special styling for top 3 */}
+      {/* Rank number */}
       <div
-        className={`w-10 text-center text-xl font-extrabold relative z-10 ${
-          entry.rank === 1
-            ? "text-yellow-500"
-            : entry.rank === 2
-            ? "text-gray-400"
-            : entry.rank === 3
-            ? "text-orange-600"
-            : "text-text-secondary"
+        className={`w-8 text-center text-lg font-bold ${
+          entry.rank <= 3 ? "text-blue-500" : "text-gray-400"
         }`}
       >
-        {entry.rank <= 3 ? "🏆" : entry.rank}
+        {entry.rank}
       </div>
 
-      <div className="flex items-center gap-3 flex-1 ml-4 relative z-10">
-        <div className="relative">
-          <img
-            src={entry.avatar}
-            alt={entry.username}
-            className={`w-14 h-14 rounded-full transition-all duration-300 group-hover:scale-110 ${
-              entry.rank <= 3 ? "ring-4 ring-primary/50" : ""
-            }`}
-          />
-          {entry.rank <= 3 && (
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg">
-              {entry.rank}
-            </div>
-          )}
+      <div className="flex items-center gap-4 flex-1 ml-4">
+        {/* Avatar Placeholder */}
+        <div
+          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+            isMe ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+          }`}
+        >
+          {entry.nickname[0]}
         </div>
 
         <div className="flex-1">
-          <p
-            className={`font-bold text-lg mb-0.5 transition-colors duration-300 ${
-              isMe
-                ? "text-primary"
-                : "text-text-primary group-hover:text-primary"
-            }`}
-          >
-            {entry.username}
-          </p>
           <div className="flex items-center gap-2">
-            <p className="text-sm text-text-secondary font-medium">
-              {isAI
-                ? (entry as AIPersonaLeaderboardEntry).personaName
-                : `수익률 ${entry.returnRate.toFixed(1)}%`}
+            <p
+              className={`font-bold text-base ${
+                isMe ? "text-blue-600" : "text-gray-900"
+              }`}
+            >
+              {entry.nickname}
             </p>
-            {entry.isRival && (
-              <span className="text-xs font-bold bg-secondary text-white px-2.5 py-0.5 rounded-full shadow-md animate-pulse">
-                라이벌
+            {isMe && (
+              <span className="text-[10px] font-bold bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">
+                ME
               </span>
             )}
           </div>
+          {showReturnRate && (
+            <p
+              className={`text-sm font-medium mt-0.5 ${
+                entry.returnRate >= 0 ? "text-red-500" : "text-blue-500"
+              }`}
+            >
+              {entry.returnRate > 0 ? "+" : ""}
+              {entry.returnRate}%
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="w-10 flex justify-center relative z-10 transition-transform duration-300 group-hover:scale-125">
-        <RankChange change={entry.change} />
+      <div className="text-right">
+        <p className="font-bold text-gray-900 text-base">
+          {Number(entry.balance).toLocaleString()}원
+        </p>
       </div>
     </button>
   );
@@ -135,16 +104,15 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
   selectedAccount,
   user,
 }) => {
-  const [view, setView] = useState<RankView>("overall");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<LeaderboardEntry | null>(
-    null
-  );
+  const [selectedUser, setSelectedUser] = useState<RankingEntry | null>(null);
+  const { data: rankingData, isLoading: isRankingLoading } = useRanking();
+  const { data: myRankingData, isLoading: isMyRankingLoading } = useMyRanking();
 
-  const isCompetition = selectedAccount.type === "competition";
+  const isRegularAccount = selectedAccount.type === "regular";
 
-  const handleOpenProfile = (entry: LeaderboardEntry) => {
-    if (entry.username === MOCK_USER.username) return;
+  const handleOpenProfile = (entry: RankingEntry) => {
+    if (myRankingData && entry.memberId === selectedAccount.memberId) return;
     setSelectedUser(entry);
     setIsModalOpen(true);
   };
@@ -154,108 +122,119 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
     setSelectedUser(null);
   };
 
-  const getLeaderboard = () => {
-    switch (view) {
-      case "overall":
-        return isCompetition ? MOCK_COMPETITION_LEADERBOARD : MOCK_LEADERBOARD;
-      case "rivals":
-        return MOCK_RIVAL_LEADERBOARD;
-      case "ai":
-        return MOCK_AI_LEADERBOARD;
-      case "group":
-        return MOCK_GROUP_LEADERBOARD;
-      default:
-        return MOCK_LEADERBOARD;
-    }
-  };
-
-  const getTitle = () => {
-    if (isCompetition) return "대회 랭킹";
-    switch (view) {
-      case "overall":
-        return "종합 랭킹";
-      case "rivals":
-        return "라이벌 비교";
-      case "ai":
-        return "AI 페르소나 비교";
-      case "group":
-        return `${user.group.name} 랭킹`;
-      default:
-        return "랭킹";
-    }
-  };
-
-  const tabs = [
-    { id: "overall", label: "종합", icon: TrophyIcon },
-    { id: "rivals", label: "라이벌", icon: UsersIcon },
-    { id: "ai", label: "AI 비교", icon: CpuChipIcon },
-    { id: "group", label: "그룹", icon: BuildingOffice2Icon },
-  ];
-
-  const leaderboard = getLeaderboard();
+  if (isRankingLoading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div className="space-y-6">
-        {!isCompetition && (
-          <div className="flex bg-bg-secondary p-1.5 rounded-2xl shadow-lg border border-border-color animate-fadeInScale">
-            {tabs.map((tab, index) => (
-              <button
-                key={tab.id}
-                onClick={() => setView(tab.id as RankView)}
-                className={`w-1/4 py-3 text-xs font-bold rounded-xl transition-all duration-300 flex flex-col items-center gap-1 relative overflow-hidden ${
-                  view === tab.id
-                    ? "bg-primary text-white shadow-lg transform scale-[1.05]"
-                    : "text-text-secondary hover:text-text-primary hover:bg-bg-primary/50"
-                }`}
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                {view === tab.id && (
-                  <div className="absolute inset-0 animate-shimmer" />
-                )}
-                <tab.icon
-                  className={`w-5 h-5 relative z-10 transition-transform duration-300 ${
-                    view === tab.id ? "scale-110" : ""
-                  }`}
-                />
-                <span className="relative z-10">{tab.label}</span>
-              </button>
-            ))}
-          </div>
-        )}
+      <div className="space-y-6 pb-10">
+        {/* My Ranking Summary */}
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-500 to-blue-600 p-7 shadow-lg shadow-blue-200 transition-transform hover:scale-[1.01] active:scale-[0.99]">
+          {/* Background Patterns */}
+          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-blue-400/20 blur-2xl" />
 
-        {view === "group" && !isCompetition && (
-          <div className="text-center p-5 bg-bg-secondary rounded-2xl shadow-lg border border-border-color card-hover animate-fadeInScale">
-            <p className="text-text-secondary font-medium mb-1">
-              {user.group.name} 평균 수익률
-            </p>
-            <p className="font-extrabold text-3xl text-positive">
-              +{user.group.averageReturn}%
-            </p>
-          </div>
-        )}
-
-        <div className="space-y-3">
-          {leaderboard.map((entry, index) => (
-            <div
-              key={entry.rank + entry.username}
-              className="animate-fadeInUp"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <LeaderboardRow
-                entry={entry}
-                isMe={entry.username === MOCK_USER.username}
-                onClick={() => handleOpenProfile(entry)}
-              />
+          {isMyRankingLoading ? (
+            <div className="animate-pulse space-y-4">
+              <div className="flex justify-between">
+                <div className="h-4 w-20 bg-white/20 rounded"></div>
+                <div className="h-4 w-16 bg-white/20 rounded"></div>
+              </div>
+              <div className="h-8 w-32 bg-white/20 rounded"></div>
+              <div className="h-12 w-full bg-white/10 rounded-2xl"></div>
             </div>
-          ))}
+          ) : myRankingData ? (
+            <div className="relative z-10">
+              <div className="mb-6 flex items-start justify-between">
+                <div>
+                  <p className="mb-1 text-sm font-medium text-blue-100">
+                    내 순위
+                  </p>
+                  <div className="flex items-baseline gap-1">
+                    <h2 className="text-4xl font-extrabold text-white">
+                      {myRankingData.balanceRank}
+                    </h2>
+                    <span className="text-lg font-medium text-blue-100">
+                      위
+                    </span>
+                  </div>
+                </div>
+                {!isRegularAccount && (
+                  <div className="text-right">
+                    <p className="mb-1 text-sm font-medium text-blue-100">
+                      수익률
+                    </p>
+                    <h2 className="text-2xl font-bold text-white">
+                      {myRankingData.myReturnRate}%
+                    </h2>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between rounded-2xl bg-white/10 px-5 py-4 backdrop-blur-md">
+                <span className="font-medium text-blue-50">현재 자산</span>
+                <span className="text-xl font-bold text-white">
+                  {Number(myRankingData.myBalance).toLocaleString()}원
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="relative z-10 flex flex-col items-center justify-center py-4 text-white/80">
+              <p>내 랭킹 정보를 불러올 수 없습니다.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Ranking List */}
+        <div className="space-y-0">
+          <div className="px-2 py-2 text-sm font-semibold text-gray-500">
+            전체 랭킹
+          </div>
+          <div className="overflow-hidden rounded-[1.5rem] border border-gray-100 bg-white shadow-sm">
+            {rankingData?.rankings.map((entry, index) => (
+              <div
+                key={entry.rank + entry.nickname}
+                className={`border-b border-gray-50 last:border-none ${
+                  index < 10 ? "animate-fadeInUp" : ""
+                }`}
+                style={{ animationDelay: `${index * 30}ms` }}
+              >
+                <LeaderboardRow
+                  entry={entry}
+                  isMe={entry.memberId === selectedAccount.memberId}
+                  onClick={() => handleOpenProfile(entry)}
+                  showReturnRate={!isRegularAccount}
+                />
+              </div>
+            ))}
+            {rankingData?.rankings.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+                <div className="mb-2 text-4xl">📉</div>
+                <p>랭킹 데이터가 없습니다.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <UserProfileModal
+      {/* <UserProfileModal
         isOpen={isModalOpen}
         onClose={handleCloseProfile}
-        user={selectedUser}
-      />
+        user={
+          selectedUser
+            ? {
+                username: selectedUser.nickname,
+                avatar: "", // Placeholder
+                title: "Novice Investor", // Placeholder
+                group: { id: "1", name: "General", averageReturn: 0 }, // Placeholder
+              }
+            : null
+        }
+      /> */}
     </>
   );
 };

@@ -1,3 +1,5 @@
+import defaultClient from "@/lib/api/axiosClient";
+import { clearAuthToken } from "@/lib/stores/useAuthStore";
 import { useState } from "react";
 
 interface UseLogoutResult {
@@ -14,21 +16,13 @@ export const useLogout = (): UseLogoutResult => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/members/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      // const response = await defaultClient.post("/members/logout");
+      // if (response.status !== 200) {
+      //   throw new Error("Logout failed");
+      // }
 
-      if (!response.ok) {
-        throw new Error("Logout failed");
-      }
-
-      // Optional: Clear local storage or state if needed
-      // localStorage.removeItem("accessToken");
-
-      // Redirect to login or landing page if handled by the component or global state
+      clearAuthToken();
+      window.location.href = "/";
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An unknown error occurred"

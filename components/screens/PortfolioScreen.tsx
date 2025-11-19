@@ -19,6 +19,10 @@ import {
   useCancelOrder,
   PendingOrder,
 } from "@/lib/hooks/useOrders";
+import { Drawer } from "vaul";
+import OrderDetailModal from "@/components/OrderDetailModal";
+import { useQueryClient } from "@tanstack/react-query";
+import { ArrowPathIcon } from "@/components/icons/Icons";
 
 interface PortfolioScreenProps {
   onSelectStock: (ticker: string) => void;
@@ -106,128 +110,6 @@ const PendingOrderRow: React.FC<{
   );
 };
 
-const OrderDetailModal: React.FC<{
-  orderId: number | null;
-  onClose: () => void;
-}> = ({ orderId, onClose }) => {
-  const { data: order, isLoading } = useOrderDetail(orderId);
-  const { mutate: cancelOrder, isPending: isCancelling } = useCancelOrder();
-
-  if (!orderId) return null;
-
-  const handleCancel = () => {
-    if (confirm("주문을 취소하시겠습니까?")) {
-      cancelOrder(orderId, {
-        onSuccess: () => {
-          onClose();
-        },
-        onError: () => {
-          alert("주문 취소에 실패했습니다.");
-        },
-      });
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-bg-primary w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-6 relative shadow-2xl animate-in slide-in-from-bottom-10 duration-300">
-        <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-2 sm:hidden" />
-
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-bold text-text-primary">주문 상세</h3>
-          <button
-            onClick={onClose}
-            className="p-2 -mr-2 text-text-secondary hover:bg-bg-secondary rounded-full transition-colors"
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
-        </div>
-
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        ) : order ? (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4 pb-6 border-b border-border-color">
-              <img
-                src={generateLogo({
-                  stockCode: order.stockCode,
-                  marketType: "KOSPI", // Defaulting as type info might be missing in detail
-                })}
-                alt=""
-                className="w-14 h-14 rounded-full bg-gray-50 object-cover"
-              />
-              <div>
-                <h4 className="text-xl font-bold text-text-primary">
-                  {order.stockCode}
-                </h4>
-                <p className="text-text-secondary text-sm">{order.stockCode}</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex justify-between items-center py-1">
-                <span className="text-text-secondary">주문 유형</span>
-                <span
-                  className={`font-bold ${
-                    order.orderMethod === "BUY"
-                      ? "text-positive"
-                      : "text-negative"
-                  }`}
-                >
-                  {order.orderMethod === "BUY" ? "매수" : "매도"} /{" "}
-                  {order.orderType === "MARKET" ? "시장가" : "지정가"}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-text-secondary">주문 가격</span>
-                <span className="font-bold text-text-primary">
-                  {order.price > 0
-                    ? `${order.price.toLocaleString()}원`
-                    : "시장가"}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-text-secondary">주문 수량</span>
-                <span className="font-bold text-text-primary">
-                  {order.quantity}주
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-text-secondary">미체결</span>
-                <span className="font-bold text-text-primary">
-                  {order.remainingQuantity}주
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-text-secondary">주문 시간</span>
-                <span className="font-medium text-text-primary text-sm">
-                  {new Date(order.createdAt).toLocaleString()}
-                </span>
-              </div>
-            </div>
-
-            <div className="pt-4">
-              <button
-                onClick={handleCancel}
-                disabled={isCancelling}
-                className="w-full py-4 rounded-2xl bg-bg-secondary text-negative font-bold text-lg hover:bg-negative/10 transition-colors disabled:opacity-50"
-              >
-                {isCancelling ? "취소 중..." : "주문 취소하기"}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-8 text-text-secondary">
-            주문 정보를 불러올 수 없습니다.
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
   onSelectStock,
   onNavigateToExplore,
@@ -235,9 +117,48 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
   const accountId = 1;
   const { data: assets, isLoading: isAssetsLoading } =
     useAccountAssets(accountId);
-  const { data: pendingOrdersData } = usePendingOrders(accountId);
+  const { data: pendingOrdersData } = usePendingOrders();
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
-  const [isChartOpen, setIsChartOpen] = useState(true);
+  const [isChartOpen, setIsChartOpen] = useState(false);
+
+  // Pull to Refresh State
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullStartY, setPullStartY] = useState(0);
+  const [pullCurrentY, setPullCurrentY] = useState(0);
+  const PULL_THRESHOLD = 80;
+  const queryClient = useQueryClient();
+
+  // Pull to Refresh Handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const scrollContainer = e.currentTarget.closest(".overflow-y-auto");
+    if (scrollContainer && scrollContainer.scrollTop === 0) {
+      setPullStartY(e.touches[0].clientY);
+    } else if (!scrollContainer && window.scrollY === 0) {
+      setPullStartY(e.touches[0].clientY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const currentY = e.touches[0].clientY;
+    if (pullStartY > 0 && currentY > pullStartY) {
+      setPullCurrentY(currentY - pullStartY);
+    }
+  };
+
+  const handleTouchEnd = async () => {
+    if (pullCurrentY > PULL_THRESHOLD) {
+      setIsRefreshing(true);
+      try {
+        await queryClient.invalidateQueries();
+      } catch (error) {
+        console.error("Refresh failed", error);
+      } finally {
+        setIsRefreshing(false);
+      }
+    }
+    setPullStartY(0);
+    setPullCurrentY(0);
+  };
 
   if (isAssetsLoading) {
     return (
@@ -267,7 +188,37 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
     totalInvested > 0 ? (totalReturn / totalInvested) * 100 : 0;
 
   return (
-    <div className="space-y-8 pb-10">
+    <div
+      className="space-y-6 pb-10 relative min-h-full"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Pull to Refresh Indicator */}
+      <div
+        className="absolute top-0 left-0 w-full flex justify-center pointer-events-none transition-all duration-300 ease-out z-10"
+        style={{
+          transform: `translateY(${
+            pullCurrentY > 0 ? Math.min(pullCurrentY / 2, 60) : 0
+          }px)`,
+          opacity:
+            pullCurrentY > 0 ? Math.min(pullCurrentY / PULL_THRESHOLD, 1) : 0,
+        }}
+      >
+        <div
+          className={`p-2 rounded-full bg-bg-secondary shadow-md border border-border-color flex items-center justify-center ${
+            isRefreshing ? "animate-spin" : ""
+          }`}
+        >
+          <ArrowPathIcon
+            className={`w-6 h-6 text-primary ${
+              pullCurrentY > PULL_THRESHOLD
+                ? "rotate-180 transition-transform duration-300"
+                : ""
+            }`}
+          />
+        </div>
+      </div>
       {/* Header Section */}
       <div className="px-2 pt-4 space-y-1">
         <h2 className="text-text-secondary font-medium text-lg">총 자산</h2>
@@ -291,12 +242,12 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       </div>
 
       {/* Chart Section */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 transition-all duration-300">
+      <div className="p-2 transition-all duration-300">
         <button
           onClick={() => setIsChartOpen(!isChartOpen)}
           className="w-full flex justify-between items-center group"
         >
-          <h3 className="text-lg font-bold text-text-primary">
+          <h3 className="text-xl font-bold text-text-primary">
             포트폴리오 구성
           </h3>
           <div
@@ -335,7 +286,7 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-gray-50 rounded-3xl">
+          <div className="text-center py-3 bg-gray-50 rounded-3xl">
             <p className="text-text-secondary mb-4">보유한 주식이 없어요</p>
             <button
               onClick={onNavigateToExplore}

@@ -55,10 +55,19 @@ const cancelOrder = async (orderId: number): Promise<OrderDetail> => {
   return response.data;
 };
 
-export const usePendingOrders = (accountId: number = 1) => {
+import { useAccountStore } from "@/lib/store/useAccountStore";
+
+export const usePendingOrders = () => {
+  const { selectedAccount } = useAccountStore();
+  const accountId = selectedAccount?.id;
+
   return useQuery({
     queryKey: ["pendingOrders", accountId],
-    queryFn: () => fetchPendingOrders(accountId),
+    queryFn: () => {
+      if (!accountId) throw new Error("No account selected");
+      return fetchPendingOrders(accountId);
+    },
+    enabled: !!accountId,
   });
 };
 

@@ -80,7 +80,10 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
     >
       <SwiperSlide>
         <div className="h-full overflow-y-auto px-4 pb-28 pt-20">
-          <HomeScreen selectedAccount={selectedAccount} />
+          <HomeScreen
+            selectedAccount={selectedAccount}
+            onNavigate={onSlideChange}
+          />
         </div>
       </SwiperSlide>
 

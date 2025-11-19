@@ -1,25 +1,23 @@
 "use client";
 
 import React from "react";
-import { Account } from "@/lib/types/stock";
 import { CheckCircleIcon, XMarkIcon } from "./icons/Icons";
 import { Drawer } from "vaul";
+import { useAccountStore } from "@/lib/store/useAccountStore";
 
 interface AccountSwitcherProps {
   isOpen: boolean;
   onClose: () => void;
-  accounts: Account[];
-  selectedAccount: Account;
-  onSelect: (account: Account) => void;
 }
 
 const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
   isOpen,
   onClose,
-  accounts,
-  selectedAccount,
-  onSelect,
 }) => {
+  const { accounts, selectedAccount, setSelectedAccount } = useAccountStore();
+
+  if (!selectedAccount) return null;
+
   return (
     <Drawer.Root
       open={isOpen}
@@ -48,7 +46,7 @@ const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
               <button
                 key={account.id}
                 onClick={() => {
-                  onSelect(account);
+                  setSelectedAccount(account);
                   onClose();
                 }}
                 className={`w-full flex items-center justify-between p-4 rounded-xl text-left transition-colors ${

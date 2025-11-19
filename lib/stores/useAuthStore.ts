@@ -5,6 +5,7 @@ interface AuthState {
   token: string | null;
   setToken: (token: string) => void;
   clearToken: () => void;
+  isAuthenticated: () => boolean;
 }
 
 /**
@@ -13,16 +14,20 @@ interface AuthState {
  */
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       token: null,
       setToken: (token: string) => {
         set({ token });
       },
       clearToken: () => {
         set({ token: null });
-        // [중요] React-query 캐시도 여기서 비워주는 것이 좋습니다.
-        // 예: queryClient.clear(); 또는 queryClient.removeQueries();
+        try {
+          localStorage.removeItem("auth-token");
+        } catch (e) {
+          console.error("Failed to remove token from storage", e);
+        }
       },
+      isAuthenticated: () => !!get().token,
     }),
     {
       name: "auth-token", // localStorage에 저장될 키 이름
@@ -33,6 +38,7 @@ export const useAuthStore = create<AuthState>()(
 
 // [중요] Axios 인터셉터 등 React 외부에서 스토어 상태를 읽기 위한 non-hook getter
 export const getAuthToken = () => useAuthStore.getState().token;
+export const isAuthenticated = () => !!useAuthStore.getState().token;
 
 // [중요] 401 에러 발생 시 React 외부에서 호출할 로그아웃 함수
 export const clearAuthToken = () => useAuthStore.getState().clearToken();

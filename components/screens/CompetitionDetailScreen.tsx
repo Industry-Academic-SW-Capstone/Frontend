@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { Competition } from "@/lib/types/stock";
+import React, { useState } from "react";
+import { Competition, UpdateCompetitionRequest } from "@/lib/types/stock";
 import {
   XMarkIcon,
   CalendarIcon,
@@ -10,7 +10,14 @@ import {
   ClockIcon,
   ChartBarIcon,
   CheckCircleIcon,
+  PencilIcon,
+  TrashIcon,
 } from "@/components/icons/Icons";
+import { useCompetitionJoin } from "@/lib/hooks/competition/useCompetitionJoin";
+import { useCompetitionAdmin } from "@/lib/hooks/competition/useCompetitionAdmin";
+import { useAccountStore } from "@/lib/store/useAccountStore";
+import { Drawer } from "vaul";
+import Portal from "@/components/Portal";
 
 interface CompetitionDetailScreenProps {
   competition: Competition;
@@ -23,12 +30,52 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
   onClose,
   onJoin,
 }) => {
+  const { selectedAccount } = useAccountStore();
+  const [accountName, setAccountName] = useState("");
+  const [isJoinDrawerOpen, setIsJoinDrawerOpen] = useState(false);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+
+  // Admin Form State
+  const [editForm, setEditForm] = useState<UpdateCompetitionRequest>({
+    contestName: competition.contestName,
+    startDate: competition.startDate,
+    endDate: competition.endDate,
+    seedMoney: competition.seedMoney,
+    commissionRate: competition.commissionRate,
+    minMarketCap: competition.minMarketCap,
+    maxMarketCap: competition.maxMarketCap,
+    dailyTradeLimit: competition.dailyTradeLimit,
+    maxHoldingsCount: competition.maxHoldingsCount,
+    buyCooldownMinutes: competition.buyCooldownMinutes,
+    sellCooldownMinutes: competition.sellCooldownMinutes,
+  });
+
+  const { mutate: joinCompetition, isPending: isJoining } = useCompetitionJoin({
+    contestId: competition.contestId,
+    onSuccess: () => {
+      setIsJoinDrawerOpen(false);
+      onJoin(); // Refresh parent or just close
+      // Ideally we should show a success toast here
+    },
+  });
+
+  const { updateCompetition, isUpdating, deleteCompetition, isDeleting } =
+    useCompetitionAdmin({
+      contestId: competition.contestId,
+      onSuccess: () => {
+        setIsEditDrawerOpen(false);
+        onClose(); // Close detail screen on delete/update (or refresh)
+      },
+    });
+
   const now = new Date();
   const start = new Date(competition.startDate);
   const end = new Date(competition.endDate);
   const isActive = now >= start && now <= end;
   const isUpcoming = now < start;
   const isFinished = now > end;
+
+  const isAdmin = selectedAccount?.memberId === competition.managerMemberId;
 
   const statusText = isUpcoming
     ? "대회 시작 전"
@@ -41,16 +88,50 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
     ? "text-positive"
     : "text-text-secondary";
 
+  const handleJoin = () => {
+    if (!accountName.trim()) return;
+    joinCompetition({ accountName });
+  };
+
+  const handleDelete = () => {
+    if (confirm("정말로 이 대회를 삭제하시겠습니까?")) {
+      deleteCompetition();
+    }
+  };
+
+  const handleUpdate = () => {
+    updateCompetition(editForm);
+  };
+
   return (
     <div className="h-full bg-bg-primary flex flex-col relative">
       {/* Header Image / Gradient Area */}
       <div className="h-48 bg-gradient-to-br from-primary/20 to-accent/20 relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/30 rounded-full text-white transition-colors backdrop-blur-sm"
+          className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/30 rounded-full text-white transition-colors backdrop-blur-sm z-10"
         >
           <XMarkIcon className="w-6 h-6" />
         </button>
+
+        {isAdmin && (
+          <div className="absolute top-4 left-4 flex gap-2 z-10">
+            <button
+              onClick={() => setIsEditDrawerOpen(true)}
+              className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors backdrop-blur-sm"
+            >
+              <PencilIcon className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-full text-red-500 transition-colors backdrop-blur-sm"
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
         <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-bg-primary to-transparent">
           <span
             className={`inline-block px-3 py-1 rounded-full text-xs font-bold bg-bg-primary/80 backdrop-blur-md mb-2 ${statusColor}`}
@@ -156,7 +237,7 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
       {/* Bottom Action Button */}
       <div className="p-4 border-t border-border-color bg-bg-primary safe-area-bottom">
         <button
-          onClick={onJoin}
+          onClick={() => setIsJoinDrawerOpen(true)}
           disabled={competition.isJoined || isFinished}
           className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-lg ${
             competition.isJoined
@@ -178,6 +259,197 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
           )}
         </button>
       </div>
+
+      {/* Join Drawer */}
+      <Drawer.Root open={isJoinDrawerOpen} onOpenChange={setIsJoinDrawerOpen}>
+        <Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-100" />
+          <Drawer.Content className="bg-bg-primary flex flex-col rounded-t-[10px] h-[40%] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none">
+            <div className="p-4 bg-bg-primary rounded-t-[10px] flex-1">
+              <div className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300 mb-8" />
+              <div className="max-w-md mx-auto">
+                <Drawer.Title className="font-bold text-xl mb-4 text-text-primary">
+                  대회 참가 계좌 만들기
+                </Drawer.Title>
+                <p className="text-text-secondary mb-6">
+                  이 대회에서 사용할 계좌의 별칭을 입력해주세요.
+                </p>
+                <input
+                  type="text"
+                  value={accountName}
+                  onChange={(e) => setAccountName(e.target.value)}
+                  placeholder="예: 우승가자"
+                  className="w-full p-4 rounded-xl bg-bg-secondary border border-border-color focus:border-primary focus:ring-1 focus:ring-primary outline-none text-text-primary mb-4"
+                  autoFocus
+                />
+                <button
+                  onClick={handleJoin}
+                  disabled={!accountName.trim() || isJoining}
+                  className="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isJoining ? "참가 처리 중..." : "참가 완료"}
+                </button>
+              </div>
+            </div>
+          </Drawer.Content>
+        </Portal>
+      </Drawer.Root>
+
+      {/* Edit Drawer */}
+      <Drawer.Root open={isEditDrawerOpen} onOpenChange={setIsEditDrawerOpen}>
+        <Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-100" />
+          <Drawer.Content className="bg-bg-primary flex flex-col rounded-t-[10px] h-[85%] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none">
+            <div className="p-4 bg-bg-primary rounded-t-[10px] flex-1 overflow-y-auto">
+              <div className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300 mb-8" />
+              <div className="max-w-md mx-auto space-y-4 pb-8">
+                <Drawer.Title className="font-bold text-xl mb-4 text-text-primary">
+                  대회 정보 수정
+                </Drawer.Title>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    대회명
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.contestName}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, contestName: e.target.value })
+                    }
+                    className="w-full p-3 rounded-lg bg-bg-secondary border border-border-color"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-1">
+                      시작일
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={editForm.startDate.slice(0, 16)}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, startDate: e.target.value })
+                      }
+                      className="w-full p-3 rounded-lg bg-bg-secondary border border-border-color"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-1">
+                      종료일
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={editForm.endDate.slice(0, 16)}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, endDate: e.target.value })
+                      }
+                      className="w-full p-3 rounded-lg bg-bg-secondary border border-border-color"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    시드머니
+                  </label>
+                  <input
+                    type="number"
+                    value={editForm.seedMoney}
+                    onChange={(e) =>
+                      setEditForm({
+                        ...editForm,
+                        seedMoney: Number(e.target.value),
+                      })
+                    }
+                    className="w-full p-3 rounded-lg bg-bg-secondary border border-border-color"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-1">
+                      수수료율
+                    </label>
+                    <input
+                      type="number"
+                      step="0.0001"
+                      value={editForm.commissionRate}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          commissionRate: Number(e.target.value),
+                        })
+                      }
+                      className="w-full p-3 rounded-lg bg-bg-secondary border border-border-color"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-1">
+                      일일 거래 제한
+                    </label>
+                    <input
+                      type="number"
+                      value={editForm.dailyTradeLimit}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          dailyTradeLimit: Number(e.target.value),
+                        })
+                      }
+                      className="w-full p-3 rounded-lg bg-bg-secondary border border-border-color"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-1">
+                      매수 쿨타임(분)
+                    </label>
+                    <input
+                      type="number"
+                      value={editForm.buyCooldownMinutes}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          buyCooldownMinutes: Number(e.target.value),
+                        })
+                      }
+                      className="w-full p-3 rounded-lg bg-bg-secondary border border-border-color"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-1">
+                      매도 쿨타임(분)
+                    </label>
+                    <input
+                      type="number"
+                      value={editForm.sellCooldownMinutes}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          sellCooldownMinutes: Number(e.target.value),
+                        })
+                      }
+                      className="w-full p-3 rounded-lg bg-bg-secondary border border-border-color"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleUpdate}
+                  disabled={isUpdating}
+                  className="w-full py-4 mt-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary/90"
+                >
+                  {isUpdating ? "수정 중..." : "수정 완료"}
+                </button>
+              </div>
+            </div>
+          </Drawer.Content>
+        </Portal>
+      </Drawer.Root>
     </div>
   );
 };

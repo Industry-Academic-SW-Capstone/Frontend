@@ -96,13 +96,16 @@ const MissionItem: React.FC<{ mission: Mission }> = ({ mission }) => {
 
 const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
   const missions = MOCK_MISSIONS;
-  const progress = MOCK_MISSION_PROGRESS;
 
-  const beginnerMissions = missions.filter((m) => m.difficulty === "beginner");
-  const intermediateMissions = missions.filter(
-    (m) => m.difficulty === "intermediate"
-  );
-  const advancedMissions = missions.filter((m) => m.difficulty === "advanced");
+  // Mock Attendance Data
+  const attendance = {
+    streak: 12,
+    todayChecked: false,
+    history: [true, true, true, true, true, false, false], // Last 7 days (reverse order or specific dates)
+  };
+
+  const days = ["월", "화", "수", "목", "금", "토", "일"];
+  const todayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1; // Mon=0, Sun=6
 
   if (!isOpen) return null;
 
@@ -114,7 +117,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
         onClick={onClose}
       />
 
-      {/* Panel - 모바일 화면 모양의 컨테이너 */}
+      {/* Panel */}
       <div className="fixed inset-0 z-70 flex items-center justify-center pointer-events-none">
         <div className="w-full max-w-md h-full bg-bg-primary shadow-2xl pointer-events-auto transition-transform duration-300 ease-out overflow-y-auto translate-x-0">
           {/* Header */}
@@ -132,111 +135,64 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
 
           {/* Content */}
           <div className="p-5 space-y-6 pb-24">
-            {/* Theme Progress */}
-            <div className="bg-linear-to-br from-primary to-secondary p-5 rounded-3xl text-white">
-              <h3 className="text-sm font-semibold mb-1 opacity-90">
-                현재 테마
-              </h3>
-              <p className="text-2xl font-bold mb-4">{progress.currentTheme}</p>
-
-              <div className="space-y-3">
+            {/* Attendance Section */}
+            <div className="bg-bg-secondary p-6 rounded-3xl">
+              <div className="flex justify-between items-end mb-4">
                 <div>
-                  <div className="flex justify-between items-center text-xs mb-1.5">
-                    <span className="opacity-90">입문 과정</span>
-                    <span className="font-semibold">
-                      {progress.themeMissions.beginner.completed}/
-                      {progress.themeMissions.beginner.total}
-                    </span>
-                  </div>
-                  <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-white h-2 rounded-full transition-all duration-500"
-                      style={{
-                        width: `${
-                          (progress.themeMissions.beginner.completed /
-                            progress.themeMissions.beginner.total) *
-                          100
-                        }%`,
-                      }}
-                    />
-                  </div>
+                  <h3 className="text-text-secondary text-sm font-medium mb-1">
+                    연속 출석
+                  </h3>
+                  <p className="text-3xl font-bold text-primary">
+                    {attendance.streak}일째 <span className="text-2xl">🔥</span>
+                  </p>
                 </div>
+                <button className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors">
+                  출석하기
+                </button>
+              </div>
 
-                <div>
-                  <div className="flex justify-between items-center text-xs mb-1.5">
-                    <span className="opacity-90">중급 과정</span>
-                    <span className="font-semibold">
-                      {progress.themeMissions.intermediate.completed}/
-                      {progress.themeMissions.intermediate.total}
-                    </span>
-                  </div>
-                  <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-white h-2 rounded-full transition-all duration-500"
-                      style={{
-                        width: `${
-                          (progress.themeMissions.intermediate.completed /
-                            progress.themeMissions.intermediate.total) *
-                          100
-                        }%`,
-                      }}
-                    />
-                  </div>
-                </div>
+              <div className="flex justify-between">
+                {days.map((day, index) => {
+                  const isToday = index === todayIndex;
+                  const isChecked =
+                    index < todayIndex ||
+                    (index === todayIndex && attendance.todayChecked);
 
-                <div>
-                  <div className="flex justify-between items-center text-xs mb-1.5">
-                    <span className="opacity-90">고급 과정</span>
-                    <span className="font-semibold">
-                      {progress.themeMissions.advanced.completed}/
-                      {progress.themeMissions.advanced.total}
-                    </span>
-                  </div>
-                  <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-white h-2 rounded-full transition-all duration-500"
-                      style={{
-                        width: `${
-                          (progress.themeMissions.advanced.completed /
-                            progress.themeMissions.advanced.total) *
-                          100
-                        }%`,
-                      }}
-                    />
-                  </div>
-                </div>
+                  return (
+                    <div key={day} className="flex flex-col items-center gap-2">
+                      <span
+                        className={`text-xs ${
+                          isToday
+                            ? "font-bold text-text-primary"
+                            : "text-text-secondary"
+                        }`}
+                      >
+                        {day}
+                      </span>
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                          isChecked
+                            ? "bg-primary text-white"
+                            : isToday
+                            ? "bg-bg-primary border-2 border-primary text-primary"
+                            : "bg-bg-primary text-text-tertiary"
+                        }`}
+                      >
+                        {isChecked ? "✓" : ""}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Mission Lists */}
+            {/* Mission List */}
             <div>
-              <h3 className="text-base font-bold text-text-primary mb-3">
-                입문
+              <h3 className="text-lg font-bold text-text-primary mb-4">
+                도전 과제
               </h3>
               <div className="space-y-3">
-                {beginnerMissions.map((mission) => (
-                  <MissionItem key={mission.id} mission={mission} />
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-base font-bold text-text-primary mb-3">
-                중급
-              </h3>
-              <div className="space-y-3">
-                {intermediateMissions.map((mission) => (
-                  <MissionItem key={mission.id} mission={mission} />
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-base font-bold text-text-primary mb-3">
-                고급
-              </h3>
-              <div className="space-y-3">
-                {advancedMissions.map((mission) => (
+                {missions.map((mission) => (
                   <MissionItem key={mission.id} mission={mission} />
                 ))}
               </div>

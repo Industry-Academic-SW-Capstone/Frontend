@@ -19,14 +19,31 @@ export interface UserGroup {
   averageReturn: number;
 }
 
+export interface AccountData {
+  accountId: number;
+  memberId: number;
+  contestId: number;
+  accountName: string;
+  cash: number;
+  holdAmount: number;
+  availableCash: number;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
 export interface Account {
-  id: string;
+  id: number;
+  memberId: number;
+  contestId: number;
   name: string;
   type: AccountType;
   totalValue: number;
   cashBalance: number;
   change: number;
   changePercent: number;
+  isDefault: boolean;
   chartData: ChartDataPoint[];
 }
 
@@ -91,6 +108,24 @@ export interface Competition {
 }
 
 export interface CreateCompetitionRequest {
+  contestName: string;
+  startDate: string;
+  endDate: string;
+  seedMoney: number;
+  commissionRate: number;
+  minMarketCap: number;
+  maxMarketCap: number;
+  dailyTradeLimit: number;
+  maxHoldingsCount: number;
+  buyCooldownMinutes: number;
+  sellCooldownMinutes: number;
+}
+
+export interface JoinCompetitionRequest {
+  accountName: string;
+}
+
+export interface UpdateCompetitionRequest {
   contestName: string;
   startDate: string;
   endDate: string;
@@ -358,4 +393,57 @@ export interface MissionProgress {
     advanced: { completed: number; total: number };
   };
   currentTheme: string;
+}
+
+export interface OrderBookLevel {
+  price: number;
+  quantity: number;
+}
+
+export interface OrderBookData {
+  stock_code: string;
+  timestamp: string;
+  total_ask_quantity: number;
+  total_bid_quantity: number;
+  ask_levels: OrderBookLevel[];
+  bid_levels: OrderBookLevel[];
+  expected_price?: number;
+  expected_change_amount?: number;
+  expected_change_rate?: number;
+  expected_change_sign?: string;
+  expected_quantity?: number;
+  expected_volume?: number;
+  accumulated_volume?: number;
+  overtime_total_bid_quantity?: number;
+}
+
+export interface RankingEntry {
+  rank: number;
+  memberId: number;
+  nickname: string;
+  balance: number;
+  returnRate: number;
+}
+
+export interface RankingResponse {
+  contestId: number;
+  contestName: string;
+  sortBy: string;
+  rankings: RankingEntry[];
+  totalParticipants: number;
+  lastUpdated: string;
+}
+
+export interface MyRankingResponse {
+  balanceRank: number;
+  returnRateRank: number;
+  totalParticipants: number;
+  myBalance: number;
+  myReturnRate: number;
+}
+
+export interface StockSearchResult {
+  stockCode: string;
+  stockName: string;
+  similarity: number;
 }

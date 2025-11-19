@@ -1,7 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import { StockDetailInfo, StockDetailMockType } from "@/lib/types/stock";
+import React, { useState, useEffect } from "react";
+import { StockDetailInfo } from "@/lib/types/stock";
 import { XMarkIcon } from "./icons/Icons";
+import { useMarketOrder, useLimitOrder } from "@/lib/hooks/useOrder";
+import Toast, { ToastType } from "@/components/ui/Toast";
+import { Drawer } from "vaul";
 
 interface OrderModalProps {
   isOpen: boolean;
@@ -9,6 +12,8 @@ interface OrderModalProps {
   stock: StockDetailInfo;
   orderType: "buy" | "sell";
   cashBalance: number;
+  ownedQuantity?: number;
+  accountId: number;
 }
 
 const OrderModal: React.FC<OrderModalProps> = ({
@@ -17,14 +22,33 @@ const OrderModal: React.FC<OrderModalProps> = ({
   stock,
   orderType,
   cashBalance,
+  ownedQuantity = 0,
+  accountId,
 }) => {
   const [selectedOrderType, setSelectedOrderType] = useState<
     "market" | "limit"
   >("market");
   const [quantity, setQuantity] = useState("");
   const [limitPrice, setLimitPrice] = useState("");
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    message: string;
+    type: ToastType;
+  }>({
+    visible: false,
+    message: "",
+    type: "success",
+  });
 
-  if (!isOpen) return null;
+  const { mutate: marketOrder, isPending: isMarketPending } = useMarketOrder();
+  const { mutate: limitOrder, isPending: isLimitPending } = useLimitOrder();
+
+  useEffect(() => {
+    if (isOpen) {
+      setQuantity("");
+      setLimitPrice(stock.currentPrice.toString());
+    }
+  }, [isOpen, stock.currentPrice]);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
@@ -36,137 +60,269 @@ const OrderModal: React.FC<OrderModalProps> = ({
     setLimitPrice(value);
   };
 
-  const totalOrderValue =
-    selectedOrderType === "market"
-      ? stock.currentPrice * Number(quantity)
-      : Number(limitPrice) * Number(quantity);
+  const currentPrice =
+    selectedOrderType === "market" ? stock.currentPrice : Number(limitPrice);
+  const totalOrderValue = currentPrice * Number(quantity);
 
-  const maxBuyableShares = Math.floor(cashBalance / stock.currentPrice);
+  const maxBuyableShares = Math.floor(cashBalance / currentPrice);
+
+  const handlePercentageClick = (percent: number) => {
+    if (orderType === "buy") {
+      const maxShares = Math.floor((cashBalance * percent) / currentPrice);
+      setQuantity(maxShares.toString());
+    } else {
+      const maxShares = Math.floor(ownedQuantity * percent);
+      setQuantity(maxShares.toString());
+    }
+  };
+
+  const handleSubmit = () => {
+    const qty = Number(quantity);
+    if (qty <= 0) {
+      setToast({
+        visible: true,
+        message: "주문 수량은 0보다 커야 합니다.",
+        type: "error",
+      });
+      return;
+    }
+
+    if (orderType === "buy" && totalOrderValue > cashBalance) {
+      setToast({
+        visible: true,
+        message: "주문 가능 금액을 초과했습니다.",
+        type: "error",
+      });
+      return;
+    }
+
+    if (orderType === "sell" && qty > ownedQuantity) {
+      setToast({
+        visible: true,
+        message: "보유 수량을 초과했습니다.",
+        type: "error",
+      });
+      return;
+    }
+
+    const commonCallbacks = {
+      onSuccess: () => {
+        setToast({
+          visible: true,
+          message: "주문이 접수되었습니다.",
+          type: "success",
+        });
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+      },
+      onError: (error: any) => {
+        setToast({
+          visible: true,
+          message: error.response?.data?.message || "주문 실패",
+          type: "error",
+        });
+      },
+    };
+
+    if (selectedOrderType === "market") {
+      marketOrder(
+        {
+          account_id: accountId,
+          stock_code: stock.stockCode,
+          quantity: qty,
+          order_method: orderType === "buy" ? "BUY" : "SELL",
+        },
+        commonCallbacks
+      );
+    } else {
+      limitOrder(
+        {
+          account_id: accountId,
+          stock_code: stock.stockCode,
+          price: Number(limitPrice),
+          quantity: qty,
+          order_method: orderType === "buy" ? "BUY" : "SELL",
+        },
+        commonCallbacks
+      );
+    }
+  };
+
+  const isPending = isMarketPending || isLimitPending;
+  const themeColor = orderType === "buy" ? "text-positive" : "text-negative";
+  const themeBg = orderType === "buy" ? "bg-positive" : "bg-negative";
+  const themeBorder =
+    orderType === "buy" ? "border-positive" : "border-negative";
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={onClose}
+    <Drawer.Root
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
     >
-      <div
-        className="w-full max-w-md bg-bg-secondary rounded-2xl m-4 p-6 transform transition-transform duration-300 ease-in-out"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h2
-            className={`text-2xl font-bold ${
-              orderType === "buy" ? "text-positive" : "text-negative"
-            }`}
-          >
-            {stock.stockName} {orderType === "buy" ? "매수" : "매도"}
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-border-color"
-          >
-            <XMarkIcon className="w-6 h-6 text-text-secondary" />
-          </button>
-        </div>
+      <Drawer.Portal>
+        <Drawer.Overlay className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm" />
+        <Drawer.Content
+          className="fixed bottom-0 left-0 right-0 z-[10001] w-full max-w-md mx-auto bg-bg-secondary rounded-t-2xl p-6 shadow-2xl outline-none"
+          style={{ touchAction: "none" }}
+        >
+          {/* Handle */}
+          <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6" />
 
-        <div className="flex bg-bg-primary p-1 rounded-lg mb-4">
-          <button
-            onClick={() => setSelectedOrderType("market")}
-            className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-colors ${
-              selectedOrderType === "market"
-                ? "bg-bg-secondary shadow-sm text-text-primary"
-                : "text-text-secondary"
-            }`}
-          >
-            시장가
-          </button>
-          <button
-            onClick={() => setSelectedOrderType("limit")}
-            className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-colors ${
-              selectedOrderType === "limit"
-                ? "bg-bg-secondary shadow-sm text-text-primary"
-                : "text-text-secondary"
-            }`}
-          >
-            지정가
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          {selectedOrderType === "limit" && (
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6">
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">
-                주문 가격
-              </label>
-              <input
-                type="text"
-                value={limitPrice.toLocaleString()}
-                onChange={handleLimitPriceChange}
-                placeholder="희망 가격 입력"
-                className="w-full bg-bg-primary border border-border-color rounded-lg p-3 text-right font-mono"
-              />
+              <Drawer.Title className={`text-2xl font-bold text-text-primary`}>
+                {orderType === "buy" ? "매수하기" : "매도하기"}
+              </Drawer.Title>
+              <p className="text-sm text-text-secondary mt-1">
+                {stock.stockName}
+              </p>
             </div>
-          )}
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
-              주문 수량
-            </label>
-            <input
-              type="text"
-              value={quantity}
-              onChange={handleQuantityChange}
-              placeholder="주문할 수량 입력"
-              className="w-full bg-bg-primary border border-border-color rounded-lg p-3 text-right font-mono"
-            />
+            <button
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-bg-primary transition-colors"
+            >
+              <XMarkIcon className="w-6 h-6 text-text-secondary" />
+            </button>
           </div>
-        </div>
 
-        <div className="mt-4 p-3 bg-bg-primary rounded-lg text-sm space-y-1">
-          {orderType === "buy" ? (
-            <>
-              <div className="flex justify-between">
-                <span className="text-text-secondary">주문 가능 금액</span>
-                <span className="font-semibold text-text-primary">
-                  {cashBalance.toLocaleString()}원
-                </span>
+          {/* Tabs */}
+          <div className="flex bg-bg-primary p-1 rounded-xl mb-6">
+            <button
+              onClick={() => setSelectedOrderType("market")}
+              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                selectedOrderType === "market"
+                  ? "bg-bg-secondary shadow-md text-text-primary"
+                  : "text-text-tertiary hover:text-text-secondary"
+              }`}
+            >
+              시장가
+            </button>
+            <button
+              onClick={() => setSelectedOrderType("limit")}
+              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                selectedOrderType === "limit"
+                  ? "bg-bg-secondary shadow-md text-text-primary"
+                  : "text-text-tertiary hover:text-text-secondary"
+              }`}
+            >
+              지정가
+            </button>
+          </div>
+
+          {/* Inputs */}
+          <div className="space-y-6">
+            {selectedOrderType === "limit" && (
+              <div className="relative">
+                <label className="block text-xs font-medium text-text-tertiary mb-1.5 ml-1">
+                  가격
+                </label>
+                <div
+                  className={`flex items-center bg-bg-primary rounded-xl border-2 focus-within:${themeBorder} transition-colors overflow-hidden`}
+                >
+                  <input
+                    type="text"
+                    value={Number(limitPrice).toLocaleString()}
+                    onChange={handleLimitPriceChange}
+                    className="w-full bg-transparent p-4 text-xl font-bold text-right outline-none"
+                    placeholder="0"
+                  />
+                  <span className="pr-4 text-text-secondary font-medium">
+                    원
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-text-secondary">최대 주문 가능 수량</span>
-                <span className="font-semibold text-text-primary">
+            )}
+
+            <div className="relative">
+              <label className="block text-xs font-medium text-text-tertiary mb-1.5 ml-1">
+                수량
+              </label>
+              <div
+                className={`flex items-center bg-bg-primary rounded-xl border-2 focus-within:${themeBorder} transition-colors overflow-hidden`}
+              >
+                <input
+                  type="text"
+                  value={quantity ? Number(quantity).toLocaleString() : ""}
+                  onChange={handleQuantityChange}
+                  className="w-full bg-transparent p-4 text-xl font-bold text-right outline-none"
+                  placeholder="0"
+                />
+                <span className="pr-4 text-text-secondary font-medium">주</span>
+              </div>
+
+              {/* Percentage Buttons */}
+              <div className="flex gap-2 mt-3">
+                {[0.1, 0.25, 0.5, 1].map((percent) => (
+                  <button
+                    key={percent}
+                    onClick={() => handlePercentageClick(percent)}
+                    className="flex-1 py-1.5 text-xs font-medium bg-bg-primary hover:bg-border-color rounded-lg text-text-secondary transition-colors"
+                  >
+                    {percent === 1 ? "최대" : `${percent * 100}%`}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Info Summary */}
+          <div className="mt-6 p-4 bg-bg-primary rounded-xl space-y-3">
+            <div className="flex justify-between text-sm">
+              <span className="text-text-secondary">
+                {orderType === "buy" ? "주문 가능" : "보유 수량"}
+              </span>
+              <span className="font-bold text-text-primary">
+                {orderType === "buy"
+                  ? `${cashBalance.toLocaleString()}원`
+                  : `${ownedQuantity.toLocaleString()}주`}
+              </span>
+            </div>
+            {orderType === "buy" && (
+              <div className="flex justify-between text-sm">
+                <span className="text-text-secondary">구매 가능 수량</span>
+                <span className="font-bold text-text-primary">
                   {maxBuyableShares.toLocaleString()}주
                 </span>
               </div>
-            </>
-          ) : (
-            <div className="flex justify-between">
-              <span className="text-text-secondary">주문 가능 수량</span>
-              <span className="font-semibold text-text-primary">
-                {/* {stock.shares.toLocaleString()}주 */}
-                {"3주"}
+            )}
+            <div className="h-px bg-border-color my-2" />
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-text-primary">총 주문 금액</span>
+              <span className={`text-xl font-bold ${themeColor}`}>
+                {totalOrderValue.toLocaleString()}원
               </span>
             </div>
-          )}
-        </div>
-
-        <div className="mt-6">
-          <div className="flex justify-between items-center font-bold">
-            <span>총 주문 금액</span>
-            <span>{totalOrderValue.toLocaleString()}원</span>
           </div>
+
+          {/* Action Button */}
           <button
-            onClick={onClose}
-            className={`w-full mt-2 py-3 rounded-lg font-bold text-white transition-colors ${
-              orderType === "buy"
-                ? "bg-positive hover:bg-positive/90"
-                : "bg-negative hover:bg-negative/90"
-            }`}
+            onClick={handleSubmit}
+            disabled={isPending}
+            className={`w-full mt-6 py-4 rounded-xl font-bold text-white text-lg shadow-lg transition-all transform active:scale-[0.98] ${themeBg} disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            {orderType === "buy"
-              ? `${quantity || 0}주 매수하기`
-              : `${quantity || 0}주 매도하기`}
+            {isPending
+              ? "처리중..."
+              : orderType === "buy"
+              ? "매수하기"
+              : "매도하기"}
           </button>
-        </div>
-      </div>
-    </div>
+
+          {/* Safe Area Padding for Mobile */}
+          <div className="h-6" />
+        </Drawer.Content>
+      </Drawer.Portal>
+
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.visible}
+        onClose={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
+    </Drawer.Root>
   );
 };
 

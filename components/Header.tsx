@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-1 bg-bg-secondary px-3 py-1.5 rounded-full text-sm font-semibold hover:bg-border-color transition-colors"
           >
             <span className="max-w-[100px] truncate">
-              {selectedAccount.name}
+              {selectedAccount.isDefault ? "기본 계좌" : selectedAccount.name}
             </span>
             <ChevronDownIcon className="w-4 h-4 text-text-secondary" />
           </button>

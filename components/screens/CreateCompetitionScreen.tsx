@@ -238,68 +238,70 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
                 />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-2">
-                일일 매매 제한 횟수
-              </label>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() =>
-                    handleChange(
-                      "dailyTradeLimit",
-                      Math.max(1, formData.dailyTradeLimit - 1)
-                    )
-                  }
-                  className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-xl font-bold hover:bg-border-color"
-                >
-                  -
-                </button>
-                <span className="text-xl font-bold w-10 text-center">
-                  {formData.dailyTradeLimit}
-                </span>
-                <button
-                  onClick={() =>
-                    handleChange(
-                      "dailyTradeLimit",
-                      formData.dailyTradeLimit + 1
-                    )
-                  }
-                  className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-xl font-bold hover:bg-border-color"
-                >
-                  +
-                </button>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-text-secondary mb-2 justify-between">
+                  일일 매매 제한 횟수
+                </label>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() =>
+                      handleChange(
+                        "dailyTradeLimit",
+                        Math.max(1, formData.dailyTradeLimit - 1)
+                      )
+                    }
+                    className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-xl font-bold hover:bg-border-color"
+                  >
+                    -
+                  </button>
+                  <span className="text-xl font-bold w-10 text-center">
+                    {formData.dailyTradeLimit}
+                  </span>
+                  <button
+                    onClick={() =>
+                      handleChange(
+                        "dailyTradeLimit",
+                        formData.dailyTradeLimit + 1
+                      )
+                    }
+                    className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-xl font-bold hover:bg-border-color"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-2">
-                최대 보유 종목 수
-              </label>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() =>
-                    handleChange(
-                      "maxHoldingsCount",
-                      Math.max(1, formData.maxHoldingsCount - 1)
-                    )
-                  }
-                  className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-xl font-bold hover:bg-border-color"
-                >
-                  -
-                </button>
-                <span className="text-xl font-bold w-10 text-center">
-                  {formData.maxHoldingsCount}
-                </span>
-                <button
-                  onClick={() =>
-                    handleChange(
-                      "maxHoldingsCount",
-                      formData.maxHoldingsCount + 1
-                    )
-                  }
-                  className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-xl font-bold hover:bg-border-color"
-                >
-                  +
-                </button>
+              <div>
+                <label className="block text-xs font-medium text-text-secondary mb-2">
+                  최대 보유 종목 수
+                </label>
+                <div className="flex items-center gap-4 justify-between">
+                  <button
+                    onClick={() =>
+                      handleChange(
+                        "maxHoldingsCount",
+                        Math.max(1, formData.maxHoldingsCount - 1)
+                      )
+                    }
+                    className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-xl font-bold hover:bg-border-color"
+                  >
+                    -
+                  </button>
+                  <span className="text-xl font-bold w-10 text-center">
+                    {formData.maxHoldingsCount}
+                  </span>
+                  <button
+                    onClick={() =>
+                      handleChange(
+                        "maxHoldingsCount",
+                        formData.maxHoldingsCount + 1
+                      )
+                    }
+                    className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-xl font-bold hover:bg-border-color"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">

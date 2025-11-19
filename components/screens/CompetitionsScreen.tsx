@@ -4,7 +4,6 @@ import { Competition } from "@/lib/types/stock";
 import CompetitionCard from "@/components/CompetitionCard";
 import CreateCompetitionScreen from "./CreateCompetitionScreen";
 import CompetitionDetailScreen from "./CompetitionDetailScreen";
-import CompetitionAdminScreen from "./CompetitionAdminScreen";
 import SlidingScreen from "@/components/navigation/SlidingScreen";
 import { PlusCircleIcon, SpinnerIcon } from "@/components/icons/Icons";
 import { useContests } from "@/lib/hooks/useContest";
@@ -30,8 +29,6 @@ const CompetitionsScreen: React.FC = () => {
   };
 
   const handleJoinCompetition = () => {
-    // TODO: Implement join competition logic
-    alert("대회 참가 기능은 아직 구현되지 않았습니다.");
     setShowDetail(false);
   };
 
@@ -171,25 +168,6 @@ const CompetitionsScreen: React.FC = () => {
               setSelectedCompetition(null);
             }}
             onJoin={handleJoinCompetition}
-          />
-        )}
-      </SlidingScreen>
-
-      {/* 대회 관리 화면 - 슬라이딩 패널 */}
-      <SlidingScreen
-        isOpen={showAdmin}
-        onClose={() => {
-          setShowAdmin(false);
-          setSelectedCompetition(null);
-        }}
-      >
-        {selectedCompetition && (
-          <CompetitionAdminScreen
-            competition={selectedCompetition}
-            onBack={() => {
-              setShowAdmin(false);
-              setSelectedCompetition(null);
-            }}
           />
         )}
       </SlidingScreen>

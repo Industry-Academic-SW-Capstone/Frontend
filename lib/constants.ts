@@ -33,42 +33,6 @@ export const MOCK_USER: User = {
 
 export const MOCK_CASH_BALANCE = 2350000;
 
-export const MOCK_ACCOUNTS: Account[] = [
-  {
-    id: "acc-1",
-    name: "내 주식 계좌",
-    type: "regular",
-    totalValue: 12500000,
-    cashBalance: MOCK_CASH_BALANCE,
-    change: 250000,
-    changePercent: 2.04,
-    chartData: [
-      { date: "9:00", price: 12250000 },
-      { date: "10:00", price: 12300000 },
-      { date: "11:00", price: 12450000 },
-      { date: "12:00", price: 12400000 },
-      { date: "13:00", price: 12550000 },
-      { date: "14:00", price: 12500000 },
-    ],
-  },
-  {
-    id: "acc-2",
-    name: "제 1회 수익률 대회",
-    type: "competition",
-    totalValue: 11500000,
-    cashBalance: 1500000,
-    change: 150000,
-    changePercent: 1.32,
-    chartData: [
-      { date: "1일차", price: 10000000 },
-      { date: "2일차", price: 10500000 },
-      { date: "3일차", price: 10800000 },
-      { date: "4일차", price: 11200000 },
-      { date: "5일차", price: 11350000 },
-    ],
-  },
-];
-
 const generateLogo = (ticker: string, name: string) =>
   `https://avatar.vercel.sh/${ticker}.png?text=${name.substring(0, 1)}`;
 
@@ -174,45 +138,6 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     shares: 5,
     price: 80000,
     date: "2023-08-15",
-  },
-];
-
-export const MOCK_COMPETITIONS: Competition[] = [
-  {
-    id: "c-1",
-    name: "제 1회 스탁앱 수익률 대회",
-    description: "최고의 수익률을 달성하고 상금을 차지하세요!",
-    participants: 1250,
-    totalPrize: 10000000,
-    startDate: "2023.10.01",
-    endDate: "2023.10.31",
-    isJoined: true,
-    rank: 12,
-    returnPercent: 15.0,
-    isAdmin: true, // 관리자 권한
-    creatorId: "user-me",
-    rules: {
-      startingCapital: 10000000,
-      maxInvestmentPerStock: 2000000,
-      allowedSectors: ["전체"],
-    },
-  },
-  {
-    id: "c-2",
-    name: "단타의 신 선발전",
-    description: "하루 최고의 수익률을 가리는 단타 대회",
-    participants: 880,
-    totalPrize: 5000000,
-    startDate: "2023.11.01",
-    endDate: "2023.11.01",
-    isJoined: false,
-    isAdmin: false,
-    creatorId: "user-other",
-    rules: {
-      startingCapital: 5000000,
-      maxInvestmentPerStock: 1000000,
-      allowedSectors: ["IT", "반도체"],
-    },
   },
 ];
 
