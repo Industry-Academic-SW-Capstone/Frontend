@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/lib/providers/QueryProvider";
-import ToastProvider from "@/lib/providers/ToastProvider";
+import Script from "next/script";
+import { WebSocketProvider } from "@/lib/providers/SocketProvider";
 
 const pretendard = localFont({
   src: "../fonts/pretendard/PretendardVariable.woff2",
@@ -39,9 +40,14 @@ export default function RootLayout({
         <link rel="mask-icon" href="/logo.svg" color="#4f46e5" />
       </head>
       <body className={`${pretendard.className} antialiased`}>
+        <Script
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.9/kakao.min.js"
+          integrity="sha384-JpLApTkB8lPskhVMhT+m5Ln8aHlnS0bsIexhaak0jOhAkMYedQoVghPfSpjNi9K1"
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
         <QueryProvider>
-          {children}
-          <ToastProvider />
+          <WebSocketProvider>{children}</WebSocketProvider>
         </QueryProvider>
       </body>
     </html>

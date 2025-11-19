@@ -66,19 +66,42 @@ export interface CompetitionRules {
 }
 
 export interface Competition {
-  id: string;
-  name: string;
-  description: string;
-  participants: number;
-  totalPrize: number;
+  contestId: number;
+  contestName: string;
+  isDefault: boolean;
+  managerMemberId: number;
   startDate: string;
   endDate: string;
-  isJoined: boolean;
-  rules?: CompetitionRules;
-  rank?: number;
-  returnPercent?: number;
-  isAdmin?: boolean; // 현재 사용자가 관리자인지 여부
-  creatorId?: string; // 대회 생성자 ID
+  seedMoney: number;
+  commissionRate: number;
+  minMarketCap: number;
+  maxMarketCap: number;
+  dailyTradeLimit: number;
+  maxHoldingsCount: number;
+  buyCooldownMinutes: number;
+  sellCooldownMinutes: number;
+  createdAt: string;
+  updatedAt: string;
+  // Optional fields for UI compatibility if needed, or remove if fully replacing
+  participants?: number; // Not in API response, might need to fetch separately or remove
+  isJoined?: boolean; // Not in API response
+  rank?: number; // Not in API response
+  returnPercent?: number; // Not in API response
+  description?: string; // Not in API response
+}
+
+export interface CreateCompetitionRequest {
+  contestName: string;
+  startDate: string;
+  endDate: string;
+  seedMoney: number;
+  commissionRate: number;
+  minMarketCap: number;
+  maxMarketCap: number;
+  dailyTradeLimit: number;
+  maxHoldingsCount: number;
+  buyCooldownMinutes: number;
+  sellCooldownMinutes: number;
 }
 
 export interface CompetitionParticipant {
@@ -186,8 +209,6 @@ export interface BasicStockInfo extends StockLogoInfo {
 export interface StockInfo extends BasicStockInfo {
   volume: number;
   amount: number;
-  currentPrice: number;
-  changeAmount: number;
 }
 
 export interface StockDetailInfo extends StockInfo {
@@ -248,6 +269,13 @@ export interface BasicStockInfoMockType {
   stockName: string;
   currentPrice: number;
   changeRate: number;
+}
+
+export interface FavoriteStock {
+  favoriteId: number;
+  stockCode: string;
+  stockName: string;
+  addedAt: string; // ISO 날짜 문자열
 }
 
 export type PeriodType = "1day" | "1week" | "3month" | "1year" | "5year";

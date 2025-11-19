@@ -192,7 +192,6 @@ const StockChart: React.FC<StockChartProps> = ({
         return;
       if (!isDragging) return;
 
-      event.preventDefault();
       const touch = event.touches[0];
       const svg = svgRef.current;
       const pt = svg.createSVGPoint();

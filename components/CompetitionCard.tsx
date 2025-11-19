@@ -1,95 +1,94 @@
-"use client";
-
 import React from "react";
 import { Competition } from "@/lib/types/stock";
-import { CalendarIcon, UsersIcon, GiftIcon, CogIcon } from "./icons/Icons";
+import { CalendarIcon, GiftIcon, ChevronRightIcon } from "./icons/Icons";
 
 interface CompetitionCardProps {
   competition: Competition;
+  onClickDetail?: (competition: Competition) => void;
   onAdminClick?: (competition: Competition) => void;
 }
 
 const CompetitionCard: React.FC<CompetitionCardProps> = ({
   competition,
+  onClickDetail,
   onAdminClick,
 }) => {
+  // Calculate duration or status
+  const now = new Date();
+  const start = new Date(competition.startDate);
+  const end = new Date(competition.endDate);
+  const isActive = now >= start && now <= end;
+  const isFinished = now > end;
+  const isUpcoming = now < start;
+
+  let statusLabel = "";
+  let statusColorClass = "";
+  let statusBgClass = "";
+
+  if (isUpcoming) {
+    statusLabel = "모집중";
+    statusColorClass = "text-primary";
+    statusBgClass = "bg-primary/10 border-primary/20";
+  } else if (isActive) {
+    statusLabel = "진행중";
+    statusColorClass = "text-positive";
+    statusBgClass = "bg-positive/10 border-positive/20";
+  } else {
+    statusLabel = "종료";
+    statusColorClass = "text-text-secondary";
+    statusBgClass = "bg-bg-secondary border-border-color";
+  }
+
   return (
-    <div className="bg-bg-secondary border border-border-color rounded-2xl p-5 mb-4 shadow-lg card-hover cursor-pointer group overflow-hidden relative">
-      {/* Animated background accent (flat) */}
-      <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-60 transition-opacity duration-500" />
+    <div
+      onClick={() => onClickDetail?.(competition)}
+      className="group relative bg-bg-primary border border-border-color rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden"
+    >
+      {/* Hover Gradient Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-      <div className="flex flex-col relative z-10">
-        <div className="mb-4">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-text-primary mb-1 transition-colors duration-300 group-hover:text-primary">
-                {competition.name}
-              </h3>
-              <p className="text-sm text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
-                {competition.description}
-              </p>
+      <div className="relative z-10 flex flex-col h-full justify-between">
+        <div>
+          <div className="flex justify-between items-start mb-3">
+            <span
+              className={`px-2.5 py-1 rounded-full text-xs font-bold border ${statusBgClass} ${statusColorClass}`}
+            >
+              {statusLabel}
+            </span>
+            {/* Optional: Admin or other badges could go here */}
+          </div>
+
+          <h3 className="text-lg font-bold text-text-primary mb-2 group-hover:text-primary transition-colors line-clamp-1">
+            {competition.contestName}
+          </h3>
+
+          <div className="space-y-2 mb-4">
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <GiftIcon className="w-4 h-4 text-accent" />
+              <span className="font-medium text-text-primary">
+                {competition.seedMoney.toLocaleString()}원
+              </span>
+              <span className="text-xs text-text-tertiary">시드머니</span>
             </div>
-            {competition.isAdmin && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAdminClick?.(competition);
-                }}
-                className="ml-2 p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
-                title="대회 관리"
-              >
-                <CogIcon className="w-5 h-5 text-primary" />
-              </button>
-            )}
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <CalendarIcon className="w-4 h-4 text-text-tertiary" />
+              <span>
+                {new Date(competition.startDate).toLocaleDateString()} ~{" "}
+                {new Date(competition.endDate).toLocaleDateString()}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 text-sm text-text-secondary mb-4">
-          <div className="flex items-center gap-2 transition-all duration-300 hover:text-primary hover:translate-x-1">
-            <div className="p-1.5 rounded-lg group-hover:bg-primary/20 transition-colors duration-300">
-              <UsersIcon className="w-4 h-4" />
-            </div>
-            <span className="font-medium">
-              {competition.participants.toLocaleString()}명 참여
-            </span>
-          </div>
-          <div className="flex items-center gap-2 transition-all duration-300 hover:text-accent hover:translate-x-1">
-            <div className="p-1.5 rounded-lg bg-accent/10 group-hover:bg-accent/20 transition-colors duration-300">
-              <GiftIcon className="w-4 h-4" />
-            </div>
-            <span className="font-medium">
-              총 {competition.totalPrize.toLocaleString()}원
-            </span>
-          </div>
-          <div className="flex items-center gap-2 col-span-2 transition-all duration-300 hover:text-secondary hover:translate-x-1">
-            <div className="p-1.5 rounded-lg bg-secondary/10 group-hover:bg-secondary/20 transition-colors duration-300">
-              <CalendarIcon className="w-4 h-4" />
-            </div>
-            <span className="font-medium">
-              {competition.startDate} ~ {competition.endDate}
-            </span>
-          </div>
-        </div>
-
-        <button
-          className={`w-full mt-2 py-3 px-4 rounded-xl font-bold text-white transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-xl relative overflow-hidden group/btn ${
-            competition.isJoined
-              ? "bg-gray-400"
-              : "bg-primary hover:bg-primary/90"
-          }`}
-        >
-          {/* Button shimmer effect */}
-          {!competition.isJoined && (
-            <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500 animate-shimmer" />
-          )}
-          <span className="relative z-10">
-            {competition.isJoined ? "참여중" : "참가하기"}
+        <div className="flex items-center justify-between pt-4 border-t border-border-color/50 mt-2">
+          <span className="text-xs text-text-tertiary font-medium">
+            자세히 보기
           </span>
-        </button>
+          <div className="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+            <ChevronRightIcon className="w-4 h-4" />
+          </div>
+        </div>
       </div>
-
-      {/* Corner accent */}
-      <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-bl-full opacity-0 group-hover:opacity-60 transition-opacity duration-500" />
     </div>
   );
 };

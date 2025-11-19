@@ -11,9 +11,10 @@
   --color-bg-secondary: var(--bg-secondary);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --color-error: var(--error);
   --color-border-color: var(--border-color);
   --color-positive: #22c55e;
-  --color-negative: #ef4444;
+  --color-negative: var(--error);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -27,6 +28,7 @@
   --text-primary: #1e293b;
   --text-secondary: #a5acb6;
   --border-color: #e2e8f0;
+  --error: #ea4f4f;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,6 +41,7 @@
     --text-primary: #1e293b;
     --text-secondary: #64748b;
     --border-color: #e2e8f0;
+    --error: #ea4f4f;
   }
 }
 
@@ -51,6 +54,7 @@
   --text-primary: #f8fafc;
   --text-secondary: #9ca3af;
   --border-color: #2b2b2b;
+  --error: #ea4f4f;
 }
 
 body {
@@ -304,10 +308,12 @@ body {
 }
 
 .animate-fadeInUp {
+  opacity: 0;
   animation: fadeInUp 0.5s ease-in-out forwards;
 }
 
 .animate-slideInUp {
+  opacity: 0;
   animation: slideInUpBounce 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
@@ -316,14 +322,17 @@ body {
 }
 
 .animate-fadeIn {
+  opacity: 0;
   animation: fadeIn 0.3s ease-in-out forwards;
 }
 
 .animate-scaleIn {
+  opacity: 0;
   animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-fadeInScale {
+  opacity: 0;
   animation: fadeInScale 0.6s ease-out forwards;
 }
 
@@ -337,10 +346,12 @@ body {
 }
 
 .animate-slideInRight {
+  opacity: 0;
   animation: slideInRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-slideInLeft {
+  opacity: 0;
   animation: slideInLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
@@ -368,6 +379,7 @@ body {
 }
 
 .animate-slideUp {
+  opacity: 0;
   animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 

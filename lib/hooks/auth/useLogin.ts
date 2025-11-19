@@ -29,15 +29,12 @@ export const useLogin = () => {
   >({
     mutationFn: loginApi, // API 호출 함수
     onSuccess: (data: LoginResponse) => {
-      console.log("Login Success:", data);
       setToken(data.accessToken);
 
-      // (로그아웃했다가 다른 유저로 로그인할 경우를 대비)
       queryClient.clear();
-      return true;
     },
     onError: (error) => {
-      console.error("Login Failed:", error.response?.data);
+      console.error("Login failed:", error);
     },
   });
 };

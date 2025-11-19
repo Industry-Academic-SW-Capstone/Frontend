@@ -13,7 +13,21 @@ const API_BASE_URL =
 
 // API 호출 함수 (확장성 고려, 추후 파라미터 추가 가능)
 async function fetchTopStocks(OrderBy: OrderType): Promise<StockInfo[]> {
-  const res = await defaultClient.get(`/api/stocks/${OrderBy}`);
+  let url = "";
+  switch (OrderBy) {
+    case "amount":
+      url = "/api/stocks/amount";
+      break;
+    case "gainers":
+      url = "/api/stocks/fluctuations?type=rise";
+      break;
+    case "losers":
+      url = "/api/stocks/fluctuations?type=fall";
+      break;
+    default:
+      throw new Error("Invalid OrderBy parameter");
+  }
+  const res = await defaultClient.get(url);
   if (res.status !== 200) {
     throw new Error("Failed to fetch top stocks");
   }

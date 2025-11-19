@@ -42,4 +42,16 @@ export interface LoginResponse {
   accessToken: string;
 }
 
+export interface KakaoSignupRequest {
+  email: string;
+  name: string;
+  profile_image: string;
+}
+
+export interface KakaoCallbackResponse {
+  token?: string; // 로그인 성공 시
+  userInfo?: KakaoSignupRequest; // 회원가입 필요 시
+  message?: string;
+}
+
 export const DEFAULT_SESSION_TIMEOUT = 15 * 24 * 60 * 60 * 1000; // 15일

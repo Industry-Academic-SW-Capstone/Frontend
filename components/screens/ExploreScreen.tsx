@@ -12,11 +12,14 @@ import {
   BasicStockInfoMockType,
   PopularStockCategory,
   BasicStockInfo,
+  IndustriesTopStocks,
 } from "@/lib/types/stock";
 import { MOCK_FAVORITE_STOCKS } from "@/lib/constants";
 import { useTopStocks } from "@/lib/hooks/stock/useTopStocks";
 import { useIndustriesTopStocks } from "@/lib/hooks/stock/useIndustriesTopStocks";
 import { generateLogo } from "@/lib/utils";
+import { useStockStore } from "@/lib/stores/useStockStore";
+import { useWebSocket } from "@/lib/providers/SocketProvider";
 
 interface ExploreScreenProps {
   onSelectStock: (ticker: string) => void;
@@ -141,10 +144,39 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
     "sectors" | "favorites"
   >("sectors");
 
+  const upsertTickers = useStockStore((state) => state.upsertTickers);
   const { data: popularStocks, isLoading: isLoadingTopStocks } =
     useTopStocks(activePopularTab);
+
+  useEffect(() => {
+    // data가 존재하면(로드 완료되면) Zustand 스토어 업데이트
+    if (popularStocks) {
+      upsertTickers(popularStocks);
+    }
+  }, [popularStocks, upsertTickers]); // data가 바뀔 때마다 실행됨
+
   const { data: industriesTopStocks, isLoading: isLoadingIndustries } =
     useIndustriesTopStocks(activePopularTab);
+
+  useEffect(() => {
+    // data가 존재하면(로드 완료되면) Zustand 스토어 업데이트
+    if (industriesTopStocks) {
+      industriesTopStocks.forEach((sector: IndustriesTopStocks) => {
+        upsertTickers(sector.stocks);
+      });
+    }
+  }, [industriesTopStocks, upsertTickers]); // data가 바뀔 때마다 실행됨
+
+  const { setSubscribeSet } = useWebSocket();
+
+  useEffect(() => {
+    const tickers = new Set<string>();
+    popularStocks?.forEach((stock) => tickers.add(stock.stockCode));
+    industriesTopStocks?.forEach((sector) =>
+      sector.stocks.forEach((stock) => tickers.add(stock.stockCode))
+    );
+    setSubscribeSet(Array.from(tickers));
+  }, [popularStocks, industriesTopStocks]);
 
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (
@@ -155,37 +187,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
       <div className="h-3 bg-gray-200 rounded w-3/7 my-0.5" />
     </div>
   );
-
-  const filteredSectors = useMemo(() => {
-    if (isLoadingIndustries || !industriesTopStocks) return [];
-    if (
-      !searchTerm ||
-      searchTerm.length === 0 ||
-      searchTerm.trim().length === 0
-    )
-      return industriesTopStocks;
-    const lowercasedFilter = searchTerm.toLowerCase();
-    return industriesTopStocks
-      .map((sector) => {
-        const filteredStocks = sector.stocks.filter(
-          (stock) =>
-            stock.stockName.toLowerCase().includes(lowercasedFilter) ||
-            stock.stockCode.toLowerCase().includes(lowercasedFilter)
-        );
-        return { ...sector, stocks: filteredStocks };
-      })
-      .filter((sector) => sector.stocks.length > 0);
-  }, [searchTerm, isLoadingIndustries, industriesTopStocks]);
-
-  const filteredFavorites = useMemo(() => {
-    if (!searchTerm) return MOCK_FAVORITE_STOCKS;
-    const lowercasedFilter = searchTerm.toLowerCase();
-    return MOCK_FAVORITE_STOCKS.filter(
-      (stock) =>
-        stock.stockName.toLowerCase().includes(lowercasedFilter) ||
-        stock.stockCode.toLowerCase().includes(lowercasedFilter)
-    );
-  }, [searchTerm]);
 
   return (
     <div className="space-y-6">
@@ -291,8 +292,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
                   </div>
                 ))}
               </>
-            ) : filteredSectors.length > 0 ? (
-              filteredSectors.map((sector) => (
+            ) : industriesTopStocks.length > 0 ? (
+              industriesTopStocks.map((sector) => (
                 <div key={sector.industryName}>
                   <h3 className="font-bold text-text-primary px-2 mb-1">
                     {sector.industryName}
@@ -315,8 +316,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
         )}
         {activeContentTab === "favorites" && (
           <div className="space-y-2">
-            {filteredFavorites.length > 0 ? (
-              filteredFavorites.map((stock) => (
+            {favorites.length > 0 ? (
+              favorites.map((stock) => (
                 <StockRow
                   key={stock.stockCode}
                   stock={stock}

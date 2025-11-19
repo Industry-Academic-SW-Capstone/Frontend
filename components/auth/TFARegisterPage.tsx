@@ -123,6 +123,7 @@ export default function TFARegisterPage({
         title="PIN 확인"
         subtitle="동일한 PIN을 다시 입력해주세요"
         onComplete={handlePinConfirm}
+        onBack={() => setStep("pin-setup")}
         error={error}
       />
     );

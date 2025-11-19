@@ -9,6 +9,7 @@ interface PinInputProps {
   subtitle?: string;
   error?: string;
   autoFocus?: boolean;
+  onBack?: () => void;
 }
 
 export default function PinInput({
@@ -18,6 +19,7 @@ export default function PinInput({
   subtitle = "보안 PIN을 입력해주세요",
   error,
   autoFocus = true,
+  onBack,
 }: PinInputProps) {
   useEffect(() => {
     setPin(Array(length).fill(""));
@@ -181,7 +183,21 @@ export default function PinInput({
           ))}
 
           {/* 빈 공간 */}
-          <div />
+          {onBack ? (
+            <button
+              onClick={onBack}
+              className="
+                h-16 rounded-2xl bg-gray-800 hover:bg-gray-700
+                text-white text-xl
+                transition-all duration-200 active:scale-95
+                hover:shadow-lg hover:shadow-gray-500/20
+              "
+            >
+              재설정
+            </button>
+          ) : (
+            <div />
+          )}
 
           {/* 0 */}
           <button

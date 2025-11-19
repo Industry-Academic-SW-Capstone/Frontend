@@ -50,8 +50,9 @@ import {
   HiExclamationTriangle,
   HiInformationCircle,
 } from "react-icons/hi2";
-import { MdPhone, MdKey, MdEmail } from "react-icons/md";
+import { MdPhone, MdKey, MdEmail, MdError } from "react-icons/md";
 import { IconBaseProps } from "react-icons";
+import { FaSpinner } from "react-icons/fa6";
 
 type IconProps = IconBaseProps & React.SVGProps<SVGSVGElement>;
 
@@ -103,6 +104,8 @@ export const AppleIcon = (props: IconProps) => (
 export const PhoneIcon = (props: IconProps) => <MdPhone {...props} />;
 export const KeyIcon = (props: IconProps) => <MdKey {...props} />;
 export const EnvelopeIcon = (props: IconProps) => <MdEmail {...props} />;
+export const ErrorIcon = (props: IconProps) => <MdError {...props} />;
+export const SpinnerIcon = (props: IconProps) => <FaSpinner {...props} />;
 
 // Stock Icon (Custom - 대체 불가능)
 export const StonkIcon = (props: IconProps) => (
