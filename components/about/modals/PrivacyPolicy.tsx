@@ -124,7 +124,7 @@ export const PrivacyPolicyContent: React.FC = () => {
             </thead>
             <tbody>
               <tr className="border-t border-gray-300">
-                <td className="p-2">AWS (Amazon Web Services)</td>
+                <td className="p-2">GCP (Google Cloud Platform)</td>
                 <td className="p-2">서버 호스팅 및 데이터 보관</td>
               </tr>
             </tbody>

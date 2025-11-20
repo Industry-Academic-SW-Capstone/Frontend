@@ -106,7 +106,7 @@ export const Header: React.FC = () => {
 
           <div className="flex items-center gap-2">
             {/* CTA Button */}
-            <div className="hidden md:block">
+            <div className="hidden lg:block">
               <Button
                 variant={
                   isScrolled || nowDirectory !== "/about"
