@@ -15,13 +15,17 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Stock It! - StockIt",
+  title: "Stock It!",
   description: "주식 투자 시뮬레이션 및 대회 플랫폼",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Stock It!",
+  },
+  robots: {
+    index: true, // 인덱싱은 허용 (검색 결과에 뜸)
+    follow: true, // 링크 따라가기도 허용 (about 등으로 흐르도록)
   },
 };
 

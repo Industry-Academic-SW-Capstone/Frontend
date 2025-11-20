@@ -14,9 +14,13 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 export const metadata: Metadata = {
   title: "기술 스택 - StockIt",
   description: "StockIt이 사용하는 최신 기술 스택과 아키텍처를 소개합니다.",
+  alternates: {
+    canonical: "/about/tech",
+  },
   openGraph: {
     title: "기술 스택 - StockIt",
     description: "StockIt이 사용하는 최신 기술 스택과 아키텍처를 소개합니다.",
+    url: "/about/tech",
   },
 };
 

@@ -41,13 +41,6 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     type: "website",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "StockIt! - 주식 투자 시뮬레이션",
-    description:
-      "리스크 없는 모의투자와 흥미진진한 대회. 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
-    images: ["/images/og-image.png"],
-  },
 };
 
 const jsonLd = {
@@ -66,7 +59,7 @@ const jsonLd = {
   image: "https://stockit.live/logo.png",
   author: {
     "@type": "Organization",
-    name: "StockIt Team",
+    name: "Team GRIT",
     url: "https://stockit.live",
   },
 };

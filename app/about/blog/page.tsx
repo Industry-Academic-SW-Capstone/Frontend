@@ -9,9 +9,13 @@ import { Calendar, Clock, User } from "lucide-react";
 export const metadata: Metadata = {
   title: "블로그 - StockIt",
   description: "StockIt 팀의 개발 이야기와 금융 인사이트를 공유합니다.",
+  alternates: {
+    canonical: "/about/blog",
+  },
   openGraph: {
     title: "블로그 - StockIt",
     description: "StockIt 팀의 개발 경험과 금융 인사이트를 공유합니다.",
+    url: "/about/blog",
   },
 };
 
