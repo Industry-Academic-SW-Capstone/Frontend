@@ -6,6 +6,8 @@ import Script from "next/script";
 import { WebSocketProvider } from "@/lib/providers/SocketProvider";
 import PreventContextMenu from "@/components/PreventContextMenu";
 import PWARegistry from "@/components/PWARegistry";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const pretendard = localFont({
   src: "../fonts/pretendard/PretendardVariable.woff2",
@@ -53,6 +55,8 @@ export default function RootLayout({
           strategy="lazyOnload"
         />
         <PreventContextMenu />
+        <SpeedInsights />
+        <Analytics />
         <QueryProvider>
           <PWARegistry />
           <WebSocketProvider>{children}</WebSocketProvider>
