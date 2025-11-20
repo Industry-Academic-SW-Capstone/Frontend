@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import Script from "next/script";
-import { WebSocketProvider } from "@/lib/providers/SocketProvider";
 import PreventContextMenu from "@/components/PreventContextMenu";
 import PWARegistry from "@/components/PWARegistry";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -59,7 +58,7 @@ export default function RootLayout({
         <Analytics />
         <QueryProvider>
           <PWARegistry />
-          <WebSocketProvider>{children}</WebSocketProvider>
+          {children}
         </QueryProvider>
       </body>
     </html>

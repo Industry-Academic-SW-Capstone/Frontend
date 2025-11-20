@@ -13,6 +13,8 @@ import HomeScreenSkeleton from "@/components/screens/HomeScreenSkeleton";
 import HeaderSkeleton from "@/components/HeaderSkeleton";
 import { Screen, Account, User } from "@/lib/types/stock";
 import { MOCK_USER } from "@/lib/constants";
+import { WebSocketProvider } from "@/lib/providers/SocketProvider";
+
 import {
   getUnreadCount,
   getStoredNotifications,
@@ -183,51 +185,53 @@ export default function Home() {
 
   return (
     <>
-      <div className="max-w-md mx-auto bg-bg-primary text-text-primary min-h-screen font-sans relative overflow-hidden">
-        <Header
-          selectedAccount={currentAccount}
-          user={user}
-          onAccountSwitch={() => setIsAccountSwitcherOpen(true)}
-          onNotificationClick={() => setIsNotificationsOpen(true)}
-          unreadCount={unreadNotifications}
-        />
-
-        <main className="h-screen">
-          <MainSwiper
+      <WebSocketProvider>
+        <div className="max-w-md mx-auto bg-bg-primary text-text-primary min-h-screen font-sans relative overflow-hidden">
+          <Header
             selectedAccount={currentAccount}
             user={user}
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-            currentScreen={currentScreen}
-            onSlideChange={handleSetCurrentScreen}
+            onAccountSwitch={() => setIsAccountSwitcherOpen(true)}
+            onNotificationClick={() => setIsNotificationsOpen(true)}
+            unreadCount={unreadNotifications}
           />
-        </main>
 
-        <BottomNavBar
-          currentScreen={currentScreen}
-          setCurrentScreen={handleSetCurrentScreen}
-          isStocksActive={isStocksViewActive}
-        />
+          <main className="h-screen">
+            <MainSwiper
+              selectedAccount={currentAccount}
+              user={user}
+              isDarkMode={isDarkMode}
+              setIsDarkMode={setIsDarkMode}
+              currentScreen={currentScreen}
+              onSlideChange={handleSetCurrentScreen}
+            />
+          </main>
 
-        {/* 증권 화면 - 오른쪽에서 슬라이딩 */}
-        <SlidingScreen isOpen={isStocksViewActive} onClose={handleExitStocks}>
-          <StocksContainerScreen onExit={handleExitStocks} />
-        </SlidingScreen>
+          <BottomNavBar
+            currentScreen={currentScreen}
+            setCurrentScreen={handleSetCurrentScreen}
+            isStocksActive={isStocksViewActive}
+          />
 
-        <AccountSwitcher
-          isOpen={isAccountSwitcherOpen}
-          onClose={() => setIsAccountSwitcherOpen(false)}
-        />
+          {/* 증권 화면 - 오른쪽에서 슬라이딩 */}
+          <SlidingScreen isOpen={isStocksViewActive} onClose={handleExitStocks}>
+            <StocksContainerScreen onExit={handleExitStocks} />
+          </SlidingScreen>
 
-        {/* 알림 화면 - 오른쪽에서 슬라이딩 */}
-        <SlidingScreen
-          isOpen={isNotificationsOpen}
-          onClose={() => setIsNotificationsOpen(false)}
-          title="알림"
-        >
-          <NotificationsScreen />
-        </SlidingScreen>
-      </div>
+          <AccountSwitcher
+            isOpen={isAccountSwitcherOpen}
+            onClose={() => setIsAccountSwitcherOpen(false)}
+          />
+
+          {/* 알림 화면 - 오른쪽에서 슬라이딩 */}
+          <SlidingScreen
+            isOpen={isNotificationsOpen}
+            onClose={() => setIsNotificationsOpen(false)}
+            title="알림"
+          >
+            <NotificationsScreen />
+          </SlidingScreen>
+        </div>
+      </WebSocketProvider>
     </>
   );
 }
