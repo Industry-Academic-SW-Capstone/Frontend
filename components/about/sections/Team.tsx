@@ -47,13 +47,22 @@ export const Team: React.FC = () => {
                 </p>
 
                 <div className="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                  <button className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">
+                  <button
+                    className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                    aria-label={`${member.name}의 Github`}
+                  >
                     <Github size={18} />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+                  <button
+                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                    aria-label={`${member.name}의 Linkedin`}
+                  >
                     <Linkedin size={18} />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
+                  <button
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                    aria-label={`${member.name}에게 이메일 보내기`}
+                  >
                     <Mail size={18} />
                   </button>
                 </div>

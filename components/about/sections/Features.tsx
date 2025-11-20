@@ -39,7 +39,10 @@ export const Features: React.FC = () => {
               <div className="bg-white rounded-3xl p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl group border border-gray-100 relative overflow-hidden h-full">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150 duration-500"></div>
 
-                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-8 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-blue-200 group-hover:shadow-lg relative z-10">
+                <div
+                  className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-8 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-blue-200 group-hover:shadow-lg relative z-10"
+                  aria-hidden="true"
+                >
                   <feature.icon size={32} strokeWidth={1.5} />
                 </div>
 

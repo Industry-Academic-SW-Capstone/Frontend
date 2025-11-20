@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useEffectEvent } from "react";
 import { Menu, X, TrendingUp, Download, Github } from "lucide-react";
 import { NAV_ITEMS } from "./constants";
 import { Button } from "./ui/Button";
 import { useInstallModal } from "./context/InstallModalContext";
 import { useLenis } from "./ui/SmoothScroll";
+import { usePathname } from "next/navigation";
 
 export const Header: React.FC = () => {
   const { openInstallModal } = useInstallModal();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lenis = useLenis();
+
+  const nowDirectory = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,20 +28,30 @@ export const Header: React.FC = () => {
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
-    e.preventDefault();
-    if (lenis) {
-      lenis.scrollTo(href);
-    } else {
-      const element = document.querySelector(href);
-      element?.scrollIntoView({ behavior: "smooth" });
+    // If it's a hash link
+    if (
+      href.startsWith("#") ||
+      (href.startsWith("/about#") && window.location.pathname === "/about")
+    ) {
+      e.preventDefault();
+      const targetId = href.includes("#")
+        ? href.split("#")[1]
+        : href.substring(1);
+      if (lenis) {
+        lenis.scrollTo(`#${targetId}`);
+      } else {
+        const element = document.getElementById(targetId);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }
+      setIsMobileMenuOpen(false);
     }
-    setIsMobileMenuOpen(false);
+    // If it's a normal link, let it navigate (do nothing here)
   };
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled || isMobileMenuOpen
+        isScrolled || isMobileMenuOpen || nowDirectory !== "/about"
           ? "bg-white/90 backdrop-blur-md shadow-sm py-3"
           : "bg-transparent py-5"
       }`}
@@ -55,7 +68,7 @@ export const Header: React.FC = () => {
             </div>
             <span
               className={`text-2xl font-bold tracking-tight ${
-                isScrolled || isMobileMenuOpen
+                isScrolled || isMobileMenuOpen || nowDirectory !== "/about"
                   ? "text-gray-900"
                   : "text-gray-900 md:text-white"
               }`}
@@ -72,7 +85,7 @@ export const Header: React.FC = () => {
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
                 className={`text-sm font-medium transition-colors hover:text-blue-500 ${
-                  isScrolled
+                  isScrolled || nowDirectory !== "/about"
                     ? "text-gray-600"
                     : "text-white/90 hover:text-white"
                 }`}
@@ -86,7 +99,11 @@ export const Header: React.FC = () => {
             {/* CTA Button */}
             <div className="hidden md:block">
               <Button
-                variant={isScrolled ? "primary" : "secondary"}
+                variant={
+                  isScrolled || nowDirectory !== "/about"
+                    ? "primary"
+                    : "secondary"
+                }
                 size="sm"
                 onClick={() => {
                   window.open(
@@ -101,7 +118,11 @@ export const Header: React.FC = () => {
             </div>
             <div className="hidden md:block">
               <Button
-                variant={isScrolled ? "primary" : "secondary"}
+                variant={
+                  isScrolled || nowDirectory !== "/about"
+                    ? "primary"
+                    : "secondary"
+                }
                 size="sm"
                 onClick={openInstallModal}
                 className="gap-2"
@@ -115,11 +136,18 @@ export const Header: React.FC = () => {
           <button
             className="md:hidden p-2 text-gray-600"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
           >
             {isMobileMenuOpen ? (
               <X />
             ) : (
-              <Menu className={isScrolled ? "text-gray-900" : "text-white"} />
+              <Menu
+                className={
+                  isScrolled || nowDirectory !== "/about"
+                    ? "text-gray-900"
+                    : "text-white"
+                }
+              />
             )}
           </button>
         </div>

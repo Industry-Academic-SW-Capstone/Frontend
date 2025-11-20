@@ -23,3 +23,50 @@ export interface NavItem {
   label: string;
   href: string;
 }
+
+export interface TechStackItem {
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  category: "Frontend" | "Backend" | "Infrastructure" | "Other";
+}
+
+export interface BlogPost {
+  id: number;
+  title: string;
+  excerpt: string;
+  date: string;
+  author: string;
+  category: string;
+  readTime: string;
+  image: string;
+}
+
+export interface Announcement {
+  id: number;
+  title: string;
+  content: string;
+  date: string;
+  type: "NOTICE" | "EVENT" | "MAINTENANCE";
+}
+
+export interface SystemArchitectureItem {
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  connections?: string[];
+}
+
+export interface DevEnvironmentItem {
+  tool: string;
+  purpose: string;
+  icon: LucideIcon;
+  category: "IDE" | "Version Control" | "Deployment" | "Communication";
+}
+
+export interface ServerLogicItem {
+  title: string;
+  description: string;
+  steps: string[];
+  icon: LucideIcon;
+}

@@ -6,49 +6,88 @@ import { Features } from "@/components/about/sections/Features";
 import { AppDemo } from "@/components/about/sections/AppDemo";
 import { Team } from "@/components/about/sections/Team";
 import { Footer } from "@/components/about/Footer";
-import { InstallModal } from "@/components/about/modals/InstallModal";
-import { InstallModalProvider } from "@/components/about/context/InstallModalContext";
-import { SmoothScroll } from "@/components/about/ui/SmoothScroll";
 
 export const metadata: Metadata = {
-  title: "StockIt! - 주식 투자 시뮬레이션",
+  metadataBase: new URL("https://stock-it-sandy.vercel.app"),
+  title: "StockIt! - 주식 투자 시뮬레이션 & 대회 플랫폼",
   description:
-    "리스크 없는 모의투자와 흥미진진한 대회. 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
+    "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션으로 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
+  keywords: [
+    "주식",
+    "모의투자",
+    "주식대회",
+    "투자연습",
+    "StockIt",
+    "스톡잇",
+    "금융교육",
+  ],
+  alternates: {
+    canonical: "/about",
+  },
   openGraph: {
     title: "StockIt! - 주식 투자 시뮬레이션",
     description:
-      "리스크 없는 모의투자와 흥미진진한 대회. 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
-    type: "website",
-    locale: "ko_KR",
+      "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션으로 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
+    url: "/about",
     siteName: "StockIt!",
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "StockIt Preview",
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "StockIt! - 주식 투자 시뮬레이션",
     description:
       "리스크 없는 모의투자와 흥미진진한 대회. 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
+    images: ["/images/og-image.png"],
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "StockIt!",
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "Web",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "KRW",
+  },
+  description:
+    "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션 플랫폼.",
+  image: "https://stock-it-sandy.vercel.app/logo.png",
+  author: {
+    "@type": "Organization",
+    name: "StockIt Team",
+    url: "https://stock-it-sandy.vercel.app",
   },
 };
 
 export default function AboutPage() {
   return (
-    <InstallModalProvider>
-      <SmoothScroll>
-        <div className="min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900">
-          <Header />
+    <div className="min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Header />
 
-          <main>
-            <Hero />
-            <Features />
-            <AppDemo />
-            <Team />
-          </main>
+      <main>
+        <Hero />
+        <Features />
+        <AppDemo />
+        <Team />
+      </main>
 
-          <Footer />
-
-          <InstallModal />
-        </div>
-      </SmoothScroll>
-    </InstallModalProvider>
+      <Footer />
+    </div>
   );
 }
