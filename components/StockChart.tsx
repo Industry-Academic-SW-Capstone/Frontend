@@ -501,7 +501,7 @@ const StockChart: React.FC<StockChartProps> = ({
         {/* Hover Tooltip */}
         {hoverData && (
           <div
-            className="absolute p-2 text-xs rounded-lg shadow-lg pointer-events-none bg-bg-secondary border border-border-color"
+            className="absolute z-[60] p-2 text-xs rounded-lg shadow-lg pointer-events-none bg-bg-secondary border border-border-color"
             style={{
               left: `${(hoverData.x / width) * 100}%`,
               top: `0px`,
