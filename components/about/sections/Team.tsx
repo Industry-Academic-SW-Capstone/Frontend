@@ -1,7 +1,7 @@
 import React from "react";
 import { TEAM_MEMBERS } from "../constants";
-import { Github, Linkedin, Mail } from "lucide-react";
 import { FadeIn, Stagger, StaggerItem } from "@/components/about/ui/Motion";
+import { SocialLinks } from "./SocialLinks";
 
 export const Team: React.FC = () => {
   return (
@@ -46,26 +46,12 @@ export const Team: React.FC = () => {
                   {member.description}
                 </p>
 
-                <div className="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                  <button
-                    className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
-                    aria-label={`${member.name}의 Github`}
-                  >
-                    <Github size={18} />
-                  </button>
-                  <button
-                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
-                    aria-label={`${member.name}의 Linkedin`}
-                  >
-                    <Linkedin size={18} />
-                  </button>
-                  <button
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                    aria-label={`${member.name}에게 이메일 보내기`}
-                  >
-                    <Mail size={18} />
-                  </button>
-                </div>
+                <SocialLinks
+                  github={member.github}
+                  linkedIn={member.linkedIn}
+                  email={member.email}
+                  memberName={member.name}
+                />
               </div>
             </StaggerItem>
           ))}
@@ -96,17 +82,12 @@ export const Team: React.FC = () => {
                   {member.description}
                 </p>
 
-                <div className="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                  <button className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">
-                    <Github size={18} />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                    <Linkedin size={18} />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
-                    <Mail size={18} />
-                  </button>
-                </div>
+                <SocialLinks
+                  github={member.github}
+                  linkedIn={member.linkedIn}
+                  email={member.email}
+                  memberName={member.name}
+                />
               </div>
             </StaggerItem>
           ))}
@@ -122,7 +103,7 @@ export const Team: React.FC = () => {
 
             <div className="relative z-10 max-w-4xl mx-auto">
               <h3 className="text-3xl md:text-4xl font-bold text-white mb-8">
-                "투자는 어렵다"는 편견을 깨다
+                "투자는 어렵다"는 편견을 깨다.
               </h3>
               <p className="text-gray-300 text-lg leading-relaxed mb-10">
                 스톡잇은 단순한 질문에서 시작되었습니다.{" "}
@@ -139,10 +120,10 @@ export const Team: React.FC = () => {
               </p>
               <div className="flex justify-center gap-4">
                 <span className="px-6 py-2 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full text-white text-sm font-medium">
-                  Since 2024
+                  Since 2025
                 </span>
                 <span className="px-6 py-2 bg-blue-600/20 backdrop-blur-sm border border-blue-500/30 rounded-full text-blue-300 text-sm font-medium">
-                  Open Source
+                  Team GRIT
                 </span>
               </div>
             </div>

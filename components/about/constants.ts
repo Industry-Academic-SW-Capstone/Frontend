@@ -11,7 +11,7 @@ import {
 import { Feature, TeamMember, NavItem } from "./types";
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "홈", href: "/about" },
+  { label: "홈", href: "/about#home" },
   { label: "특징", href: "/about#features" },
   { label: "기술 스택", href: "/about/tech" },
   { label: "블로그", href: "/about/blog" },
@@ -49,38 +49,46 @@ export const FEATURES: Feature[] = [
 export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "최재현",
-    role: "PM & Backend",
+    role: "LLMOps, Backend",
     description:
-      "금융 데이터 처리 및 전체 프로젝트 리딩을 담당합니다. 안정적인 서버 운영을 최우선으로 합니다.",
-    image: "https://picsum.photos/200/200?random=1",
+      "Team GRIT의 리더로서 스톡잇의 AI 모델 개발과 클라우드 DevOps 및 CI/CD, 랭킹기능을 개발을 담당하고 있습니다.",
+    image:
+      "https://img.seoul.co.kr/img/upload/2015/07/02/SSI_20150702155500.jpg",
+    github: "https://github.com/MacArthur17",
   },
   {
     name: "김환희",
-    role: "Backend",
+    role: "DevOps, Backend",
     description:
-      "Next.js를 활용하여 사용자 경험을 극대화하는 직관적인 UI/UX를 설계하고 개발합니다.",
-    image: "https://picsum.photos/200/200?random=2",
+      "실시간 종목 데이터 처리와 체결로직, 소켓 기능과 Firebase 알림을 맡아 개발하고 있습니다.",
+    image:
+      "https://item.kakaocdn.net/do/dd0984cf971dd8ac6f8909775b7e8cd7617ea012db208c18f6e83b1a90a7baa7",
+    github: "https://github.com/hwanh2",
   },
   {
     name: "김지훈",
-    role: "Frontend",
+    role: "UI/UX, Frontend",
     description:
-      "복잡한 금융 데이터를 시각적으로 아름답고 이해하기 쉽게 풀어내는 디자인을 연구합니다.",
-    image: "https://picsum.photos/200/200?random=3",
+      "누구나 사용할 수 있는 캐주얼한 UI와, 빠르고 신속하며 신뢰성 있는 웹앱을 개발합니다.",
+    image: "https://avatars.githubusercontent.com/u/40907210?s=96&v=4",
+    github: "https://github.com/urous3814",
+    linkedIn: "https://www.linkedin.com/in/urous3814/",
+    email: "mailto:urous3814@gmail.com",
   },
   {
     name: "변정원",
     role: "Backend",
-    description:
-      "실시간 데이터 파이프라인 구축 및 PWA 최적화를 담당하여 끊김 없는 서비스를 제공합니다.",
-    image: "https://picsum.photos/200/200?random=4",
+    description: "유저와 계정, 인증에 관한 로직과 API들을 개발하고있습니다.",
+    image: "https://avatars.githubusercontent.com/u/185999086?s=96&v=4",
+    github: "https://github.com/Yeeyahou",
   },
   {
     name: "나준선",
     role: "Backend",
     description:
-      "실시간 데이터 파이프라인 구축 및 PWA 최적화를 담당하여 끊김 없는 서비스를 제공합니다.",
-    image: "https://picsum.photos/200/200?random=4",
+      "미션과 업적, 칭호 등 게이미피케이션 요소의 기획과 개발을 담당하고 있습니다.",
+    image: "https://avatars.githubusercontent.com/u/91936830?s=96&v=4",
+    github: "https://github.com/junsunna",
   },
 ];
 

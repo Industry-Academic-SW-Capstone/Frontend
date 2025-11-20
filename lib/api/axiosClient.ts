@@ -34,7 +34,7 @@ export function createAxiosClient(): AxiosInstance {
         config.headers["Authorization"] = `Bearer ${token}`;
       }
 
-      // 요청 데이터 PascalCase로 변환
+      // 요청 데이터 snake-case로 변환
       try {
         if (
           config.data &&

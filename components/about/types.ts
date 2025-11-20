@@ -11,6 +11,9 @@ export interface TeamMember {
   role: string;
   description: string;
   image: string;
+  github?: string;
+  linkedIn?: string;
+  email?: string;
 }
 
 export interface StockData {

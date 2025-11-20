@@ -6,15 +6,20 @@ import { NAV_ITEMS } from "./constants";
 import { Button } from "./ui/Button";
 import { useInstallModal } from "./context/InstallModalContext";
 import { useLenis } from "./ui/SmoothScroll";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export const Header: React.FC = () => {
+  const router = useRouter();
   const { openInstallModal } = useInstallModal();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lenis = useLenis();
 
-  const nowDirectory = usePathname();
+  const pathname = usePathname();
+  const [nowDirectory, setNowDirectory] = useState(pathname);
+  useEffect(() => {
+    setNowDirectory(pathname);
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,7 +36,7 @@ export const Header: React.FC = () => {
     // If it's a hash link
     if (
       href.startsWith("#") ||
-      (href.startsWith("/about#") && window.location.pathname === "/about")
+      (href.startsWith("/about#") && nowDirectory == "/about")
     ) {
       e.preventDefault();
       const targetId = href.includes("#")
@@ -44,6 +49,8 @@ export const Header: React.FC = () => {
         element?.scrollIntoView({ behavior: "smooth" });
       }
       setIsMobileMenuOpen(false);
+    } else {
+      router.push(href);
     }
     // If it's a normal link, let it navigate (do nothing here)
   };
@@ -59,23 +66,25 @@ export const Header: React.FC = () => {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div
+          <a
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => lenis?.scrollTo(0)}
+            onClick={(e) => {
+              handleNavClick(e, "/about#home");
+            }}
           >
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
               <TrendingUp className="text-white w-6 h-6" />
             </div>
             <span
               className={`text-2xl font-bold tracking-tight ${
-                isScrolled || isMobileMenuOpen || nowDirectory !== "/about"
+                isScrolled || nowDirectory !== "/about"
                   ? "text-gray-900"
-                  : "text-gray-900 md:text-white"
+                  : "text-white"
               }`}
             >
               StockIt!
             </span>
-          </div>
+          </a>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
