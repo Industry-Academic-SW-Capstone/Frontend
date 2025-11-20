@@ -13,22 +13,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/about/tech`,
-      lastModified: currentDate,
-      changeFrequency: "monthly", // 기술 블로그 등은 업데이트 빈도에 맞게 조절
-      priority: 0.8,
-    },
-    {
       url: `${baseUrl}/about/blog`,
       lastModified: currentDate,
       changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/about/tech`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
       priority: 0.8,
     },
+
     {
       url: `${baseUrl}/about/announce`,
       lastModified: currentDate,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.7,
     },
     {
       url: baseUrl,
