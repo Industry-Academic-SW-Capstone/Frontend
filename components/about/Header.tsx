@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Menu, X, TrendingUp, Download } from "lucide-react";
+import { Menu, X, TrendingUp, Download, Github } from "lucide-react";
 import { NAV_ITEMS } from "./constants";
 import { Button } from "./ui/Button";
 import { useInstallModal } from "./context/InstallModalContext";
@@ -65,16 +65,37 @@ export const Header: React.FC = () => {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
-            <Button
-              variant={isScrolled ? "primary" : "secondary"}
-              size="sm"
-              onClick={openInstallModal}
-              className="gap-2"
-            >
-              <Download size={16} />앱 설치하기
-            </Button>
+          <div className="flex items-center gap-2">
+            {/* CTA Button */}
+            <div className="hidden md:block">
+              <button
+                // variant={isScrolled ? "primary" : "secondary"}
+                // size="sm"
+                onClick={() => {
+                  window.open(
+                    "https://github.com/Industry-Academic-SW-Capstone",
+                    "_blank"
+                  );
+                }}
+                className={`gap-2 ${
+                  isScrolled
+                    ? "text-gray-600"
+                    : "text-white/90 hover:text-white"
+                } w-8 h-8 rounded-full flex items-center justify-center bg-white`}
+              >
+                <Github size={16} color="black" />
+              </button>
+            </div>
+            <div className="hidden md:block">
+              <Button
+                variant={isScrolled ? "primary" : "secondary"}
+                size="sm"
+                onClick={openInstallModal}
+                className="gap-2"
+              >
+                <Download size={16} />앱 설치하기
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Menu Toggle */}
