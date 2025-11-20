@@ -92,7 +92,7 @@ const PopularStockCard: React.FC<{
       className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between active:scale-98 transition-all ease-in-out duration-200"
       onTouchStart={() => {}}
     >
-      <div className="flex justify-center">
+      <div className="w-full flex justify-center">
         <img
           src={generateLogo(stock)}
           onError={(event) => {
@@ -104,15 +104,15 @@ const PopularStockCard: React.FC<{
         />
       </div>
 
-      <p className="font-bold text-sm text-text-primary truncate">
+      <p className="w-full font-bold text-sm text-text-primary truncate">
         {stock.stockName}
       </p>
-      <div>
-        <p className="font-semibold text-text-primary">
+      <div className="w-full flex flex-col">
+        <p className="w-full font-semibold text-text-primary">
           {stock.currentPrice.toLocaleString()}원
         </p>
         <p
-          className={`font-semibold text-xs ${
+          className={`w-full font-semibold text-xs ${
             isPositive ? "text-positive" : "text-negative"
           }`}
         >
