@@ -23,7 +23,7 @@ const StockChart: React.FC<StockChartProps> = ({
   isPositive,
   setChartStartPrice,
 }) => {
-  const [period, setPeriod] = useState<PeriodType>("1day");
+  const [period, setPeriod] = useState<PeriodType>("1week");
   const [chartMode, setChartMode] = useState<"line" | "candle">("line");
 
   // Socket & Store

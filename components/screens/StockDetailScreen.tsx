@@ -9,7 +9,6 @@ import {
 } from "@/components/icons/Icons";
 import { useStockDetail } from "@/lib/hooks/stock/useStockDetail";
 import { generateLogo } from "@/lib/utils";
-import { useStockChart } from "@/lib/hooks/stock/useStockChart";
 import {
   useFavoriteStocks,
   useAddFavorite,

@@ -100,7 +100,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
     : initialUser;
 
   // Accordion states
-  const [openSection, setOpenSection] = useState<string | null>("account");
+  const [openSection, setOpenSection] = useState<string | null>(null);
   const [showAllAchievements, setShowAllAchievements] = useState(false);
 
   // Edit Profile State
