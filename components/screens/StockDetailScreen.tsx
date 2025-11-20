@@ -287,7 +287,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto relative">
             {activeTab === "chart" ? (
-              <div className="px-4 pb-24 mt-6">
+              <div className="px-4 pb-24 mt-10">
                 <StockChart
                   setChartStartPrice={setChartStartPrice}
                   stockCode={stock.stockCode}
