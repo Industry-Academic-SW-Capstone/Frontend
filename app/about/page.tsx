@@ -8,7 +8,7 @@ import { Team } from "@/components/about/sections/Team";
 import { Footer } from "@/components/about/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://stock-it-sandy.vercel.app"),
+  metadataBase: new URL("https://stockit.live"),
   title: "StockIt! - 주식 투자 시뮬레이션 & 대회 플랫폼",
   description:
     "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션으로 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
@@ -63,11 +63,11 @@ const jsonLd = {
   },
   description:
     "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션 플랫폼.",
-  image: "https://stock-it-sandy.vercel.app/logo.png",
+  image: "https://stockit.live/logo.png",
   author: {
     "@type": "Organization",
     name: "StockIt Team",
-    url: "https://stock-it-sandy.vercel.app",
+    url: "https://stockit.live",
   },
 };
 
