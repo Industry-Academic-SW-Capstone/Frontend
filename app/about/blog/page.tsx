@@ -7,14 +7,14 @@ import { FadeIn, Stagger, StaggerItem } from "@/components/about/ui/Motion";
 import { Calendar, Clock, User } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "블로그 - StockIt",
-  description: "StockIt 팀의 개발 이야기와 금융 인사이트를 공유합니다.",
+  title: "블로그",
+  description: "스톡잇을 개발하며 얻은 기술적 고민과 인사이트를 공유합니다.",
   alternates: {
     canonical: "/about/blog",
   },
   openGraph: {
-    title: "블로그 - StockIt",
-    description: "StockIt 팀의 개발 경험과 금융 인사이트를 공유합니다.",
+    title: "블로그",
+    description: "스톡잇을 개발하며 얻은 기술적 고민과 인사이트를 공유합니다.",
     url: "/about/blog",
   },
 };

@@ -7,14 +7,14 @@ import { FadeIn, Stagger, StaggerItem } from "@/components/about/ui/Motion";
 import { Megaphone, Wrench, Trophy } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "공지사항 - StockIt",
-  description: "StockIt의 새로운 소식과 업데이트를 확인하세요.",
+  title: "공지사항",
+  description: "스톡잇의 새로운 소식과 업데이트를 확인하세요.",
   alternates: {
     canonical: "/about/announce",
   },
   openGraph: {
-    title: "공지사항 - StockIt",
-    description: "StockIt의 새로운 소식과 업데이트를 확인하세요.",
+    title: "공지사항",
+    description: "스톡잇의 새로운 소식과 업데이트를 확인하세요.",
     url: "/about/announce",
   },
 };
