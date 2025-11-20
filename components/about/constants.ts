@@ -44,29 +44,36 @@ export const FEATURES: Feature[] = [
 
 export const TEAM_MEMBERS: TeamMember[] = [
   {
-    name: "김스톡",
-    role: "Project Manager & Backend",
+    name: "최재현",
+    role: "PM & Backend",
     description:
       "금융 데이터 처리 및 전체 프로젝트 리딩을 담당합니다. 안정적인 서버 운영을 최우선으로 합니다.",
     image: "https://picsum.photos/200/200?random=1",
   },
   {
-    name: "이프론",
-    role: "Lead Frontend Developer",
+    name: "김환희",
+    role: "Backend",
     description:
       "Next.js를 활용하여 사용자 경험을 극대화하는 직관적인 UI/UX를 설계하고 개발합니다.",
     image: "https://picsum.photos/200/200?random=2",
   },
   {
-    name: "박디자",
-    role: "UI/UX Designer",
+    name: "김지훈",
+    role: "Frontend",
     description:
       "복잡한 금융 데이터를 시각적으로 아름답고 이해하기 쉽게 풀어내는 디자인을 연구합니다.",
     image: "https://picsum.photos/200/200?random=3",
   },
   {
-    name: "최데브",
-    role: "Full Stack Engineer",
+    name: "변정원",
+    role: "Backend",
+    description:
+      "실시간 데이터 파이프라인 구축 및 PWA 최적화를 담당하여 끊김 없는 서비스를 제공합니다.",
+    image: "https://picsum.photos/200/200?random=4",
+  },
+  {
+    name: "나준선",
+    role: "Backend",
     description:
       "실시간 데이터 파이프라인 구축 및 PWA 최적화를 담당하여 끊김 없는 서비스를 제공합니다.",
     image: "https://picsum.photos/200/200?random=4",

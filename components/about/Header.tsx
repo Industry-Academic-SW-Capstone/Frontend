@@ -5,11 +5,13 @@ import { Menu, X, TrendingUp, Download, Github } from "lucide-react";
 import { NAV_ITEMS } from "./constants";
 import { Button } from "./ui/Button";
 import { useInstallModal } from "./context/InstallModalContext";
+import { useLenis } from "./ui/SmoothScroll";
 
 export const Header: React.FC = () => {
   const { openInstallModal } = useInstallModal();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +20,20 @@ export const Header: React.FC = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    e.preventDefault();
+    if (lenis) {
+      lenis.scrollTo(href);
+    } else {
+      const element = document.querySelector(href);
+      element?.scrollIntoView({ behavior: "smooth" });
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <header
@@ -32,7 +48,7 @@ export const Header: React.FC = () => {
           {/* Logo */}
           <div
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => lenis?.scrollTo(0)}
           >
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
               <TrendingUp className="text-white w-6 h-6" />
@@ -54,6 +70,7 @@ export const Header: React.FC = () => {
               <a
                 key={item.label}
                 href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
                 className={`text-sm font-medium transition-colors hover:text-blue-500 ${
                   isScrolled
                     ? "text-gray-600"
@@ -68,23 +85,19 @@ export const Header: React.FC = () => {
           <div className="flex items-center gap-2">
             {/* CTA Button */}
             <div className="hidden md:block">
-              <button
-                // variant={isScrolled ? "primary" : "secondary"}
-                // size="sm"
+              <Button
+                variant={isScrolled ? "primary" : "secondary"}
+                size="sm"
                 onClick={() => {
                   window.open(
                     "https://github.com/Industry-Academic-SW-Capstone",
                     "_blank"
                   );
                 }}
-                className={`gap-2 ${
-                  isScrolled
-                    ? "text-gray-600"
-                    : "text-white/90 hover:text-white"
-                } w-8 h-8 rounded-full flex items-center justify-center bg-white`}
+                className={`gap-2`}
               >
-                <Github size={16} color="black" />
-              </button>
+                <Github size={16} /> Github
+              </Button>
             </div>
             <div className="hidden md:block">
               <Button
@@ -120,7 +133,7 @@ export const Header: React.FC = () => {
               key={item.label}
               href={item.href}
               className="text-gray-600 font-medium py-2 px-4 hover:bg-gray-50 rounded-lg"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={(e) => handleNavClick(e, item.href)}
             >
               {item.label}
             </a>

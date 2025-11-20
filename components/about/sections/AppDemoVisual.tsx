@@ -37,12 +37,15 @@ export const AppDemoVisual: React.FC = () => {
   };
 
   return (
-    <div className="lg:w-1/2 flex justify-center">
+    <div className="w-full flex justify-center">
       <PhoneFrame>
         {/* Screen Content */}
         <div className="h-full bg-gray-50 relative flex flex-col">
           {/* Main Content Area */}
-          <div className="flex-1 overflow-y-auto scrollbar-hide pb-16">
+          <div
+            className="flex-1 overflow-y-auto scrollbar-hide pb-16"
+            data-lenis-prevent
+          >
             {currentScreen === "home" && (
               <DemoHomeScreen onNavigate={handleNavigate} />
             )}

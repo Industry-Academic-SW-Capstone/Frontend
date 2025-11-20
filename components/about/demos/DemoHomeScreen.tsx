@@ -97,9 +97,6 @@ const MissionSummary: React.FC<{ onClick: () => void }> = ({ onClick }) => {
     >
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <div className="bg-primary/10 p-2 rounded-xl">
-            <CheckCircleIcon className="w-5 h-5 text-primary" />
-          </div>
           <span className="font-bold text-text-primary text-lg">
             오늘의 미션
           </span>
@@ -172,7 +169,7 @@ export const DemoHomeScreen: React.FC<DemoHomeScreenProps> = ({
 
   return (
     <>
-      <div className="space-y-3 pb-24 relative min-h-full bg-bg-primary">
+      <div className="space-y-3 p-4 pt-10 pb-24 relative min-h-full bg-bg-primary">
         {/* Greeting Section */}
         <div
           className="p-6 py-3 bg-bg-secondary rounded-2xl flex flex-col cursor-pointer group overflow-hidden relative transition-all duration-500"
@@ -208,6 +205,13 @@ export const DemoHomeScreen: React.FC<DemoHomeScreenProps> = ({
           </div>
         </div>
 
+        {/* Featured Competition */}
+        <div className="transition-opacity duration-500">
+          <div onClick={() => onNavigate("competitions")}>
+            <MissionSummary onClick={() => onNavigate("competitions")} />
+          </div>
+        </div>
+
         {/* Favorites Section */}
         <div className="bg-bg-secondary rounded-2xl p-5">
           <div className="flex justify-between items-center mb-4">
@@ -219,7 +223,10 @@ export const DemoHomeScreen: React.FC<DemoHomeScreenProps> = ({
               전체보기
             </button>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide swiper-no-swiping">
+          <div
+            className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide swiper-no-swiping"
+            data-lenis-prevent
+          >
             {favoriteStocks.map((stock) => (
               <div
                 key={stock.stockCode}

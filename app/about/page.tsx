@@ -8,6 +8,7 @@ import { Team } from "@/components/about/sections/Team";
 import { Footer } from "@/components/about/Footer";
 import { InstallModal } from "@/components/about/modals/InstallModal";
 import { InstallModalProvider } from "@/components/about/context/InstallModalContext";
+import { SmoothScroll } from "@/components/about/ui/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "StockIt! - 주식 투자 시뮬레이션",
@@ -32,20 +33,22 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <InstallModalProvider>
-      <div className="min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900">
-        <Header />
+      <SmoothScroll>
+        <div className="min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900">
+          <Header />
 
-        <main>
-          <Hero />
-          <Features />
-          <AppDemo />
-          <Team />
-        </main>
+          <main>
+            <Hero />
+            <Features />
+            <AppDemo />
+            <Team />
+          </main>
 
-        <Footer />
+          <Footer />
 
-        <InstallModal />
-      </div>
+          <InstallModal />
+        </div>
+      </SmoothScroll>
     </InstallModalProvider>
   );
 }

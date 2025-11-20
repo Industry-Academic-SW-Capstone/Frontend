@@ -94,9 +94,6 @@ const MissionSummary: React.FC<{ onClick: () => void }> = ({ onClick }) => {
     >
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <div className="bg-primary/10 p-2 rounded-xl">
-            <CheckCircleIcon className="w-5 h-5 text-primary" />
-          </div>
           <span className="font-bold text-text-primary text-lg">
             오늘의 미션
           </span>
