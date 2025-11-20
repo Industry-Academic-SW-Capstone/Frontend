@@ -9,7 +9,7 @@ import { Footer } from "@/components/about/Footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://stockit.live"),
-  title: "StockIt! - 주식 투자 시뮬레이션 & 대회 플랫폼",
+  title: "스톡잇! - 주식 투자 시뮬레이션 & 대회 플랫폼",
   description:
     "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션으로 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
   keywords: [
@@ -20,16 +20,17 @@ export const metadata: Metadata = {
     "StockIt",
     "스톡잇",
     "금융교육",
+    "Stock It",
   ],
   alternates: {
     canonical: "/about",
   },
   openGraph: {
-    title: "StockIt! - 주식 투자 시뮬레이션",
+    title: "스톡잇! - 주식 투자 시뮬레이션",
     description:
       "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션으로 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
     url: "/about",
-    siteName: "StockIt!",
+    siteName: "스톡잇!",
     images: [
       {
         url: "/images/og-image.png",

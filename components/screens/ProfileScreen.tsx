@@ -183,7 +183,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
   const handleLogout = async () => {
     if (confirm("정말 로그아웃 하시겠습니까?")) {
       await logout();
-      router.push("/"); // Redirect to landing page
+      router.push("/pwa"); // Redirect to landing page
     }
   };
 

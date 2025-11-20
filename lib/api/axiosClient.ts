@@ -79,7 +79,7 @@ export function createAxiosClient(): AxiosInstance {
 
         // 로그인 페이지로 리디렉션
         if (typeof window !== "undefined") {
-          window.location.href = "/";
+          window.location.href = "/pwa";
         }
       }
 

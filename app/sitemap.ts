@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${baseUrl}/about`,
       lastModified: currentDate,
-      changeFrequency: "weekly",
+      changeFrequency: "daily",
       priority: 1.0,
     },
     {
@@ -21,7 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${baseUrl}/about/blog`,
       lastModified: currentDate,
-      changeFrequency: "weekly",
+      changeFrequency: "daily",
       priority: 0.8,
     },
     {
@@ -33,8 +33,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: baseUrl,
       lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/pwa`,
+      lastModified: currentDate,
       changeFrequency: "daily",
-      priority: 0.3,
+      priority: 0.1,
     },
   ];
 }

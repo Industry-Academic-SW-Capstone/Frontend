@@ -22,7 +22,7 @@ export const useLogout = (): UseLogoutResult => {
       // }
 
       clearAuthToken();
-      window.location.href = "/";
+      window.location.href = "/pwa";
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An unknown error occurred"

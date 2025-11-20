@@ -173,7 +173,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     } finally {
       setIsAuthLoading(false);
       // URL에서 code 제거 (선택 사항)
-      window.history.replaceState({}, document.title, "/");
+      window.history.replaceState({}, document.title, "/pwa");
     }
   };
 

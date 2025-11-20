@@ -13,6 +13,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  redirects: () => {
+    return [
+      {
+        source: "/",
+        destination: "/about",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

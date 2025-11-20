@@ -38,7 +38,7 @@ export const registerServiceWorker =
 
     try {
       const registration = await navigator.serviceWorker.register("/sw.js", {
-        scope: "/",
+        scope: "/pwa",
       });
       console.log("서비스 워커가 성공적으로 등록되었습니다:", registration);
       return registration;
