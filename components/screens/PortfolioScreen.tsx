@@ -23,6 +23,7 @@ import { Drawer } from "vaul";
 import OrderDetailModal from "@/components/OrderDetailModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowPathIcon } from "@/components/icons/Icons";
+import { useAccountStore } from "@/lib/store/useAccountStore";
 
 interface PortfolioScreenProps {
   onSelectStock: (ticker: string) => void;
@@ -114,9 +115,11 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
   onSelectStock,
   onNavigateToExplore,
 }) => {
-  const accountId = 1;
-  const { data: assets, isLoading: isAssetsLoading } =
-    useAccountAssets(accountId);
+  const { selectedAccount, setSelectedAccount, accounts } = useAccountStore();
+
+  const { data: assets, isLoading: isAssetsLoading } = useAccountAssets(
+    selectedAccount?.id
+  );
   const { data: pendingOrdersData } = usePendingOrders();
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isChartOpen, setIsChartOpen] = useState(false);

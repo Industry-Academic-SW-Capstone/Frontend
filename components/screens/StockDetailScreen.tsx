@@ -18,6 +18,7 @@ import {
 import { useAccountAssets } from "@/lib/hooks/useAccount";
 import Toast, { ToastType } from "@/components/ui/Toast";
 import OrderBook from "@/components/OrderBook";
+import { useAccountStore } from "@/lib/store/useAccountStore";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -38,6 +39,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   ticker,
   onBack,
 }) => {
+  const { selectedAccount, setSelectedAccount, accounts } = useAccountStore();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
   const [chartStartPrice, setChartStartPrice] = useState<number | null>(null);
@@ -97,7 +99,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     }
   };
 
-  const { data: accountAssets } = useAccountAssets(1); // Assuming accountId 1 for now
+  const { data: accountAssets } = useAccountAssets(selectedAccount?.id); // Assuming accountId 1 for now
   const cashBalance = accountAssets?.cash || 0;
   const ownedStock = accountAssets?.holdings.find(
     (h) => h.stockCode === ticker
