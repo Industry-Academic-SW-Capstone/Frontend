@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import Header from "@/components/Header";
 import BottomNavBar from "@/components/BottomNavBar";
@@ -100,13 +100,6 @@ export default function Home() {
     }
   }, [isDarkMode]);
 
-  // Check login status based on user info availability or token
-  useEffect(() => {
-    if (userInfo) {
-      setIsLoggedIn(true);
-    }
-  }, [userInfo]);
-
   const handleSetCurrentScreen = (screen: Screen) => {
     if (screen === "stocks") {
       setIsStocksViewActive(true);
@@ -123,36 +116,26 @@ export default function Home() {
   const handleLoginSuccess = (newUser: Partial<User>) => {
     // Refetch user info or handle login success
     // For now, just set logged in
+    console.log("너구나");
     setIsLoggedIn(true);
   };
 
-  const getHeaderTitle = () => {
-    switch (currentScreen) {
-      case "home":
-        return "홈";
-      case "competitions":
-        return "대회";
-      case "rankings":
-        return "랭킹";
-      case "profile":
-        return "MY";
-      default:
-        return "StonkApp";
-    }
-  };
-
-  // Initial token check to avoid waiting for useFetchInfo if no token exists
+  const tokenRef = useRef(token);
   useEffect(() => {
-    if (!token) {
-      setIsLoggedIn(false);
-    } else {
-      // If token exists, we assume logged in until 401 happens or user info loads
-      setIsLoggedIn(true);
-    }
+    tokenRef.current = token;
   }, [token]);
+  useEffect(() => {
+    setTimeout(() => {
+      if (!tokenRef.current) {
+        setIsLoggedIn(false);
+      } else {
+        setIsLoggedIn(true);
+      }
+    }, 300);
+  }, []);
 
   // If not logged in and not loading (or if we know there's no token), show Onboarding
-  if (!token && !isLoggedIn) {
+  if (!token || !isLoggedIn) {
     return (
       <Suspense fallback={null}>
         <OnboardingScreen onLoginSuccess={handleLoginSuccess} />
