@@ -46,7 +46,7 @@ export function FadeIn({
     <div
       ref={ref}
       className={`${className} ${fullWidth ? "w-full" : ""}`}
-      style={{ position: "relative" }}
+      style={{ position: "relative", willChange: "transform, opacity" }}
     >
       <motion.div
         initial={initial}
@@ -94,6 +94,7 @@ export function Stagger({
       initial="hidden"
       animate={isInView ? "show" : "hidden"}
       className={className}
+      style={{ willChange: "transform, opacity" }}
     >
       {children}
     </motion.div>
@@ -133,7 +134,11 @@ export function StaggerItem({
   };
 
   return (
-    <motion.div variants={itemVariants} className={className}>
+    <motion.div
+      variants={itemVariants}
+      className={className}
+      style={{ willChange: "transform, opacity" }}
+    >
       {children}
     </motion.div>
   );

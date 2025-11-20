@@ -53,7 +53,7 @@ const DonutChart: React.FC<PortfolioDonutChartProps> = ({ holdings, cash }) => {
   });
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-8">
+    <div className="flex flex-col items-center gap-8">
       <div className="relative w-48 h-48 flex-shrink-0">
         <svg
           viewBox="0 0 100 100"

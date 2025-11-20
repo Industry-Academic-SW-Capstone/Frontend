@@ -19,7 +19,7 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
         </h3>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div className="grid grid-cols-1 gap-8 items-center">
         {/* Left Column: Chart & Persona */}
         <div className="flex flex-col items-center">
           <div className="relative w-full max-w-[280px] aspect-square mb-6">

@@ -18,23 +18,27 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const lenisInstance = new Lenis({
-      duration: 1.1,
+      duration: 0.9, // Reduced from 1.1 for snappier feel
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
+      wheelMultiplier: 1.2, // Slightly faster scroll
     });
 
     setLenis(lenisInstance);
 
+    let rafId: number;
+
     function raf(time: number) {
       lenisInstance.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenisInstance.destroy();
       setLenis(null);
     };

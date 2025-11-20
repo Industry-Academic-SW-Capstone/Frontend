@@ -14,8 +14,14 @@ export const Hero: React.FC = () => {
 
       {/* Decorative Patterns */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-30">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/30 rounded-full blur-[120px] animate-pulse-slow"></div>
-        <div className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-purple-500/30 rounded-full blur-[100px] animate-pulse-slow delay-1000"></div>
+        <div
+          className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/30 rounded-full blur-[120px] animate-pulse-slow"
+          style={{ willChange: "opacity" }}
+        ></div>
+        <div
+          className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-purple-500/30 rounded-full blur-[100px] animate-pulse-slow delay-1000"
+          style={{ willChange: "opacity" }}
+        ></div>
       </div>
 
       <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
