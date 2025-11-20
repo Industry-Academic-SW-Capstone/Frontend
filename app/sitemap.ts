@@ -37,11 +37,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.5,
     },
-    {
-      url: `${baseUrl}/pwa`,
-      lastModified: currentDate,
-      changeFrequency: "daily",
-      priority: 0.2,
-    },
   ];
 }
