@@ -6,7 +6,7 @@ import { analyzeInvestmentStyle } from "@/lib/services/geminiService";
 import * as Icons from "@/components/icons/Icons";
 import InvestmentAnalysisCard from "@/components/InvestmentAnalysisCard";
 
-const AnalysisScreen: React.FC = () => {
+const AnalysisScreen: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   const [analysis, setAnalysis] = useState<InvestmentStyleAnalysis | null>(
     MOCK_ANALYSIS_RESULT
   );

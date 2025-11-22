@@ -20,6 +20,7 @@ export interface PendingOrdersResponse {
 export interface OrderDetail {
   orderId: number;
   accountId: number;
+  stockName: string;
   stockCode: string;
   orderType: "MARKET" | "LIMIT";
   orderMethod: "BUY" | "SELL";

@@ -74,22 +74,32 @@ const StocksSwiper: React.FC<StocksSwiperProps> = ({
     >
       <SwiperSlide>
         <div className="h-full overflow-y-auto px-4 pb-24">
-          <PortfolioScreen
-            onSelectStock={onSelectStock}
-            onNavigateToExplore={() => onSlideChange("explore")}
-          />
+          {currentView === "portfolio" ? (
+            <PortfolioScreen
+              isActive={currentView === "portfolio"}
+              onSelectStock={onSelectStock}
+              onNavigateToExplore={() => onSlideChange("explore")}
+            />
+          ) : null}
         </div>
       </SwiperSlide>
 
       <SwiperSlide>
         <div className="h-full overflow-y-auto px-4 pb-24">
-          <ExploreScreen onSelectStock={onSelectStock} />
+          {currentView === "explore" ? (
+            <ExploreScreen
+              isActive={currentView === "explore"}
+              onSelectStock={onSelectStock}
+            />
+          ) : null}
         </div>
       </SwiperSlide>
 
       <SwiperSlide>
         <div className="h-full overflow-y-auto px-4 pb-24">
-          <AnalysisScreen />
+          {currentView === "analysis" ? (
+            <AnalysisScreen isActive={currentView === "analysis"} />
+          ) : null}
         </div>
       </SwiperSlide>
     </Swiper>

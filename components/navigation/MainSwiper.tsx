@@ -79,7 +79,7 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
       className="h-full w-full"
     >
       <SwiperSlide>
-        <div className="h-full overflow-y-auto px-4 pb-28 pt-20">
+        <div className="h-full px-4 pb-28">
           <HomeScreen
             selectedAccount={selectedAccount}
             onNavigate={onSlideChange}
@@ -88,24 +88,28 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
       </SwiperSlide>
 
       <SwiperSlide>
-        <div className="h-full overflow-y-auto px-4 pb-28 pt-20">
-          <CompetitionsScreen />
+        <div className="h-full px-4 pb-28">
+          {currentScreen === "competitions" ? <CompetitionsScreen /> : null}
         </div>
       </SwiperSlide>
 
       <SwiperSlide>
-        <div className="h-full overflow-y-auto px-4 pb-28 pt-20">
-          <RankingsScreen selectedAccount={selectedAccount} user={user} />
+        <div className="h-full px-4 pb-28">
+          {currentScreen === "rankings" ? (
+            <RankingsScreen selectedAccount={selectedAccount} user={user} />
+          ) : null}
         </div>
       </SwiperSlide>
 
       <SwiperSlide>
-        <div className="h-full overflow-y-auto px-4 pb-28 pt-20">
-          <ProfileScreen
-            user={user}
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-          />
+        <div className="h-full px-4 pb-28">
+          {currentScreen === "profile" ? (
+            <ProfileScreen
+              user={user}
+              isDarkMode={isDarkMode}
+              setIsDarkMode={setIsDarkMode}
+            />
+          ) : null}
         </div>
       </SwiperSlide>
     </Swiper>

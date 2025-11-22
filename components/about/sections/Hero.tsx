@@ -77,111 +77,108 @@ export const Hero: React.FC = () => {
         </div>
 
         {/* Visual Area */}
-        <FadeIn direction="left" delay={0.2} duration={0.8}>
-          <div className="hidden lg:block relative h-[700px] perspective-1000">
-            {/* Main App Screenshot Placeholder - Ideally this would be a real screenshot or the demo component itself if we wanted to show it here too, but let's keep it as a stylized graphic for the hero */}
-            <div className="relative z-10 transform rotate-y-[-12deg] rotate-x-[5deg] hover:rotate-y-[-5deg] hover:rotate-x-[2deg] transition-transform duration-700 ease-out preserve-3d">
-              <div className="relative rounded-[2.5rem] overflow-hidden border-[8px] border-slate-800 shadow-2xl bg-slate-900 aspect-[9/19] w-[320px] mx-auto">
-                {/* Abstract UI Representation */}
-                <div className="absolute inset-0 bg-slate-900">
-                  {/* Header */}
-                  <div className="h-14 border-b border-white/5 flex items-center justify-between px-6">
-                    <div className="w-20 h-4 bg-white/10 rounded-full"></div>
-                    <div className="w-8 h-8 bg-white/10 rounded-full"></div>
+        {/* Visual Area */}
+        <div className="hidden lg:block relative h-[700px] perspective-1000">
+          {/* Main App Screenshot Placeholder - Ideally this would be a real screenshot or the demo component itself if we wanted to show it here too, but let's keep it as a stylized graphic for the hero */}
+          <div className="relative z-10 transform rotate-y-[-12deg] rotate-x-[5deg] hover:rotate-y-[-5deg] hover:rotate-x-[2deg] transition-transform duration-700 ease-out preserve-3d">
+            <div className="relative rounded-[2.5rem] overflow-hidden border-[8px] border-slate-800 shadow-2xl bg-slate-900 aspect-[9/19] w-[320px] mx-auto">
+              {/* Abstract UI Representation */}
+              <div className="absolute inset-0 bg-slate-900">
+                {/* Header */}
+                <div className="h-14 border-b border-white/5 flex items-center justify-between px-6">
+                  <div className="w-20 h-4 bg-white/10 rounded-full"></div>
+                  <div className="w-8 h-8 bg-white/10 rounded-full"></div>
+                </div>
+                {/* Chart */}
+                <div className="mt-8 px-6">
+                  <div className="w-32 h-8 bg-white/10 rounded-lg mb-2"></div>
+                  <div className="w-24 h-4 bg-white/5 rounded-lg mb-8"></div>
+                  <div className="h-40 w-full bg-gradient-to-b from-blue-500/20 to-transparent rounded-xl border-t border-blue-500/30 relative overflow-hidden">
+                    <svg
+                      className="absolute bottom-0 left-0 w-full h-full"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="M0 100 L0 60 Q 20 40 40 70 T 80 30 L 100 50 L 100 100 Z"
+                        fill="url(#grad)"
+                      />
+                      <path
+                        d="M0 60 Q 20 40 40 70 T 80 30 L 100 50"
+                        fill="none"
+                        stroke="#3b82f6"
+                        strokeWidth="2"
+                      />
+                      <defs>
+                        <linearGradient
+                          id="grad"
+                          x1="0%"
+                          y1="0%"
+                          x2="0%"
+                          y2="100%"
+                        >
+                          <stop
+                            offset="0%"
+                            stopColor="#3b82f6"
+                            stopOpacity="0.3"
+                          />
+                          <stop
+                            offset="100%"
+                            stopColor="#3b82f6"
+                            stopOpacity="0"
+                          />
+                        </linearGradient>
+                      </defs>
+                    </svg>
                   </div>
-                  {/* Chart */}
-                  <div className="mt-8 px-6">
-                    <div className="w-32 h-8 bg-white/10 rounded-lg mb-2"></div>
-                    <div className="w-24 h-4 bg-white/5 rounded-lg mb-8"></div>
-                    <div className="h-40 w-full bg-gradient-to-b from-blue-500/20 to-transparent rounded-xl border-t border-blue-500/30 relative overflow-hidden">
-                      <svg
-                        className="absolute bottom-0 left-0 w-full h-full"
-                        viewBox="0 0 100 100"
-                        preserveAspectRatio="none"
-                      >
-                        <path
-                          d="M0 100 L0 60 Q 20 40 40 70 T 80 30 L 100 50 L 100 100 Z"
-                          fill="url(#grad)"
-                        />
-                        <path
-                          d="M0 60 Q 20 40 40 70 T 80 30 L 100 50"
-                          fill="none"
-                          stroke="#3b82f6"
-                          strokeWidth="2"
-                        />
-                        <defs>
-                          <linearGradient
-                            id="grad"
-                            x1="0%"
-                            y1="0%"
-                            x2="0%"
-                            y2="100%"
-                          >
-                            <stop
-                              offset="0%"
-                              stopColor="#3b82f6"
-                              stopOpacity="0.3"
-                            />
-                            <stop
-                              offset="100%"
-                              stopColor="#3b82f6"
-                              stopOpacity="0"
-                            />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                  </div>
-                  {/* List Items */}
-                  <div className="mt-8 px-6 space-y-4">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="flex items-center gap-4">
-                        <div
-                          className={`w-10 h-10 rounded-full ${
-                            i % 2 === 0 ? "bg-red-500/20" : "bg-blue-500/20"
-                          }`}
-                        ></div>
-                        <div className="flex-1 space-y-2">
-                          <div className="w-24 h-3 bg-white/10 rounded-full"></div>
-                          <div className="w-16 h-2 bg-white/5 rounded-full"></div>
-                        </div>
-                        <div className="w-16 h-6 bg-white/5 rounded-lg"></div>
+                </div>
+                {/* List Items */}
+                <div className="mt-8 px-6 space-y-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <div
+                        className={`w-10 h-10 rounded-full ${
+                          i % 2 === 0 ? "bg-red-500/20" : "bg-blue-500/20"
+                        }`}
+                      ></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="w-24 h-3 bg-white/10 rounded-full"></div>
+                        <div className="w-16 h-2 bg-white/5 rounded-full"></div>
                       </div>
-                    ))}
-                  </div>
+                      <div className="w-16 h-6 bg-white/5 rounded-lg"></div>
+                    </div>
+                  ))}
                 </div>
               </div>
+            </div>
 
-              {/* Floating Badge 1 */}
-              <div className="absolute top-20 -right-4 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-xl animate-float delay-0">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-400">
-                    <TrendingUp size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400">수익률 1위</p>
-                    <p className="text-sm font-bold text-white">워렌버핏</p>
-                  </div>
+            {/* Floating Badge 1 */}
+            <div className="absolute top-20 -right-4 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-xl animate-float delay-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-400">
+                  <TrendingUp size={20} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400">수익률 1위</p>
+                  <p className="text-sm font-bold text-white">워렌버핏</p>
                 </div>
               </div>
+            </div>
 
-              {/* Floating Badge 2 */}
-              <div className="absolute bottom-40 -left-8 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-xl animate-float delay-1000">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400">
-                    <Zap size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400">실시간 체결</p>
-                    <p className="text-sm font-bold text-white">
-                      삼성전자 매수
-                    </p>
-                  </div>
+            {/* Floating Badge 2 */}
+            <div className="absolute bottom-40 -left-8 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-xl animate-float delay-1000">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400">
+                  <Zap size={20} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400">실시간 체결</p>
+                  <p className="text-sm font-bold text-white">삼성전자 매수</p>
                 </div>
               </div>
             </div>
           </div>
-        </FadeIn>
+        </div>
       </div>
 
       <ScrollDown />

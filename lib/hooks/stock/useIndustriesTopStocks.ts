@@ -20,7 +20,6 @@ async function fetchTopStocks(
   if (res.status !== 200) {
     throw new Error("Failed to fetch top stocks");
   }
-  console.log("Fetched Industries Top Stocks:", res.data);
   return res.data;
 }
 

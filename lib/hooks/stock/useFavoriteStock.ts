@@ -65,7 +65,9 @@ async function fetchFavoriteStocks(): Promise<FavoriteStockInfo[]> {
 }
 
 export function useFavoriteStocks() {
-  const { data, isLoading, isError, refetch } = useQuery<FavoriteStockInfo[]>({
+  const { data, isLoading, isError, refetch, isFetching } = useQuery<
+    FavoriteStockInfo[]
+  >({
     queryKey: ["favoriteStocks"],
     queryFn: () => fetchFavoriteStocks(),
   });
@@ -75,6 +77,7 @@ export function useFavoriteStocks() {
     isLoading,
     isError,
     refetch,
+    isFetching,
   };
 }
 

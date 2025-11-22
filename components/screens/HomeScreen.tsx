@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Competition } from "@/lib/types/stock";
+import { Competition, AccountAssetHolding } from "@/lib/types/stock";
 import {
   TrophyIcon,
   CalendarIcon,
@@ -10,7 +10,7 @@ import {
 import MissionPanel from "@/components/MissionPanel";
 import HomeScreenSkeleton from "@/components/screens/HomeScreenSkeleton";
 import { useAccounts } from "@/lib/hooks/useAccounts";
-import { useAccountAssets, AccountAssetHolding } from "@/lib/hooks/useAccount";
+import { useAccountAssets } from "@/lib/hooks/useAccount";
 import { useContests } from "@/lib/hooks/useContest";
 import { useMyRanking, useRanking } from "@/lib/hooks/useRanking";
 import { useAccountStore } from "@/lib/store/useAccountStore";
@@ -18,6 +18,7 @@ import { useFetchInfo } from "@/lib/hooks/me/useInfo";
 import { useFavoriteStocks } from "@/lib/hooks/stock/useFavoriteStock";
 import { usePendingOrders } from "@/lib/hooks/useOrders";
 import { generateLogo } from "@/lib/utils";
+import CountUp from "react-countup";
 
 const FeaturedCompetition: React.FC<{ competition: Competition }> = ({
   competition,
@@ -90,9 +91,9 @@ const MissionSummary: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-bg-secondary p-5 rounded-2xl cursor-pointer group transition-colors hover:bg-bg-tertiary"
+      className="bg-bg-secondary p-5 pb-3 pt-3 rounded-2xl cursor-pointer group transition-colors hover:bg-bg-tertiary"
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-2">
           <span className="font-bold text-text-primary text-lg">
             오늘의 미션
@@ -116,12 +117,12 @@ const MissionSummary: React.FC<{ onClick: () => void }> = ({ onClick }) => {
           <span className="font-semibold text-text-primary">3개</span>
         </div>
 
-        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+        {/* <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
           <div
             className="bg-primary h-2 rounded-full transition-all duration-500"
             style={{ width: "40%" }}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -166,6 +167,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const [selectedStockTicker, setSelectedStockTicker] = useState<string | null>(
     null
   );
+  const [helloVisible, setHelloVisible] = useState(true);
+
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 
   // Pull to Refresh State
@@ -196,23 +199,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     setSelectedOrderId(orderId);
   };
 
-  // Pull to Refresh Handlers
   const handleTouchStart = (e: React.TouchEvent) => {
-    // Only enable pull to refresh if we are at the top of the page
-    // We need to check if the container is scrolled to top.
-    // Since HomeScreen is inside a scrollable div in MainSwiper, checking window.scrollY might not be enough if the scroll is on the parent.
-    // However, MainSwiper has `overflow-y-auto` on the wrapper div.
-    // We might need to check that wrapper's scrollTop.
-    // But here we only have access to the component.
-    // Let's assume for now the user pulls when the scroll is at 0.
-    // We can check `e.currentTarget.scrollTop === 0` if we attach it to the scrolling container, but HomeScreen is a child.
-    // Let's try checking if the closest scrollable parent is at 0.
-    // For simplicity, let's just use the logic from ProfileScreen, but note that ProfileScreen might be relying on window scroll or body scroll.
-    // In MainSwiper, the scroll is on the div wrapping HomeScreen.
-    // So `window.scrollY` will always be 0 if the body isn't scrolling.
-    // We need to be careful.
-    // Let's attach the handlers to the main div of HomeScreen.
-    // And we need to know if we are at the top.
     const scrollContainer = e.currentTarget.closest(".overflow-y-auto");
     if (scrollContainer && scrollContainer.scrollTop === 0) {
       setPullStartY(e.touches[0].clientY);
@@ -234,7 +221,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     if (pullCurrentY > PULL_THRESHOLD) {
       setIsRefreshing(true);
       try {
-        await queryClient.invalidateQueries();
+        refetchUserInfo();
+        refetchAssets();
+        refetchMyRanking();
+        refetchFavoriteStocks();
+        refetchPendingOrders();
+        refetchMainRanking();
+        refetchContests();
+        setHelloVisible(false);
         // Optional: Show toast? ProfileScreen does.
       } catch (error) {
         console.error("Refresh failed", error);
@@ -246,14 +240,46 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     setPullCurrentY(0);
   };
 
-  const { data: contests } = useContests();
-  const { data: userInfo } = useFetchInfo();
-  const { data: assets } = useAccountAssets(selectedAccount?.id);
-  const { data: myRanking } = useMyRanking();
-  const { data: favoriteStocks } = useFavoriteStocks();
-  const { data: pendingOrders } = usePendingOrders();
-  const { data: mainRanking } = useRanking("returnRate");
+  const {
+    data: contests,
+    isFetching: contestsLoading,
+    refetch: refetchContests,
+  } = useContests();
+  const {
+    data: userInfo,
+    isFetching: userInfoLoading,
+    refetch: refetchUserInfo,
+  } = useFetchInfo();
+  const {
+    data: assets,
+    isFetching: assetsLoading,
+    refetch: refetchAssets,
+  } = useAccountAssets(selectedAccount?.id);
+  const {
+    data: myRanking,
+    isFetching: myRankingLoading,
+    refetch: refetchMyRanking,
+  } = useMyRanking();
+  const {
+    data: favoriteStocks,
+    isFetching: favoriteStocksLoading,
+    refetch: refetchFavoriteStocks,
+  } = useFavoriteStocks();
+  const {
+    data: pendingOrders,
+    isFetching: pendingOrdersLoading,
+    refetch: refetchPendingOrders,
+  } = usePendingOrders();
+  const {
+    data: mainRanking,
+    isFetching: mainRankingLoading,
+    refetch: refetchMainRanking,
+  } = useRanking("returnRate");
   const { mutate: cancelOrder } = useCancelOrder();
+
+  useEffect(() => {
+    console.log("assetsLoading", assetsLoading);
+  }, [assetsLoading]);
 
   const selectedCompetition = contests?.find(
     (c) => c.contestId === selectedAccount?.contestId
@@ -275,25 +301,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     return <HomeScreenSkeleton />;
   }
 
-  // Calculate real values from assets
-  const totalAssets = assets?.totalAssets ?? selectedAccount.totalValue;
-  const totalInvested =
-    assets?.holdings.reduce(
-      (sum: number, h: AccountAssetHolding) =>
-        sum + h.averagePrice * h.quantity,
-      0
-    ) ?? 0;
-  const currentStockValue = assets?.stockValue ?? 0;
-  const totalProfit = currentStockValue - totalInvested;
-  const returnRate =
-    totalInvested > 0 ? (totalProfit / totalInvested) * 100 : 0;
-
-  const isPositive = totalProfit >= 0;
-  const changeString = `${isPositive ? "+" : ""}${Number(
-    totalProfit
-  ).toLocaleString()}원 (${isPositive ? "+" : ""}${Number(returnRate).toFixed(
-    2
-  )}%)`;
   const isMainAccount = selectedAccount.type === "regular";
 
   // Ranking Logic
@@ -315,7 +322,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   return (
     <>
       <div
-        className="space-y-3 pb-24 relative min-h-full"
+        className="space-y-2 pb-24 relative min-h-full"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -348,41 +355,77 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Greeting Section */}
         <div
-          className={`p-6 py-3 bg-bg-secondary rounded-2xl flex flex-col cursor-pointer group overflow-hidden relative transition-all duration-500 ${
-            isMounted ? "animate-fadeInUp opacity-100" : "opacity-0"
+          className={`bg-bg-secondary p-5 rounded-2xl flex flex-col cursor-pointer overflow-hidden relative transition-all duration-700 ease-in ${
+            helloVisible
+              ? "max-h-[100px] opacity-100 py-3"
+              : "max-h-0 opacity-0 py-0"
           }`}
           onClick={() => onNavigate("profile")}
         >
-          <h1 className="text-2xl font-bold text-text-primary">
+          <h1 className="text-xl font-bold text-text-primary">
             안녕하세요, {userInfo?.name || "투자자"}님 👋
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-text-secondary text-sm">
             오늘도 스톡잇과 함께 배워봐요!
           </p>
         </div>
 
         {/* Total Assets Section */}
         <div
-          className={`p-6 bg-bg-secondary rounded-2xl flex flex-col cursor-pointer group overflow-hidden relative transition-all duration-200 active:bg-border-color active:scale-95 ${
-            isMounted ? "animate-fadeInUp opacity-100" : "opacity-0"
-          }`}
+          className={`p-5 py-3 bg-bg-secondary rounded-2xl flex flex-col cursor-pointer group overflow-hidden relative transition-all duration-200 active:bg-border-color active:scale-95`}
           onClick={handleNavigateToPortfolio}
         >
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex justify-between items-start">
             <p className="text-text-secondary text-sm font-medium">총 자산</p>
             <ChevronRightIcon className="w-5 h-5 text-text-tertiary group-hover:text-text-primary transition-colors" />
           </div>
-          <p className="text-4xl font-extrabold text-text-primary tracking-tight">
-            {Number(totalAssets).toLocaleString()}
+          <div
+            className={`text-4xl font-extrabold text-text-primary transition-all duration-500 ease-in-out origin-left
+            ${
+              assetsLoading
+                ? "opacity-80 scale-[0.98]"
+                : "opacity-100 scale-100"
+            }`}
+          >
+            <CountUp
+              start={Number(assets?.totalAssets)} // 첫 렌더링 시 시작 숫자
+              end={Number(assets?.totalAssets)} // 목표 숫자 (이 값이 바뀌면 애니메이션 실행)
+              duration={0.5} // 애니메이션 지속 시간 (초)
+              separator="," // 천 단위 구분자
+              preserveValue={true} // 업데이트 시 0부터 다시 세지 않고 현재 값에서 이어서 카운팅
+            />
             <span className="text-2xl font-bold ml-1">원</span>
-          </p>
+          </div>
+          <div
+            className={`flex items-center text-sm font-medium ${
+              Number(assets?.totalProfit) >= 0
+                ? "text-positive"
+                : "text-negative"
+            }`}
+          >
+            {Number(assets?.totalProfit) >= 0 ? "+" : ""}
+            <CountUp
+              start={Number(assets?.totalProfit)}
+              end={Number(assets?.totalProfit)}
+              duration={0.5}
+              separator=","
+              preserveValue={true}
+            />
+            원{Number(assets?.totalProfit) >= 0 ? " (+" : " ("}
+            <CountUp
+              start={Number(assets?.returnRate)}
+              end={Number(assets?.returnRate)}
+              duration={0.5}
+              separator=","
+              preserveValue={true}
+            />
+            {"%)"}
+          </div>
         </div>
 
         {/* Featured Competition or Mission */}
         <div
-          className={`transition-opacity duration-500 ${
-            isMounted ? "animate-fadeInUp opacity-100" : "opacity-0"
-          }`}
+          className={`transition-opacity duration-500`}
           style={{ animationDelay: "100ms" }}
         >
           {!isMainAccount && displayCompetition ? (
@@ -396,8 +439,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Favorites Section */}
         {favoriteStocks && favoriteStocks.length > 0 && (
-          <div className="bg-bg-secondary rounded-2xl p-5">
-            <div className="flex justify-between items-center mb-4">
+          <div className="bg-bg-secondary rounded-2xl p-5 pb-1 pt-3">
+            <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-bold text-text-primary">관심 주식</h2>
               <button
                 className="text-xs text-text-secondary hover:text-primary transition-colors"
@@ -424,12 +467,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                       </p>
                     </div>
                   </div>
-                  <div>
+                  <div className="flex items-center gap-2">
                     <p className="font-bold text-text-primary text-sm">
                       {Number(stock.currentPrice).toLocaleString()}원
                     </p>
                     <p
-                      className={`text-xs font-medium ${
+                      className={`text-xs w-fit font-medium ${
                         Number(stock.changeRate) >= 0
                           ? "text-positive"
                           : "text-negative"
@@ -447,8 +490,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Pending Orders Section */}
         {pendingOrders?.orders && pendingOrders.orders.length > 0 && (
-          <div className="bg-bg-secondary rounded-2xl p-5">
-            <h2 className="text-lg font-bold text-text-primary mb-2">
+          <div className="bg-bg-secondary rounded-2xl p-5 pb-1 pt-3">
+            <h2 className="text-lg font-bold text-text-primary -mb-1">
               대기 중인 주문
             </h2>
             <div className="space-y-4">
@@ -502,8 +545,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Rankings Preview */}
         {mainRanking && mainRanking.rankings && (
-          <div className="bg-bg-secondary rounded-2xl p-5">
-            <div className="flex justify-between items-center mb-4">
+          <div className="bg-bg-secondary rounded-2xl p-5 pb-3 pt-3">
+            <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-bold text-text-primary">
                 실시간 랭킹
               </h2>

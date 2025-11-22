@@ -47,12 +47,25 @@ export interface Account {
   chartData: ChartDataPoint[];
 }
 
-export interface StockHolding extends StockLogoInfo {
+export interface AccountAssetHolding extends StockLogoInfo {
   stockName: string;
-  shares: number;
+  quantity: number;
   currentPrice: number;
-  avgPrice: number;
-  todayChangePercent: number;
+  averagePrice: number;
+  totalValue: number;
+}
+
+export interface AccountAssets {
+  totalAssets: number;
+  cash: number;
+  stockValue: number;
+  holdings: AccountAssetHolding[];
+}
+
+export interface AssetInfo extends AccountAssets {
+  totalInvested: number;
+  totalProfit: number;
+  returnRate: number;
 }
 
 export interface Transaction {
@@ -240,6 +253,7 @@ export interface BasicStockInfo extends StockLogoInfo {
   currentPrice: number;
   changeRate: number;
   changeSign: ChangeSign;
+  changeAmount: number;
 }
 export interface StockInfo extends BasicStockInfo {
   volume: number;
@@ -256,56 +270,12 @@ export interface StockDetailInfo extends StockInfo {
   lowPrice: number;
   openPrice: number;
   previousClosePrice: number;
-  changeAmount: number;
-  changeRate: number;
 }
 
 export interface IndustriesTopStocks {
   industryCode: string;
   industryName: string;
   stocks: StockInfo[];
-}
-
-export interface StockDetailMockType {
-  stockCode: string;
-  stockName: string;
-  description: string;
-  currentPrice: number;
-  changeAmount: number;
-  changeRate: number;
-  marketCap: number;
-  peRatio: number;
-  shares: number;
-  logo: string;
-  chartData: {
-    day: {
-      date: string;
-      price: number;
-      volume: number;
-    }[];
-    week: {
-      date: string;
-      price: number;
-      volume: number;
-    }[];
-    month: {
-      date: string;
-      price: number;
-      volume: number;
-    }[];
-    year: {
-      date: string;
-      price: number;
-      volume: number;
-    }[];
-  };
-}
-
-export interface BasicStockInfoMockType {
-  stockCode: string;
-  stockName: string;
-  currentPrice: number;
-  changeRate: number;
 }
 
 export interface FavoriteStock {
@@ -326,11 +296,6 @@ export interface ChartData {
   closePrice: number;
   volume: number;
   amount: number;
-}
-
-export interface Sector {
-  name: string;
-  stocks: BasicStockInfoMockType[];
 }
 
 export type PopularStockCategory = "gainers" | "losers" | "volume" | "amount";

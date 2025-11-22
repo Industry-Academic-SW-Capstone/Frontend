@@ -1,15 +1,15 @@
 "use client";
 import React from "react";
-import { StockHolding } from "@/lib/types/stock";
+import { AccountAssetHolding } from "@/lib/types/stock";
 
 interface PortfolioDonutChartProps {
-  holdings: StockHolding[];
+  holdings: AccountAssetHolding[];
   cash: number;
 }
 
 const DonutChart: React.FC<PortfolioDonutChartProps> = ({ holdings, cash }) => {
   const totalHoldingsValue = holdings.reduce(
-    (sum, h) => sum + h.shares * h.currentPrice,
+    (sum, h) => sum + h.quantity * h.currentPrice,
     0
   );
   const totalPortfolioValue = totalHoldingsValue + cash;
@@ -37,7 +37,7 @@ const DonutChart: React.FC<PortfolioDonutChartProps> = ({ holdings, cash }) => {
     { name: "현금", value: cash, color: "#E9ECEF" }, // Light gray for cash
     ...holdings.map((h, i) => ({
       name: h.stockName,
-      value: h.shares * h.currentPrice,
+      value: h.quantity * h.currentPrice,
       color: COLORS[i % COLORS.length],
     })),
   ].sort((a, b) => b.value - a.value);

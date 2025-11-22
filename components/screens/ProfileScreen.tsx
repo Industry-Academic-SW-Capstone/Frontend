@@ -245,12 +245,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
       </div>
 
       {/* Profile Card - Simplified Design */}
-      <div className="bg-bg-secondary rounded-3xl shadow-lg p-8 flex flex-col items-center text-center border border-border-color/50">
+      <div className="bg-bg-secondary rounded-3xl p-8 flex flex-col items-center text-center shadow-sm border border-border-color">
         <div className="relative inline-block mb-5">
           <img
             src={user.avatar}
             alt="User Avatar"
-            className="w-32 h-32 rounded-full border-4 border-bg-primary shadow-xl object-cover"
+            className="w-32 h-32 rounded-full border-4 border-bg-primary shadow-sm object-cover"
           />
           <button
             onClick={() => setIsEditingProfile(true)}
@@ -275,367 +275,219 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </div>
       </div>
 
-      {/* Account Info Section */}
-      <div className="bg-bg-secondary rounded-3xl shadow-lg overflow-hidden border border-border-color/50">
-        <button
-          className={`w-full flex items-center justify-between p-6 ${
-            openSection === "account" ? "bg-bg-primary/50" : ""
-          } hover:bg-bg-primary/30 transition-colors`}
-          onClick={() => handleAccordion("account")}
-        >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-500">
-              <Icons.UserIcon className="w-6 h-6" />
+      {/* Grouped Sections */}
+      <div className=" bg-bg-secondary rounded-3xl shadow-sm border border-border-color overflow-hidden divide-y divide-border-color">
+        {/* Account Info Section */}
+        <div>
+          <button
+            className={`w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors`}
+            onClick={() => handleAccordion("account")}
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-blue-50 rounded-xl text-blue-500">
+                <Icons.UserIcon className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-lg text-text-primary">계정 정보</h3>
             </div>
-            <h3 className="font-bold text-lg text-text-primary">계정 정보</h3>
-          </div>
-          <Icons.ChevronRightIcon
-            className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
-              openSection === "account" ? "rotate-90" : ""
+            <Icons.ChevronRightIcon
+              className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
+                openSection === "account" ? "rotate-90" : ""
+              }`}
+            />
+          </button>
+
+          <div
+            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+              openSection === "account"
+                ? "max-h-[500px] opacity-100"
+                : "max-h-0 opacity-0"
             }`}
-          />
-        </button>
-
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            openSection === "account"
-              ? "max-h-[500px] opacity-100"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="p-2 space-y-1">
-            <div className="p-4 flex items-center justify-between hover:bg-bg-primary/30 rounded-xl transition-colors mx-2">
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-bg-primary rounded-lg text-text-secondary">
-                  <Icons.EnvelopeIcon className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs text-text-secondary font-medium mb-0.5">
-                    이메일
-                  </p>
-                  <p className="text-text-primary font-semibold">
-                    {fetchedUser?.email || "user@example.com"}
-                  </p>
+          >
+            <div className="p-2 space-y-1 bg-gray-50/50">
+              <div className="p-4 flex items-center justify-between hover:bg-gray-100 rounded-xl transition-colors mx-2">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-white rounded-lg text-text-secondary shadow-sm">
+                    <Icons.EnvelopeIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-text-secondary font-medium mb-0.5">
+                      이메일
+                    </p>
+                    <p className="text-text-primary font-semibold">
+                      {fetchedUser?.email || "user@example.com"}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Phone number removed as requested */}
-
-            <button
-              onClick={() => setIsEditingProfile(true)}
-              className="w-full p-4 flex items-center justify-between hover:bg-bg-primary/50 rounded-xl transition-colors mx-2 group"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-accent/10 rounded-lg text-accent group-hover:bg-accent group-hover:text-white transition-colors">
-                  <Icons.PencilSquareIcon className="w-5 h-5" />
-                </div>
-                <span className="text-text-primary font-semibold group-hover:text-accent transition-colors">
-                  프로필 수정
-                </span>
-              </div>
-              <Icons.ChevronRightIcon className="w-5 h-5 text-text-secondary group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Social Login Section - Commented out as requested */}
-      {/*
-      <div className="bg-bg-secondary rounded-3xl shadow-lg overflow-hidden border border-border-color/50">
-        <button
-          className={`w-full flex items-center justify-between p-6 ${
-            openSection === "social" ? "bg-bg-primary/50" : ""
-          } hover:bg-bg-primary/30 transition-colors`}
-          onClick={() => handleAccordion("social")}
-        >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-500/10 rounded-2xl text-purple-500">
-              <Icons.LinkIcon className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-lg text-text-primary">연동된 계정</h3>
-          </div>
-          <Icons.ChevronRightIcon
-            className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
-              openSection === "social" ? "rotate-90" : ""
-            }`}
-          />
-        </button>
-
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            openSection === "social"
-              ? "max-h-[500px] opacity-100"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="p-4 space-y-3">
-            <div className="flex items-center justify-between p-4 bg-bg-primary/30 rounded-2xl border border-border-color/50">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path
-                      fill="#4285F4"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    />
-                    <path
-                      fill="#EA4335"
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-text-primary font-bold">Google</p>
-                  <p className="text-xs text-positive font-medium">연동됨</p>
-                </div>
-              </div>
               <button
-                disabled
-                className="px-4 py-2 bg-bg-primary text-text-disabled text-xs font-bold rounded-full border border-border-color cursor-not-allowed"
+                onClick={() => setIsEditingProfile(true)}
+                className="w-full p-4 flex items-center justify-between hover:bg-gray-100 rounded-xl transition-colors mx-2 group"
               >
-                해제 불가
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-bg-primary/30 rounded-2xl border border-border-color/50">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center shadow-sm">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-                  </svg>
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
+                    <Icons.PencilSquareIcon className="w-5 h-5" />
+                  </div>
+                  <span className="text-text-primary font-semibold group-hover:text-primary transition-colors">
+                    프로필 수정
+                  </span>
                 </div>
-                <div>
-                  <p className="text-text-primary font-bold">Apple</p>
-                  <p className="text-xs text-text-disabled font-medium">
-                    미연동
-                  </p>
-                </div>
-              </div>
-              <button
-                disabled
-                className="px-4 py-2 bg-bg-primary text-text-disabled text-xs font-bold rounded-full border border-border-color cursor-not-allowed"
-              >
-                연동하기
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-bg-primary/30 rounded-2xl border border-border-color/50">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-[#FEE500] rounded-full flex items-center justify-center shadow-sm">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#000000">
-                    <path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.794 1.932 5.238 4.805 6.63-.197.713-.644 2.43-.734 2.824-.11.483.177.477.373.346.157-.105 2.423-1.642 3.47-2.35.66.093 1.338.142 2.028.142 5.523 0 10-3.477 10-7.8S17.523 3 12 3z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-text-primary font-bold">카카오</p>
-                  <p className="text-xs text-text-disabled font-medium">
-                    미연동
-                  </p>
-                </div>
-              </div>
-              <button
-                disabled
-                className="px-4 py-2 bg-bg-primary text-text-disabled text-xs font-bold rounded-full border border-border-color cursor-not-allowed"
-              >
-                연동하기
+                <Icons.ChevronRightIcon className="w-5 h-5 text-text-secondary group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
         </div>
-      </div>
-      */}
 
-      {/* Achievements Section */}
-      <div className="bg-bg-secondary rounded-3xl shadow-lg overflow-hidden border border-border-color/50">
-        <button
-          className={`w-full flex items-center justify-between p-6 ${
-            openSection === "achievements" ? "bg-bg-primary/50" : ""
-          } hover:bg-bg-primary/30 transition-colors`}
-          onClick={() => handleAccordion("achievements")}
-        >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-yellow-500/10 rounded-2xl text-yellow-500">
-              <Icons.TrophyIcon className="w-6 h-6" />
+        {/* Achievements Section */}
+        <div>
+          <button
+            className={`w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors`}
+            onClick={() => handleAccordion("achievements")}
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-yellow-50 rounded-xl text-yellow-500">
+                <Icons.TrophyIcon className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-lg text-text-primary">업적</h3>
             </div>
-            <h3 className="font-bold text-lg text-text-primary">업적</h3>
-          </div>
-          <Icons.ChevronRightIcon
-            className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
-              openSection === "achievements" ? "rotate-90" : ""
-            }`}
-          />
-        </button>
+            <Icons.ChevronRightIcon
+              className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
+                openSection === "achievements" ? "rotate-90" : ""
+              }`}
+            />
+          </button>
 
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            openSection === "achievements"
-              ? "max-h-[1000px] opacity-100"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="p-4 space-y-3">
-            <div className="grid grid-cols-1 gap-3">
-              {visibleAchievements.map((ach, index) => (
-                <div
-                  key={ach.id}
-                  className="animate-fadeInUp"
-                  style={{ animationDelay: `${index * 50}ms` }}
+          <div
+            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+              openSection === "achievements"
+                ? "max-h-[1000px] opacity-100"
+                : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="p-4 space-y-3 bg-gray-50/50">
+              <div className="grid grid-cols-1 gap-3">
+                {visibleAchievements.map((ach, index) => (
+                  <div
+                    key={ach.id}
+                    className="animate-fadeInUp"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <AchievementItem achievement={ach} />
+                  </div>
+                ))}
+              </div>
+
+              {MOCK_ACHIEVEMENTS.length > 3 && (
+                <button
+                  onClick={() => setShowAllAchievements(!showAllAchievements)}
+                  className="w-full py-3 mt-2 text-sm font-bold text-primary hover:bg-primary/5 rounded-xl transition-colors flex items-center justify-center gap-2"
                 >
-                  <AchievementItem achievement={ach} />
-                </div>
-              ))}
+                  {showAllAchievements ? (
+                    <>
+                      <span>접기</span>
+                      <Icons.ChevronUpIcon className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <span>전체 보기 ({MOCK_ACHIEVEMENTS.length})</span>
+                      <Icons.ChevronDownIcon className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              )}
             </div>
-
-            {MOCK_ACHIEVEMENTS.length > 3 && (
-              <button
-                onClick={() => setShowAllAchievements(!showAllAchievements)}
-                className="w-full py-3 mt-2 text-sm font-bold text-primary hover:bg-primary/5 rounded-xl transition-colors flex items-center justify-center gap-2"
-              >
-                {showAllAchievements ? (
-                  <>
-                    <span>접기</span>
-                    <Icons.ChevronUpIcon className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    <span>전체 보기 ({MOCK_ACHIEVEMENTS.length})</span>
-                    <Icons.ChevronDownIcon className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            )}
           </div>
         </div>
-      </div>
 
-      {/* Settings Section */}
-      <div className="bg-bg-secondary rounded-3xl shadow-lg overflow-hidden border border-border-color/50">
-        <button
-          className={`w-full flex items-center justify-between p-6 ${
-            openSection === "settings" ? "bg-bg-primary/50" : ""
-          } hover:bg-bg-primary/30 transition-colors`}
-          onClick={() => handleAccordion("settings")}
-        >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-gray-500/10 rounded-2xl text-gray-500">
-              <Icons.Cog6ToothIcon className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-lg text-text-primary">설정</h3>
-          </div>
-          <Icons.ChevronRightIcon
-            className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
-              openSection === "settings" ? "rotate-90" : ""
-            }`}
-          />
-        </button>
-
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            openSection === "settings"
-              ? "max-h-[1200px] opacity-100"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="p-2 space-y-1">
-            {/* Dark Mode */}
-            <div className="p-4 flex justify-between items-center hover:bg-bg-primary/30 rounded-xl transition-colors mx-2">
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-bg-primary rounded-lg text-text-secondary">
-                  {isDarkMode ? (
-                    <Icons.MoonIcon className="w-5 h-5" />
-                  ) : (
-                    <Icons.SunIcon className="w-5 h-5" />
-                  )}
-                </div>
-                <span className="text-text-primary font-semibold">
-                  다크 모드
-                </span>
+        {/* Settings Section */}
+        <div>
+          <button
+            className={`w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors`}
+            onClick={() => handleAccordion("settings")}
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-gray-100 rounded-xl text-gray-500">
+                <Icons.Cog6ToothIcon className="w-6 h-6" />
               </div>
-              <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className={`relative inline-flex items-center h-7 rounded-full w-12 transition-all duration-300 focus:outline-none ${
-                  isDarkMode ? "bg-accent" : "bg-gray-300 dark:bg-gray-600"
-                }`}
-              >
-                <span
-                  className={`inline-block w-5 h-5 transform bg-white rounded-full transition-all duration-300 shadow-md ${
-                    isDarkMode ? "translate-x-6" : "translate-x-1"
+              <h3 className="font-bold text-lg text-text-primary">설정</h3>
+            </div>
+            <Icons.ChevronRightIcon
+              className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
+                openSection === "settings" ? "rotate-90" : ""
+              }`}
+            />
+          </button>
+
+          <div
+            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+              openSection === "settings"
+                ? "max-h-[1200px] opacity-100"
+                : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="p-2 space-y-1 bg-gray-50/50">
+              {/* Dark Mode */}
+              <div className="p-4 flex justify-between items-center hover:bg-gray-100 rounded-xl transition-colors mx-2">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-white rounded-lg text-text-secondary shadow-sm">
+                    {isDarkMode ? (
+                      <Icons.MoonIcon className="w-5 h-5" />
+                    ) : (
+                      <Icons.SunIcon className="w-5 h-5" />
+                    )}
+                  </div>
+                  <span className="text-text-primary font-semibold">
+                    다크 모드
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className={`relative inline-flex items-center h-7 rounded-full w-12 transition-all duration-300 focus:outline-none ${
+                    isDarkMode ? "bg-primary" : "bg-gray-300 dark:bg-gray-600"
                   }`}
-                />
+                >
+                  <span
+                    className={`inline-block w-5 h-5 transform bg-white rounded-full transition-all duration-300 shadow-md ${
+                      isDarkMode ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Notifications */}
+              <button className="w-full p-4 flex items-center justify-between hover:bg-gray-100 rounded-xl transition-colors mx-2 group">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-white rounded-lg text-text-secondary group-hover:text-primary transition-colors shadow-sm">
+                    <Icons.BellIcon className="w-5 h-5" />
+                  </div>
+                  <span className="text-text-primary font-semibold">
+                    알림 설정
+                  </span>
+                </div>
+                <Icons.ChevronRightIcon className="w-5 h-5 text-text-secondary group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <div className="mx-2">
+                <TwoFactorSettings />
+              </div>
+
+              <div className="my-2 border-t border-border-color/50 mx-4" />
+
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-full p-4 flex items-center justify-between hover:bg-red-50 rounded-xl transition-colors mx-2 group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-red-100 rounded-lg text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors shadow-sm">
+                    <Icons.ArrowRightOnRectangleIcon className="w-5 h-5" />
+                  </div>
+                  <span className="text-red-500 font-semibold">
+                    {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
+                  </span>
+                </div>
               </button>
             </div>
-
-            {/* Notifications */}
-            <button className="w-full p-4 flex items-center justify-between hover:bg-bg-primary/50 rounded-xl transition-colors mx-2 group">
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-bg-primary rounded-lg text-text-secondary group-hover:text-primary transition-colors">
-                  <Icons.BellIcon className="w-5 h-5" />
-                </div>
-                <span className="text-text-primary font-semibold">
-                  알림 설정
-                </span>
-              </div>
-              <Icons.ChevronRightIcon className="w-5 h-5 text-text-secondary group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            {/* Privacy - Commented out */}
-            {/*
-            <button className="w-full p-4 flex items-center justify-between hover:bg-bg-primary/50 rounded-xl transition-colors mx-2 group">
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-bg-primary rounded-lg text-text-secondary group-hover:text-primary transition-colors">
-                  <Icons.LockClosedIcon className="w-5 h-5" />
-                </div>
-                <span className="text-text-primary font-semibold">
-                  개인정보 보호
-                </span>
-              </div>
-              <Icons.ChevronRightIcon className="w-5 h-5 text-text-secondary group-hover:translate-x-1 transition-transform" />
-            </button>
-            */}
-
-            <div className="mx-2">
-              <TwoFactorSettings />
-            </div>
-
-            {/* Support - Commented out */}
-            {/*
-            <button className="w-full p-4 flex items-center justify-between hover:bg-bg-primary/50 rounded-xl transition-colors mx-2 group">
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-bg-primary rounded-lg text-text-secondary group-hover:text-primary transition-colors">
-                  <Icons.QuestionMarkCircleIcon className="w-5 h-5" />
-                </div>
-                <span className="text-text-primary font-semibold">
-                  고객 지원
-                </span>
-              </div>
-              <Icons.ChevronRightIcon className="w-5 h-5 text-text-secondary group-hover:translate-x-1 transition-transform" />
-            </button>
-            */}
-
-            <div className="my-2 border-t border-border-color/50 mx-4" />
-
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="w-full p-4 flex items-center justify-between hover:bg-negative/10 rounded-xl transition-colors mx-2 group"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-negative/10 rounded-lg text-negative group-hover:bg-negative group-hover:text-white transition-colors">
-                  <Icons.ArrowRightOnRectangleIcon className="w-5 h-5" />
-                </div>
-                <span className="text-negative font-semibold">
-                  {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
-                </span>
-              </div>
-            </button>
           </div>
         </div>
       </div>

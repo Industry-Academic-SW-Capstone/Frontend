@@ -3,15 +3,13 @@ import { create } from "zustand";
 import { StockInfo, StockDetailInfo } from "@/lib/types/stock";
 import camelcaseKeys from "camelcase-keys";
 
-type StoredStockInfo = Partial<StockDetailInfo> & { stockCode: string };
-
 // snake_case를 camelCase로 변환하는 유틸리티 (이전 답변)
 const transformSocketData = (data: any): Partial<StockInfo> => {
   return camelcaseKeys(data, { deep: true });
 };
 
 interface TickerState {
-  tickers: Record<string, StoredStockInfo>;
+  tickers: Record<string, StockDetailInfo>;
 
   // 여러 종목을 한 번에 업데이트/삽입 (API 응답용)
   // StockInfo[] 또는 StockDetailInfo[] 모두 받을 수 있음
@@ -25,7 +23,7 @@ interface TickerState {
   setStocksView: (view: "portfolio" | "explore" | "analysis") => void;
 }
 
-export const useStockStore = create<TickerState>((set) => ({
+export const useStockStore = create<TickerState>((set, get) => ({
   tickers: {},
 
   upsertTickers: (stocks) => {

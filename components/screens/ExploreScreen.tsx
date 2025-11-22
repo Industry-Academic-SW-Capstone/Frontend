@@ -8,8 +8,6 @@ import {
   BookmarkIcon,
 } from "@/components/icons/Icons";
 import {
-  Sector,
-  BasicStockInfoMockType,
   PopularStockCategory,
   BasicStockInfo,
   IndustriesTopStocks,
@@ -22,20 +20,27 @@ import { useStockSearch } from "@/lib/hooks/useStockSearch";
 import { generateLogo } from "@/lib/utils";
 import { useStockStore } from "@/lib/stores/useStockStore";
 import { useWebSocket } from "@/lib/providers/SocketProvider";
+import { SlidingTabs } from "../ui/SlidingTabs";
 
 interface ExploreScreenProps {
   onSelectStock: (ticker: string) => void;
+  isActive: boolean;
 }
 
 const StockRow: React.FC<{
-  stock: BasicStockInfo;
+  stockCode: string;
+  initialData?: BasicStockInfo;
   onClick: () => void;
-}> = ({ stock, onClick }) => {
+}> = ({ stockCode, initialData, onClick }) => {
+  const stock =
+    useStockStore((state) => state.tickers[stockCode]) || initialData;
+
+  if (!stock) return null;
   const isPositive = stock.changeRate >= 0;
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between p-4 rounded-xl active:bg-border-color/50 active:scale-98 transition-all ease-in-out duration-200"
+      className="w-full flex items-center justify-between p-2 rounded-xl active:bg-border-color/50 active:scale-98 transition-all ease-in-out duration-200"
       onTouchStart={() => {}}
     >
       <div className="flex items-center gap-3">
@@ -58,22 +63,19 @@ const StockRow: React.FC<{
         </div>
       </div>
       <div className="text-right">
-        <p className="font-semibold text-text-primary">
+        <p className="font-semibold text-text-primary text-md">
           {stock.currentPrice.toLocaleString()}원
         </p>
         <div
-          className={`flex items-center justify-end gap-1 text-sm font-semibold ${
+          className={`flex items-center justify-end gap-1 text-sm font-medium ${
             isPositive ? "text-positive" : "text-negative"
           }`}
         >
-          {isPositive ? (
-            <ArrowTrendingUpIcon className="w-4 h-4" />
-          ) : (
-            <ArrowTrendingDownIcon className="w-4 h-4" />
-          )}
           <span>
             {isPositive ? "+" : ""}
-            {stock.changeRate}%
+            {stock.changeAmount.toLocaleString()}
+            {" ("}
+            {stock.changeRate}%{")"}
           </span>
         </div>
       </div>
@@ -82,14 +84,21 @@ const StockRow: React.FC<{
 };
 
 const PopularStockCard: React.FC<{
-  stock: BasicStockInfo;
+  type: PopularStockCategory;
+  stockCode: string;
+  initialData?: BasicStockInfo;
   onClick: () => void;
-}> = ({ stock, onClick }) => {
+}> = ({ type, stockCode, initialData, onClick }) => {
+  const stock =
+    useStockStore((state) => state.tickers[stockCode]) || initialData;
+
+  if (!stock) return null;
   const isPositive = stock.changeRate >= 0;
   return (
     <button
       onClick={onClick}
-      className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between active:scale-98 transition-all ease-in-out duration-200"
+      id={`${type}-${stock.stockCode}`}
+      className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between active:scale-98 transition-all animate-fadeIn ease-in-out duration-200"
       onTouchStart={() => {}}
     >
       <div className="w-full flex justify-center">
@@ -166,57 +175,84 @@ const SearchResultRow: React.FC<{
   );
 };
 
-const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
+const ExploreScreen: React.FC<ExploreScreenProps> = ({
+  onSelectStock,
+  isActive,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchModal, setSearchModal] = useState(false);
+  useEffect(() => {
+    if (!isActive) {
+      setSearchModal(false);
+    }
+  }, [isActive]);
+  useEffect(() => {
+    if (searchModal) {
+      setSearchTerm("");
+    }
+  }, [searchModal]);
+
   const [activePopularTab, setActivePopularTab] =
-    useState<PopularStockCategory>("amount");
+    useState<PopularStockCategory>("gainers");
   const [activeContentTab, setActiveContentTab] = useState<
     "sectors" | "favorites"
   >("sectors");
 
-  const upsertTickers = useStockStore((state) => state.upsertTickers);
+  const { upsertTickers } = useStockStore();
   const { data: popularStocks, isLoading: isLoadingTopStocks } =
     useTopStocks(activePopularTab);
 
   useEffect(() => {
     // data가 존재하면(로드 완료되면) Zustand 스토어 업데이트
-    if (popularStocks) {
+    if (popularStocks && isActive) {
       upsertTickers(popularStocks);
     }
-  }, [popularStocks, upsertTickers]); // data가 바뀔 때마다 실행됨
+  }, [popularStocks, upsertTickers, isActive]); // data가 바뀔 때마다 실행됨
 
   const { data: industriesTopStocks, isLoading: isLoadingIndustries } =
     useIndustriesTopStocks(activePopularTab);
 
   useEffect(() => {
     // data가 존재하면(로드 완료되면) Zustand 스토어 업데이트
-    if (industriesTopStocks) {
+    if (industriesTopStocks && isActive && activeContentTab === "sectors") {
       industriesTopStocks.forEach((sector: IndustriesTopStocks) => {
         upsertTickers(sector.stocks);
       });
     }
-  }, [industriesTopStocks, upsertTickers]); // data가 바뀔 때마다 실행됨
+  }, [industriesTopStocks, upsertTickers, isActive, activeContentTab]); // data가 바뀔 때마다 실행됨
 
   const { data: favoriteStocks, isLoading: isLoadingFavorites } =
     useFavoriteStocks();
 
   useEffect(() => {
-    if (favoriteStocks) {
+    if (favoriteStocks && isActive && activeContentTab === "favorites") {
       upsertTickers(favoriteStocks);
     }
-  }, [favoriteStocks, upsertTickers]);
+  }, [favoriteStocks, upsertTickers, isActive, activeContentTab]);
 
   const { setSubscribeSet } = useWebSocket();
 
   useEffect(() => {
+    if (!isActive) return;
     const tickers = new Set<string>();
     popularStocks?.forEach((stock) => tickers.add(stock.stockCode));
-    industriesTopStocks?.forEach((sector) =>
-      sector.stocks.forEach((stock) => tickers.add(stock.stockCode))
-    );
-    favoriteStocks?.forEach((stock) => tickers.add(stock.stockCode));
+    if (activeContentTab === "sectors") {
+      industriesTopStocks?.forEach((sector) =>
+        sector.stocks.forEach((stock) => tickers.add(stock.stockCode))
+      );
+    }
+    if (activeContentTab === "favorites") {
+      favoriteStocks?.forEach((stock) => tickers.add(stock.stockCode));
+    }
+    console.log("구독 항목", "인기종목", activeContentTab, Array.from(tickers));
     setSubscribeSet(Array.from(tickers));
-  }, [popularStocks, industriesTopStocks, favoriteStocks]);
+  }, [
+    popularStocks,
+    industriesTopStocks,
+    favoriteStocks,
+    isActive,
+    activeContentTab,
+  ]);
 
   // Search Hook
   const { data: searchResults, isLoading: isSearching } =
@@ -233,101 +269,101 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
   );
 
   return (
-    <div className="space-y-6 relative">
-      <div className="relative mt-4 z-20">
-        <input
-          type="text"
-          placeholder="종목명 또는 티커 검색"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-bg-secondary border border-border-color rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
-      </div>
-
+    <div className="relative bg-bg-secondary">
       {/* Search Results Overlay */}
-      {searchTerm && (
-        <div className="absolute top-16 left-0 right-0 bg-bg-primary border border-border-color rounded-xl shadow-lg z-10 max-h-[60vh] overflow-y-auto">
-          {isSearching ? (
-            <div className="p-4 space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="w-full flex items-center gap-3 p-2 animate-pulse"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-gray-200" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 w-1/3 bg-gray-200 rounded" />
-                    <div className="h-3 w-1/4 bg-gray-200 rounded" />
-                  </div>
+
+      {searchModal && (
+        <div
+          className={`fixed top-0 left-0 right-0 bg-bg-primary/35 z-10 transition-opacity duration-800 ease-in-out ${
+            searchModal ? "h-full opacity-100" : "h-0 opacity-0"
+          }`}
+          onClick={() => setSearchModal(false)}
+        >
+          <div
+            className="absolute top-16 left-2 right-2 bg-bg-primary border border-border-color rounded-xl shadow-lg z-20 max-h-[60vh] overflow-y-auto transition-all duration-800 ease-in-out"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative p-2 z-20">
+              <input
+                type="text"
+                placeholder="종목명 또는 티커 검색"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-bg-secondary border border-border-color rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <MagnifyingGlassIcon className="absolute left-4.5 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+            </div>
+            {searchTerm.length > 0 ? (
+              isSearching ? (
+                <div className="p-4 space-y-2">
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="w-full flex items-center gap-3 p-2 animate-pulse"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-gray-200" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 w-1/3 bg-gray-200 rounded" />
+                        <div className="h-3 w-1/4 bg-gray-200 rounded" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          ) : searchResults && searchResults.length > 0 ? (
-            <div className="py-2">
-              {searchResults.map((result) => (
-                <SearchResultRow
-                  key={result.stockCode}
-                  result={result}
-                  onClick={() => onSelectStock(result.stockCode)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="p-8 text-center text-text-secondary">
-              검색 결과가 없습니다.
-            </div>
-          )}
+              ) : searchResults && searchResults.length > 0 ? (
+                <div className="py-2">
+                  {searchResults.map((result) => (
+                    <SearchResultRow
+                      key={result.stockCode}
+                      result={result}
+                      onClick={() => onSelectStock(result.stockCode)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center text-text-secondary">
+                  검색 결과가 없습니다.
+                </div>
+              )
+            ) : null}
+          </div>
         </div>
       )}
 
       {/* Popular Stocks */}
-      <div className="space-y-3">
-        <h2 className="text-xl font-bold text-text-primary px-2 flex items-center gap-2">
-          <FireIcon className="w-6 h-6 text-red-500" />
-          지금 시장은?
-        </h2>
-        <div className="flex bg-bg-secondary p-1 rounded-lg">
-          <button
-            onClick={() => setActivePopularTab("gainers")}
-            className={`flex-1 py-2 text-sm font-semibold rounded-md ${
-              activePopularTab === "gainers"
-                ? "bg-bg-primary text-positive shadow"
-                : "text-text-secondary"
-            }`}
-          >
-            급등
-          </button>
-          <button
-            onClick={() => setActivePopularTab("losers")}
-            className={`flex-1 py-2 text-sm font-semibold rounded-md ${
-              activePopularTab === "losers"
-                ? "bg-bg-primary text-negative shadow"
-                : "text-text-secondary"
-            }`}
-          >
-            급락
-          </button>
-          <button
-            onClick={() => setActivePopularTab("amount")}
-            className={`flex-1 py-2 text-sm font-semibold rounded-md ${
-              activePopularTab === "amount"
-                ? "bg-bg-primary text-primary shadow"
-                : "text-text-secondary"
-            }`}
-          >
-            거래대금
-          </button>
+      <div className="space-y-3 bg-bg-secondary -mx-4 px-4 pt-6 pb-2">
+        <div className="flex items-center justify-between pb-3">
+          <h2 className="text-xl font-bold text-text-primary px-2 flex items-center gap-2">
+            <FireIcon className="w-6 h-6 text-red-500" />
+            지금 시장은?
+          </h2>
+          <MagnifyingGlassIcon
+            className="w-6 h-6 text-text-primary cursor-pointer"
+            onClick={() => setSearchModal(true)}
+          />
         </div>
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 swiper-no-swiping">
+
+        <SlidingTabs
+          tabs={[
+            { id: "gainers", label: "급등" },
+            { id: "losers", label: "급락" },
+            { id: "amount", label: "거래대금" },
+          ]}
+          activeTab={activePopularTab}
+          onTabChange={(tabId) =>
+            setActivePopularTab(tabId as "gainers" | "losers" | "amount")
+          }
+        />
+        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 -mt-3 pt-3 swiper-no-swiping bg-bg-primary">
           {isLoadingTopStocks || !popularStocks
             ? Array.from({ length: 5 }).map((_, i) => (
                 <PopularStockSkeleton key={i} />
               ))
             : popularStocks.map((stock) => (
                 <PopularStockCard
-                  key={stock.stockCode}
-                  stock={stock}
+                  type={activePopularTab}
+                  key={`${activePopularTab}-${stock.stockCode}`}
+                  stockCode={stock.stockCode}
+                  initialData={stock}
                   onClick={() => onSelectStock(stock.stockCode)}
                 />
               ))}
@@ -335,31 +371,20 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
       </div>
 
       {/* Sectors / Favorites */}
-      <div className="space-y-3">
-        <div className="flex border-b border-border-color">
-          <button
-            onClick={() => setActiveContentTab("sectors")}
-            className={`py-2 px-4 text-sm font-semibold ${
-              activeContentTab === "sectors"
-                ? "text-primary border-b-2 border-primary"
-                : "text-text-secondary"
-            }`}
-          >
-            섹터별
-          </button>
-          <button
-            onClick={() => setActiveContentTab("favorites")}
-            className={`py-2 px-4 text-sm font-semibold ${
-              activeContentTab === "favorites"
-                ? "text-primary border-b-2 border-primary"
-                : "text-text-secondary"
-            }`}
-          >
-            관심 종목
-          </button>
-        </div>
+
+      <div className="-mx-4 px-4 bg-bg-secondary pt-3">
+        <SlidingTabs
+          tabs={[
+            { id: "sectors", label: "섹터별" },
+            { id: "favorites", label: "관심종목" },
+          ]}
+          activeTab={activeContentTab}
+          onTabChange={(tabId) =>
+            setActiveContentTab(tabId as "sectors" | "favorites")
+          }
+        />
         {activeContentTab === "sectors" && (
-          <div className="space-y-4">
+          <div className="space-y-4 -mx-4 px-4 pt-2 ">
             {isLoadingIndustries || !industriesTopStocks ? (
               // 섹터별 스켈레톤
               <>
@@ -375,13 +400,14 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
             ) : industriesTopStocks.length > 0 ? (
               industriesTopStocks.map((sector) => (
                 <div key={sector.industryName}>
-                  <h3 className="font-bold text-text-primary px-2 mb-1">
+                  <h3 className="font-bold text-text-primary px-2 mb-1 ">
                     {sector.industryName}
                   </h3>
                   {sector.stocks.map((stock) => (
                     <StockRow
                       key={stock.stockCode}
-                      stock={stock}
+                      stockCode={stock.stockCode}
+                      initialData={stock}
                       onClick={() => onSelectStock(stock.stockCode)}
                     />
                   ))}
@@ -407,7 +433,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ onSelectStock }) => {
               favoriteStocks.map((stock) => (
                 <StockRow
                   key={stock.stockCode}
-                  stock={stock}
+                  stockCode={stock.stockCode}
+                  initialData={stock}
                   onClick={() => onSelectStock(stock.stockCode)}
                 />
               ))

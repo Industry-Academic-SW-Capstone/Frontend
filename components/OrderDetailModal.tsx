@@ -77,7 +77,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                 />
                 <div>
                   <h4 className="text-xl font-bold text-text-primary">
-                    {order.stockCode}
+                    {order.stockName}
                   </h4>
                   <p className="text-text-secondary text-sm">
                     {order.stockCode}

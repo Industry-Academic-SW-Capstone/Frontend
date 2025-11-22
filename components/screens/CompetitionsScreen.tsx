@@ -12,6 +12,7 @@ import {
 } from "@/components/icons/Icons";
 import { useContests } from "@/lib/hooks/useContest";
 import { useQueryClient } from "@tanstack/react-query";
+import Portal from "../Portal";
 
 const CompetitionsScreen: React.FC = () => {
   const [showCreate, setShowCreate] = useState(false);
@@ -118,18 +119,17 @@ const CompetitionsScreen: React.FC = () => {
           />
         </div>
       </div>
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-text-primary">대회</h1>
+
+      {/* Floating Action Button for Creation */}
+      <Portal>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 bg-primary text-white font-bold px-5 py-2.5 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 ripple overflow-hidden relative group"
+          className="fixed bottom-28 right-6 z-50 bg-primary text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center"
+          aria-label="대회 만들기"
         >
-          {/* Button shimmer */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer" />
-          <PlusCircleIcon className="w-5 h-5 relative z-10 transition-transform duration-300" />
-          <span className="relative z-10">대회 만들기</span>
+          <PlusCircleIcon className="w-6 h-6" />
         </button>
-      </div>
+      </Portal>
 
       {/* Tab Switcher */}
       <div className="flex p-1 bg-bg-secondary/50 rounded-xl border border-border-color">

@@ -31,7 +31,6 @@ async function fetchTopStocks(OrderBy: OrderType): Promise<StockInfo[]> {
   if (res.status !== 200) {
     throw new Error("Failed to fetch top stocks");
   }
-  console.log("Fetched Top Stocks:", res.data);
   return res.data;
 }
 

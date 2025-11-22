@@ -42,11 +42,11 @@ export const fetchInfoApi = async () => {
 };
 
 export const useFetchInfo = (options?: { enabled?: boolean }) => {
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryFn: fetchInfoApi, // API 호출 함수
     queryKey: ["info"],
     enabled: options?.enabled,
   });
 
-  return { data, isLoading, isError, refetch };
+  return { data, isLoading, isError, refetch, isFetching };
 };

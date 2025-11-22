@@ -132,7 +132,7 @@ export default function Home() {
       } else {
         setIsLoggedIn(true);
       }
-    }, 300);
+    }, 400);
   }, []);
 
   // If not logged in and not loading (or if we know there's no token), show Onboarding
@@ -195,7 +195,7 @@ export default function Home() {
             unreadCount={unreadNotifications}
           />
 
-          <main className="h-screen">
+          <main className="h-screen mt-16">
             <MainSwiper
               selectedAccount={currentAccount}
               user={user}

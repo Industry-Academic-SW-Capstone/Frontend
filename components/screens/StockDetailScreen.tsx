@@ -18,6 +18,7 @@ import { useAccountAssets } from "@/lib/hooks/useAccount";
 import Toast, { ToastType } from "@/components/ui/Toast";
 import OrderBook from "@/components/OrderBook";
 import { useAccountStore } from "@/lib/store/useAccountStore";
+import { SlidingTabs } from "../ui/SlidingTabs";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -254,41 +255,20 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex border-b border-border-color relative px-4 mt-2 shrink-0">
-            <button
-              onClick={() => setActiveTab("chart")}
-              className={`flex-1 py-3 text-center font-bold transition-colors ${
-                activeTab === "chart"
-                  ? "text-text-primary"
-                  : "text-text-tertiary"
-              }`}
-            >
-              차트
-            </button>
-            <button
-              onClick={() => setActiveTab("orderbook")}
-              className={`flex-1 py-3 text-center font-bold transition-colors ${
-                activeTab === "orderbook"
-                  ? "text-text-primary"
-                  : "text-text-tertiary"
-              }`}
-            >
-              호가
-            </button>
-            {/* Sliding Indicator */}
-            <div
-              className="absolute bottom-0 h-0.5 bg-text-primary transition-all duration-300 ease-in-out"
-              style={{
-                width: "calc(50% - 16px)", // 50% minus padding
-                left: activeTab === "chart" ? "16px" : "calc(50%)",
-              }}
-            />
-          </div>
+          <SlidingTabs
+            tabs={[
+              { id: "chart", label: "차트" },
+              { id: "orderbook", label: "호가" },
+            ]}
+            activeTab={activeTab}
+            onTabChange={(id) => setActiveTab(id as "chart" | "orderbook")}
+            isBlack
+          />
 
           {/* Content Area */}
-          <div className="flex-1 overflow-y-auto relative">
+          <div className="flex-1 relative bg-bg-secondary">
             {activeTab === "chart" ? (
-              <div className="px-4 pb-24 mt-16">
+              <div className="px-4 pb-24 mt-8">
                 <StockChart
                   setChartStartPrice={setChartStartPrice}
                   stockCode={stock.stockCode}
@@ -317,6 +297,11 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
                           value={formatMarketCap(stock.marketCap)}
                         />
                         <InfoRow label="주가수익비율(PER)" value={stock.per} />
+                        <InfoRow label="주당순이익 (EPS)" value={stock.eps} />
+                        <InfoRow
+                          label="주가순자산비율 (PBR)"
+                          value={stock.pbr}
+                        />
                       </>
                     );
                   })()}

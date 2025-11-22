@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { StockHolding } from "@/lib/types/stock";
+import { AccountAssetHolding } from "@/lib/types/stock";
 import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
@@ -12,7 +12,7 @@ import {
 } from "@/components/icons/Icons";
 import PortfolioDonutChart from "@/components/PortfolioDonutChart";
 import { generateLogo } from "@/lib/utils";
-import { useAccountAssets, AccountAssetHolding } from "@/lib/hooks/useAccount";
+import { useAccountAssets } from "@/lib/hooks/useAccount";
 import {
   usePendingOrders,
   useOrderDetail,
@@ -24,18 +24,22 @@ import OrderDetailModal from "@/components/OrderDetailModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowPathIcon } from "@/components/icons/Icons";
 import { useAccountStore } from "@/lib/store/useAccountStore";
+import CountUp from "react-countup";
 
 interface PortfolioScreenProps {
   onSelectStock: (ticker: string) => void;
   onNavigateToExplore: () => void;
+  isActive: boolean;
 }
 
-const StockRow: React.FC<{ holding: StockHolding; onClick: () => void }> = ({
-  holding,
-  onClick,
-}) => {
-  const totalValue = holding.shares * holding.currentPrice;
-  const isTodayPositive = holding.todayChangePercent >= 0;
+const StockRow: React.FC<{
+  holding: AccountAssetHolding;
+  onClick: () => void;
+}> = ({ holding, onClick }) => {
+  const investedValue = holding.quantity * holding.averagePrice;
+  const todayChange = holding.totalValue - investedValue;
+  const todayChangePercent = (todayChange / investedValue) * 100;
+  const isTodayPositive = todayChange > 0;
 
   return (
     <button
@@ -59,18 +63,18 @@ const StockRow: React.FC<{ holding: StockHolding; onClick: () => void }> = ({
             {holding.stockName}
           </p>
           <p className="text-sm text-text-secondary mt-0.5">
-            {holding.shares}주 보유
+            {holding.quantity}주 보유
           </p>
         </div>
       </div>
       <div className="text-right">
         <p className="font-bold text-text-primary text-lg">
-          {totalValue.toLocaleString()}원
+          {holding.totalValue.toLocaleString()}원
         </p>
         <div className="flex items-center justify-end gap-1 text-sm font-medium mt-0.5">
           <span className={isTodayPositive ? "text-positive" : "text-negative"}>
             {isTodayPositive ? "+" : ""}
-            {holding.todayChangePercent.toFixed(1)}%
+            {todayChangePercent.toFixed(1)}%
           </span>
           <span className="text-text-tertiary text-xs">오늘</span>
         </div>
@@ -114,12 +118,15 @@ const PendingOrderRow: React.FC<{
 const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
   onSelectStock,
   onNavigateToExplore,
+  isActive,
 }) => {
-  const { selectedAccount, setSelectedAccount, accounts } = useAccountStore();
+  const { selectedAccount } = useAccountStore();
 
-  const { data: assets, isLoading: isAssetsLoading } = useAccountAssets(
-    selectedAccount?.id
-  );
+  const {
+    data: assets,
+    isFetching: isAssetsLoading,
+    refetch,
+  } = useAccountAssets(selectedAccount?.id);
   const { data: pendingOrdersData } = usePendingOrders();
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isChartOpen, setIsChartOpen] = useState(false);
@@ -152,7 +159,7 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
     if (pullCurrentY > PULL_THRESHOLD) {
       setIsRefreshing(true);
       try {
-        await queryClient.invalidateQueries();
+        refetch();
       } catch (error) {
         console.error("Refresh failed", error);
       } finally {
@@ -162,25 +169,6 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
     setPullStartY(0);
     setPullCurrentY(0);
   };
-
-  if (isAssetsLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  const holdings: StockHolding[] =
-    assets?.holdings.map((h: AccountAssetHolding) => ({
-      stockCode: h.stockCode,
-      stockName: h.stockName,
-      marketType: h.marketType as "KOSPI" | "KOSDAQ",
-      shares: h.quantity,
-      currentPrice: h.currentPrice,
-      avgPrice: h.averagePrice,
-      todayChangePercent: 0,
-    })) || [];
 
   const pendingOrders = pendingOrdersData?.orders || [];
   const totalAssets = assets?.totalAssets || 0;
@@ -192,7 +180,7 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
 
   return (
     <div
-      className="space-y-6 pb-10 relative min-h-full"
+      className="space-y-2 pb-10 relative min-h-full"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -223,64 +211,91 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
         </div>
       </div>
       {/* Header Section */}
-      <div className="px-2 pt-4 space-y-1">
-        <h2 className="text-text-secondary font-medium text-lg">총 자산</h2>
-        <div className="flex items-baseline gap-2">
-          <h1 className="text-4xl font-bold text-text-primary tracking-tight">
-            {totalAssets.toLocaleString()}원
-          </h1>
-        </div>
-        <div className="flex items-center gap-2 mt-2">
-          <span
-            className={`text-sm font-bold px-2 py-1 rounded-lg ${
-              totalReturn >= 0
-                ? "bg-positive/10 text-positive"
-                : "bg-negative/10 text-negative"
-            }`}
-          >
-            {totalReturn >= 0 ? "+" : ""}
-            {totalReturn.toLocaleString()}원 ({totalReturnRate.toFixed(1)}%)
-          </span>
-        </div>
-      </div>
-
-      {/* Chart Section */}
-      <div className="p-2 transition-all duration-300">
-        <button
-          onClick={() => setIsChartOpen(!isChartOpen)}
-          className="w-full flex justify-between items-center group"
-        >
-          <h3 className="text-xl font-bold text-text-primary">
-            포트폴리오 구성
-          </h3>
+      <div className="px-6 -mx-4 bg-bg-secondary pt-4 pb-4 space-y-0">
+        <div>
+          <h2 className="text-text-secondary font-medium text-lg">총 자산</h2>
           <div
-            className={`p-1 rounded-full bg-gray-50 text-text-secondary group-hover:bg-gray-100 transition-colors ${
-              isChartOpen ? "rotate-180" : ""
+            className={`text-4xl font-extrabold text-text-primary transition-all duration-500 ease-in-out origin-left
+            ${
+              isAssetsLoading
+                ? "opacity-80 scale-[0.98]"
+                : "opacity-100 scale-100"
             }`}
           >
-            <ChevronDownIcon className="w-5 h-5" />
+            <CountUp
+              start={Number(assets?.totalAssets)} // 첫 렌더링 시 시작 숫자
+              end={Number(assets?.totalAssets)} // 목표 숫자 (이 값이 바뀌면 애니메이션 실행)
+              duration={0.5} // 애니메이션 지속 시간 (초)
+              separator="," // 천 단위 구분자
+              preserveValue={true} // 업데이트 시 0부터 다시 세지 않고 현재 값에서 이어서 카운팅
+            />
+            <span className="text-2xl font-bold ml-1">원</span>
           </div>
-        </button>
+          <div
+            className={`flex items-center text-sm font-medium ${
+              Number(assets?.totalProfit) >= 0
+                ? "text-positive"
+                : "text-negative"
+            }`}
+          >
+            {Number(assets?.totalProfit) >= 0 ? "+" : ""}
+            <CountUp
+              start={Number(assets?.totalProfit)}
+              end={Number(assets?.totalProfit)}
+              duration={0.5}
+              separator=","
+              preserveValue={true}
+            />
+            원{Number(assets?.totalProfit) >= 0 ? " (+" : " ("}
+            <CountUp
+              start={Number(assets?.returnRate)}
+              end={Number(assets?.returnRate)}
+              duration={0.5}
+              separator=","
+              preserveValue={true}
+            />
+            {"%)"}
+          </div>
+        </div>
+        {/* Chart Section */}
+        <div className="pt-6 transition-all duration-300">
+          <button
+            onClick={() => setIsChartOpen(!isChartOpen)}
+            className="w-full flex justify-between items-center group"
+          >
+            <h3 className="text-xl font-bold text-text-primary">
+              포트폴리오 구성
+            </h3>
+            <div
+              className={`p-1 rounded-full bg-gray-50 text-text-secondary group-hover:bg-gray-100 transition-colors ${
+                isChartOpen ? "rotate-180" : ""
+              }`}
+            >
+              <ChevronDownIcon className="w-5 h-5" />
+            </div>
+          </button>
 
-        <div
-          className={`overflow-hidden transition-all duration-500 ease-in-out ${
-            isChartOpen
-              ? "max-h-[500px] opacity-100 mt-6"
-              : "max-h-0 opacity-0 mt-0"
-          }`}
-        >
-          <PortfolioDonutChart holdings={holdings} cash={assets?.cash || 0} />
+          <div
+            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+              isChartOpen
+                ? "max-h-[500px] opacity-100 mt-6"
+                : "max-h-0 opacity-0 mt-0"
+            }`}
+          >
+            <PortfolioDonutChart
+              holdings={assets?.holdings || []}
+              cash={assets?.cash || 0}
+            />
+          </div>
         </div>
       </div>
 
       {/* Holdings Section */}
-      <div className="space-y-2">
-        <h3 className="text-xl font-bold text-text-primary px-2 mb-4">
-          보유 주식
-        </h3>
-        {holdings.length > 0 ? (
+      <div className="px-6 -mx-4 pt-4 pb-2 bg-bg-secondary space-y-2">
+        <h3 className="text-xl font-bold text-text-primary mb-4">보유 주식</h3>
+        {assets?.holdings && assets?.holdings.length > 0 ? (
           <div className="space-y-1">
-            {holdings.map((holding) => (
+            {assets?.holdings.map((holding) => (
               <StockRow
                 key={holding.stockCode}
                 holding={holding}
@@ -303,7 +318,7 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
 
       {/* Pending Orders Section */}
       {pendingOrders.length > 0 && (
-        <div className="space-y-3 pt-4">
+        <div className="space-y-3 pt-4 px-6 pb-6 -mx-4 bg-bg-secondary">
           <h3 className="text-xl font-bold text-text-primary px-2">
             주문 내역
           </h3>

@@ -23,7 +23,7 @@ const StockChart: React.FC<StockChartProps> = ({
   isPositive,
   setChartStartPrice,
 }) => {
-  const [period, setPeriod] = useState<PeriodType>("1week");
+  const [period, setPeriod] = useState<PeriodType>("1day");
   const [chartMode, setChartMode] = useState<"line" | "candle">("line");
 
   // Socket & Store
@@ -58,6 +58,9 @@ const StockChart: React.FC<StockChartProps> = ({
     setPeriodType(period);
     // When period changes, we wait for new chartDatas to initialize
   }, [period, setPeriodType]);
+
+  const periods: PeriodType[] = ["1day", "1week", "3month", "1year", "5year"];
+  const activeIndex = periods.indexOf(period); // 현재 선택된 탭의 인덱스 (0~4)
 
   // Initialize store when chartDatas is loaded
   useEffect(() => {
@@ -466,7 +469,7 @@ const StockChart: React.FC<StockChartProps> = ({
           </g>
 
           {/* Volume Chart */}
-          <g transform={`translate(0, ${mainHeight + 10})`}>
+          <g transform={`translate(0, ${mainHeight})`}>
             {volumeBars.map((bar: any, i: number) => (
               <rect
                 key={i}
@@ -501,7 +504,7 @@ const StockChart: React.FC<StockChartProps> = ({
         {/* Hover Tooltip */}
         {hoverData && (
           <div
-            className="absolute z-[60] p-2 text-xs rounded-lg shadow-lg pointer-events-none bg-bg-secondary border border-border-color"
+            className="absolute z-[1000] p-2 text-xs rounded-lg shadow-lg pointer-events-none bg-bg-secondary border border-border-color"
             style={{
               left: `${(hoverData.x / width) * 100}%`,
               top: `0px`,
@@ -525,16 +528,25 @@ const StockChart: React.FC<StockChartProps> = ({
           </div>
         )}
       </div>
-      <div className="flex w-full justify-center bg-bg-secondary p-1 rounded-lg mt-2">
-        {(["1day", "1week", "3month", "1year", "5year"] as PeriodType[]).map(
-          (t) => (
+      <div className="flex w-full bg-bg-primary p-1 rounded-lg mt-2">
+        {/* 2. 기간 선택 버튼들만 감싸는 그룹 (Relative Wrapper) */}
+        <div className="relative flex flex-1 items-center">
+          {/* 3. 슬라이딩 배경 (움직이는 하얀 박스) */}
+          <div
+            className="absolute h-full w-1/5 bg-bg-secondary rounded-md shadow-sm transition-transform duration-300 ease-in-out"
+            style={{
+              transform: `translateX(${activeIndex * 100}%)`, // 인덱스에 따라 100%씩 이동
+            }}
+          />
+
+          {/* 버튼들 */}
+          {periods.map((t) => (
             <button
               key={t}
               onClick={() => setPeriod(t)}
-              className={`w-2/11 py-2 text-sm font-semibold rounded-md transition-colors ${
-                period === t
-                  ? "bg-bg-primary text-text-primary shadow-sm"
-                  : "text-text-secondary"
+              // z-10과 relative를 줘서 슬라이딩 배경보다 위에 글씨가 뜨게 함
+              className={`relative z-10 w-1/5 py-2 text-sm font-semibold rounded-md transition-colors ${
+                period === t ? "text-text-primary" : "text-text-secondary"
               }`}
             >
               {t === "1day" && "1일"}
@@ -543,19 +555,21 @@ const StockChart: React.FC<StockChartProps> = ({
               {t === "1year" && "1년"}
               {t === "5year" && "5년"}
             </button>
-          )
-        )}
+          ))}
+        </div>
+
+        {/* 4. 차트 토글 버튼 (슬라이딩 그룹 밖으로 분리) */}
         <button
-          className={`h-9 w-9 ml-1 rounded-md transition-colors bg-bg-primary text-text-primary shadow-sm flex items-center justify-center`}
+          className="h-9 w-9 ml-1 shrink-0 rounded-md transition-colors bg-bg-secondary text-text-primary shadow-sm flex items-center justify-center"
           onClick={() => {
             if (chartMode === "line") setChartMode("candle");
             else setChartMode("line");
           }}
         >
           {chartMode !== "line" ? (
-            <FaChartColumn size={16} color="1e293b" />
+            <FaChartColumn size={16} color="#1e293b" />
           ) : (
-            <FaChartLine size={16} color="1e293b" />
+            <FaChartLine size={16} color="#1e293b" />
           )}
         </button>
       </div>

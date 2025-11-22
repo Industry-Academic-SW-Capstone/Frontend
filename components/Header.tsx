@@ -19,8 +19,8 @@ const Header: React.FC<HeaderProps> = ({
   unreadCount = 0,
 }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-20 max-w-md mx-auto bg-bg-primary/80 backdrop-blur-lg border-b border-border-color">
-      <div className="flex items-center justify-between p-4 h-16">
+    <header className="fixed top-0 left-0 right-0 z-20 max-w-md mx-auto bg-bg-primary/80 backdrop-blur-lg">
+      <div className="flex items-center justify-between p-4 h-16 pb-2">
         <div className="flex items-center gap-2">
           {user.group && (
             <div className="flex items-center gap-1 text-xs bg-bg-secondary px-2 py-1 rounded-full text-text-secondary font-semibold">
@@ -35,13 +35,11 @@ const Header: React.FC<HeaderProps> = ({
           {onNotificationClick && (
             <button
               onClick={onNotificationClick}
-              className="relative p-2 hover:bg-bg-secondary rounded-full transition-colors"
+              className="relative p-1 hover:bg-bg-secondary rounded-full transition-colors"
             >
-              <BellIcon className="w-6 h-6 text-text-primary" />
+              <BellIcon className="w-6 h-6 text-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-negative text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
+                <span className="absolute top-0 right-1 bg-negative text-white text-xs font-bold rounded-full w-2 h-2 flex items-center justify-center"></span>
               )}
             </button>
           )}
@@ -49,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* 계좌 전환 버튼 */}
           <button
             onClick={onAccountSwitch}
-            className="flex items-center gap-1 bg-bg-secondary px-3 py-1.5 rounded-full text-sm font-semibold hover:bg-border-color transition-colors"
+            className="flex items-center gap-1 bg-bg-secondary px-3 py-1.5 rounded-full text-sm text-text-secondary active:text-text-primary font-semibold hover:bg-border-color transition-colors"
           >
             <span className="max-w-[100px] truncate">
               {selectedAccount.isDefault ? "기본 계좌" : selectedAccount.name}

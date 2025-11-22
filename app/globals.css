@@ -27,7 +27,7 @@
   --bg-secondary: #ffffff;
   --text-primary: #1e293b;
   --text-secondary: #a5acb6;
-  --border-color: #e2e8f0;
+  --border-color: #e8ecf3;
   --error: #ea4f4f;
 }
 
@@ -40,7 +40,7 @@
     --bg-secondary: #ffffff;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
-    --border-color: #e2e8f0;
+    --border-color: #e8ecf3;
     --error: #ea4f4f;
   }
 }
@@ -51,6 +51,7 @@
   --accent: #f59e0b;
   --bg-primary: #121212;
   --bg-secondary: #1b1b1b;
+  --bg-outside: #242424;
   --text-primary: #f8fafc;
   --text-secondary: #9ca3af;
   --border-color: #2b2b2b;
@@ -504,5 +505,14 @@ a {
 }
 
 .scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }

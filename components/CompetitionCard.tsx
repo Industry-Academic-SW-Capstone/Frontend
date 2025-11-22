@@ -42,23 +42,14 @@ const CompetitionCard: React.FC<CompetitionCardProps> = ({
   return (
     <div
       onClick={() => onClickDetail?.(competition)}
-      className="group relative bg-bg-primary border border-border-color rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden"
+      className="group relative bg-bg-secondary border border-border-color rounded-2xl p-5 shadow-sm active:shadow-md transition-all duration-300 cursor-pointer overflow-hidden"
     >
-      {/* Hover Gradient Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      {/* active Gradient Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-active:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col h-full justify-between">
         <div>
-          <div className="flex justify-between items-start mb-3">
-            <span
-              className={`px-2.5 py-1 rounded-full text-xs font-bold border ${statusBgClass} ${statusColorClass}`}
-            >
-              {statusLabel}
-            </span>
-            {/* Optional: Admin or other badges could go here */}
-          </div>
-
-          <h3 className="text-lg font-bold text-text-primary mb-2 group-hover:text-primary transition-colors line-clamp-1">
+          <h3 className="text-lg font-bold text-text-primary mb-2 group-active:text-primary transition-colors line-clamp-1">
             {competition.contestName}
           </h3>
 
@@ -84,7 +75,7 @@ const CompetitionCard: React.FC<CompetitionCardProps> = ({
           <span className="text-xs text-text-tertiary font-medium">
             자세히 보기
           </span>
-          <div className="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+          <div className="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center group-active:bg-primary group-active:text-white transition-colors duration-300">
             <ChevronRightIcon className="w-4 h-4" />
           </div>
         </div>

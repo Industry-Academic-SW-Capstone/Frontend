@@ -33,12 +33,12 @@ export const Header: React.FC = () => {
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
+    e.preventDefault();
     // If it's a hash link
     if (
       href.startsWith("#") ||
       (href.startsWith("/about#") && nowDirectory == "/about")
     ) {
-      e.preventDefault();
       const targetId = href.includes("#")
         ? href.split("#")[1]
         : href.substring(1);
@@ -67,6 +67,7 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a
+            href="/about#home"
             className="flex items-center gap-2 cursor-pointer"
             onClick={(e) => {
               handleNavClick(e, "/about#home");
