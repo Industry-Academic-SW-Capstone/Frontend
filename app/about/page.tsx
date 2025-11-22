@@ -1,4 +1,3 @@
-import React from "react";
 import { Metadata } from "next";
 import { Header } from "@/components/about/Header";
 import { Hero } from "@/components/about/sections/Hero";
@@ -57,7 +56,7 @@ const jsonLd = {
   },
   description:
     "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션 플랫폼.",
-  image: "https://stockit.live/logo.png",
+  image: "https://stockit.live/new_logo.png",
   author: {
     "@type": "Organization",
     name: "Team GRIT",

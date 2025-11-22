@@ -79,7 +79,7 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
       className="h-full w-full"
     >
       <SwiperSlide>
-        <div className="h-full px-4 pb-28">
+        <div className="h-full px-4 pb-28 overflow-y-auto">
           <HomeScreen
             selectedAccount={selectedAccount}
             onNavigate={onSlideChange}
@@ -88,13 +88,13 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
       </SwiperSlide>
 
       <SwiperSlide>
-        <div className="h-full px-4 pb-28">
+        <div className="h-full px-4 pb-28 overflow-y-auto">
           {currentScreen === "competitions" ? <CompetitionsScreen /> : null}
         </div>
       </SwiperSlide>
 
       <SwiperSlide>
-        <div className="h-full px-4 pb-28">
+        <div className="h-full px-4 pb-28 overflow-y-auto">
           {currentScreen === "rankings" ? (
             <RankingsScreen selectedAccount={selectedAccount} user={user} />
           ) : null}
@@ -102,7 +102,7 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
       </SwiperSlide>
 
       <SwiperSlide>
-        <div className="h-full px-4 pb-28">
+        <div className="h-full px-4 pb-28 overflow-y-auto">
           {currentScreen === "profile" ? (
             <ProfileScreen
               user={user}

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useEffectEvent } from "react";
-import { Menu, X, TrendingUp, Download, Github } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Menu, X, Download, Github } from "lucide-react";
 import { NAV_ITEMS } from "./constants";
 import { Button } from "./ui/Button";
 import { useInstallModal } from "./context/InstallModalContext";
@@ -73,8 +73,12 @@ export const Header: React.FC = () => {
               handleNavClick(e, "/about#home");
             }}
           >
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <TrendingUp className="text-white w-6 h-6" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+              <img
+                src="/new_logo.png"
+                alt="StockIt Logo"
+                className="w-full h-full object-cover"
+              />
             </div>
             <span
               className={`text-2xl font-bold tracking-tight ${

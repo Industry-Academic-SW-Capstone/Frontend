@@ -51,7 +51,6 @@ import {
   HiXCircle,
   HiExclamationTriangle,
   HiInformationCircle,
-  HiArrowPath,
   HiExclamationCircle,
   HiArrowRight,
   HiHeart,
@@ -115,35 +114,14 @@ export const ErrorIcon = (props: IconProps) => <MdError {...props} />;
 export const SpinnerIcon = (props: IconProps) => <FaSpinner {...props} />;
 
 // Stock Icon (Custom - 대체 불가능)
-export const StonkIcon = (props: IconProps) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <path
-      d="M4 16C4 16 5 13 8 13C11 13 12 8 15 8C18 8 20 4 20 4"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M15 4H20V9"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M4 20H20"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
+export const StonkIcon = ({ className, style, ...props }: IconProps) => (
+  <img
+    src="/new_logo.png"
+    alt="StockIt Logo"
+    className={className}
+    style={{ ...style, objectFit: "contain" }}
+    {...(props as any)}
+  />
 );
 
 // Navigation Icons (React Icons로 대체)

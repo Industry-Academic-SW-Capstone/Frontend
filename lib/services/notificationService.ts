@@ -102,8 +102,8 @@ export const showLocalNotification = (
 ): void => {
   if (Notification.permission === "granted") {
     new Notification(title, {
-      icon: "/logo.svg",
-      badge: "/logo.svg",
+      icon: "/new_logo.png",
+      badge: "/new_logo.png",
       ...options,
     });
   }
@@ -117,8 +117,8 @@ export const showPushNotification = async (
   const registration = await navigator.serviceWorker.ready;
 
   await registration.showNotification(title, {
-    icon: "/logo.svg",
-    badge: "/logo.svg",
+    icon: "/new_logo.png",
+    badge: "/new_logo.png",
     tag: "stonkapp-notification",
     requireInteraction: false,
     ...options,
@@ -282,8 +282,8 @@ export const sendTestNotification = async (): Promise<void> => {
   try {
     await showPushNotification(randomNotif.title, {
       body: randomNotif.message,
-      icon: "/logo.svg",
-      badge: "/logo.svg",
+      icon: "/new_logo.png",
+      badge: "/new_logo.png",
       tag: notification.id,
       data: notification,
     });

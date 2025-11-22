@@ -67,6 +67,7 @@ body {
   -moz-user-select: none; /* Firefox: 텍스트 선택 방지 */
   -ms-user-select: none; /* IE/Edge: 텍스트 선택 방지 */
   user-select: none; /* 표준: 텍스트 선택 방지 */
+  overflow: hidden;
 
   /* 모바일에서 클릭 시 번쩍거리는 하이라이트 제거 */
   -webkit-tap-highlight-color: transparent;

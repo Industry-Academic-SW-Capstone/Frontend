@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Script from "next/script";
 import { User, UserGroup } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import {
@@ -8,14 +7,8 @@ import {
   registerServiceWorker,
   subscribeToPush,
 } from "@/lib/services/notificationService";
-import TwoFactorSettings from "../settings/TwoFactorSettings";
 import TFARegisterPage from "../auth/TFARegisterPage";
-import {
-  LoginRequest,
-  SignUpRequest,
-  KakaoCallbackResponse,
-  KakaoSignupRequest,
-} from "@/lib/types/auth";
+import { LoginRequest, SignUpRequest } from "@/lib/types/auth";
 import { useLogin } from "@/lib/hooks/auth/useLogin";
 import { useSignup } from "@/lib/hooks/auth/useSignup";
 import useKakaoOAuth from "@/lib/hooks/auth/useKakaoOAuth";
@@ -446,10 +439,14 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
             <div />
             <div>
               <div
-                className="w-24 h-24 bg-primary text-white rounded-3xl mx-auto flex items-center justify-center mb-6 animate-fadeInUp"
+                className="w-24 h-24 bg-white rounded-3xl mx-auto flex items-center justify-center mb-6 animate-fadeInUp overflow-hidden"
                 style={{ animationDelay: "0.1s" }}
               >
-                <Icons.StonkIcon className="w-14 h-14" />
+                <img
+                  src="/new_logo.png"
+                  alt="StockIt Logo"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h1
                 className="text-4xl font-extrabold text-text-primary animate-fadeInUp"
