@@ -1,10 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
-import {
-  StockInfo,
-  BasicStockInfoMockType,
-  StockDetailInfo,
-} from "@/lib/types/stock";
+import { StockDetailInfo } from "@/lib/types/stock";
 import defaultClient from "../../api/axiosClient";
 
 // 환경변수에서 API base URL을 읽음

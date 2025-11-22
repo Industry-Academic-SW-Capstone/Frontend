@@ -1,17 +1,13 @@
 import {
   Account,
-  StockHolding,
   Transaction,
   Competition,
   Achievement,
   LeaderboardEntry,
-  StockDetailMockType,
-  Sector,
   User,
   UserGroup,
   AIPersonaLeaderboardEntry,
   RivalLeaderboardEntry,
-  BasicStockInfoMockType,
   Order,
   InvestmentStyleAnalysis,
   Notification,
@@ -32,114 +28,6 @@ export const MOCK_USER: User = {
 };
 
 export const MOCK_CASH_BALANCE = 2350000;
-
-const generateLogo = (ticker: string, name: string) =>
-  `https://avatar.vercel.sh/${ticker}.png?text=${name.substring(0, 1)}`;
-
-export const MOCK_STOCK_HOLDINGS: StockHolding[] = [
-  {
-    stockCode: "005930",
-    stockName: "삼성전자",
-    quantity: 50,
-    currentPrice: 82000,
-    averagePrice: 78000,
-    marketType: "KOSPI",
-    todayChangePercent: 1.5,
-  },
-  {
-    stockCode: "035720",
-    stockName: "카카오",
-    quantity: 30,
-    currentPrice: 55000,
-    averagePrice: 62000,
-    marketType: "KOSDAQ",
-    todayChangePercent: -2.1,
-  },
-  {
-    stockCode: "035420",
-    stockName: "NAVER",
-    quantity: 25,
-    currentPrice: 190000,
-    averagePrice: 185000,
-    marketType: "KOSDAQ",
-    todayChangePercent: 0.8,
-  },
-  {
-    stockCode: "005380",
-    stockName: "현대차",
-    quantity: 10,
-    currentPrice: 250000,
-    averagePrice: 240000,
-    marketType: "KOSPI",
-    todayChangePercent: 3.2,
-  },
-];
-
-export const MOCK_PENDING_ORDERS: Order[] = [
-  {
-    id: "o-1",
-    stockCode: "373220",
-    stockName: "LG에너지솔루션",
-    marketType: "KOSDAQ",
-    type: "buy",
-    orderType: "limit",
-    shares: 5,
-    price: 380000,
-    status: "pending",
-    date: "2023-10-26",
-  },
-  {
-    id: "o-2",
-    stockCode: "000660",
-    stockName: "SK하이닉스",
-    marketType: "KOSPI",
-    type: "sell",
-    orderType: "limit",
-    shares: 10,
-    price: 135000,
-    status: "pending",
-    date: "2023-10-26",
-  },
-];
-
-export const MOCK_TRANSACTIONS: Transaction[] = [
-  {
-    id: "t-1",
-    ticker: "005930",
-    name: "삼성전자",
-    type: "buy",
-    shares: 20,
-    price: 75000,
-    date: "2023-08-01",
-  },
-  {
-    id: "t-2",
-    ticker: "035720",
-    name: "카카오",
-    type: "buy",
-    shares: 10,
-    price: 65000,
-    date: "2023-08-05",
-  },
-  {
-    id: "t-3",
-    ticker: "035420",
-    name: "NAVER",
-    type: "buy",
-    shares: 5,
-    price: 180000,
-    date: "2023-08-10",
-  },
-  {
-    id: "t-4",
-    ticker: "005930",
-    name: "삼성전자",
-    type: "sell",
-    shares: 5,
-    price: 80000,
-    date: "2023-08-15",
-  },
-];
 
 export const MOCK_ACHIEVEMENTS: Achievement[] = [
   {
@@ -347,137 +235,6 @@ const generateChartData = (base: number) => {
     };
   });
 };
-
-export const MOCK_STOCK_DETAILS: { [key: string]: StockDetailMockType } = {
-  "005930": {
-    stockCode: "005930",
-    stockName: "삼성전자",
-    description: "대한민국의 반도체, 전자제품 제조 기업.",
-    currentPrice: 82000,
-    changeAmount: 1200,
-    changeRate: 1.5,
-    marketCap: 489000000000000,
-    peRatio: 18.5,
-    shares: 50,
-    logo: generateLogo("005930", "삼성전자"),
-    chartData: {
-      day: generateChartData(82000),
-      week: generateChartData(81000),
-      month: generateChartData(78000),
-      year: generateChartData(70000),
-    },
-  },
-  "035720": {
-    stockCode: "035720",
-    stockName: "카카오",
-    description:
-      "대한민국의 IT 기업. 메신저, 포털, 콘텐츠 등 다양한 서비스를 제공.",
-    currentPrice: 55000,
-    changeAmount: -1200,
-    changeRate: -2.1,
-    marketCap: 24000000000000,
-    peRatio: 35.2,
-    shares: 30,
-    logo: generateLogo("035720", "카카오"),
-    chartData: {
-      day: generateChartData(55000),
-      week: generateChartData(56000),
-      month: generateChartData(62000),
-      year: generateChartData(50000),
-    },
-  },
-  "035420": {
-    stockCode: "035420",
-    stockName: "NAVER",
-    description: "대한민국의 최대 검색 포털을 운영하는 IT 기업.",
-    currentPrice: 190000,
-    changeAmount: 1500,
-    changeRate: 0.8,
-    marketCap: 31000000000000,
-    peRatio: 29.8,
-    shares: 25,
-    logo: generateLogo("035420", "NAVER"),
-    chartData: {
-      day: generateChartData(190000),
-      week: generateChartData(188000),
-      month: generateChartData(185000),
-      year: generateChartData(200000),
-    },
-  },
-  "005380": {
-    stockCode: "005380",
-    stockName: "현대차",
-    description: "대한민국의 대표적인 자동차 제조 기업.",
-    currentPrice: 250000,
-    changeAmount: 7800,
-    changeRate: 3.2,
-    marketCap: 52000000000000,
-    peRatio: 6.7,
-    shares: 10,
-    logo: generateLogo("005380", "현대차"),
-    chartData: {
-      day: generateChartData(250000),
-      week: generateChartData(245000),
-      month: generateChartData(240000),
-      year: generateChartData(200000),
-    },
-  },
-  "373220": {
-    stockCode: "373220",
-    stockName: "LG에너지솔루션",
-    description: "전기차 배터리 제조 기업.",
-    currentPrice: 385000,
-    changeAmount: 5000,
-    changeRate: 1.3,
-    marketCap: 90000000000000,
-    peRatio: 70.1,
-    shares: 0,
-    logo: generateLogo("373220", "LG에너지솔루션"),
-    chartData: {
-      day: generateChartData(385000),
-      week: generateChartData(380000),
-      month: generateChartData(400000),
-      year: generateChartData(420000),
-    },
-  },
-  "000660": {
-    stockCode: "000660",
-    stockName: "SK하이닉스",
-    description: "메모리 반도체 제조 기업.",
-    currentPrice: 130000,
-    changeAmount: -2000,
-    changeRate: -1.5,
-    marketCap: 94000000000000,
-    peRatio: 22.4,
-    shares: 0,
-    logo: generateLogo("000660", "SK하이닉스"),
-    chartData: {
-      day: generateChartData(130000),
-      week: generateChartData(132000),
-      month: generateChartData(125000),
-      year: generateChartData(110000),
-    },
-  },
-};
-
-export const MOCK_FAVORITE_STOCKS: BasicStockInfo[] = [
-  {
-    stockCode: "005930",
-    marketType: "KOSPI",
-    stockName: "삼성전자",
-    currentPrice: 82000,
-    changeRate: 1.5,
-    changeSign: "RISE",
-  },
-  {
-    stockCode: "035720",
-    stockName: "카카오",
-    marketType: "KOSDAQ",
-    currentPrice: 55000,
-    changeRate: -2.1,
-    changeSign: "FALL",
-  },
-];
 
 export const MOCK_ANALYSIS_RESULT: InvestmentStyleAnalysis = {
   personaName: "가치투자자 워렌 버핏",

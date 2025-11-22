@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { MOCK_TRANSACTIONS, MOCK_ANALYSIS_RESULT } from "@/lib/constants";
+import { MOCK_ANALYSIS_RESULT } from "@/lib/constants";
 import { InvestmentStyleAnalysis } from "@/lib/types/stock";
-import { analyzeInvestmentStyle } from "@/lib/services/geminiService";
 import * as Icons from "@/components/icons/Icons";
 import InvestmentAnalysisCard from "@/components/InvestmentAnalysisCard";
 
@@ -14,16 +13,16 @@ const AnalysisScreen: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleAnalyze = async () => {
-    setIsLoading(true);
-    setAnalysisError("");
-    setAnalysis(null);
-    const result = await analyzeInvestmentStyle(MOCK_TRANSACTIONS);
-    if (typeof result === "string") {
-      setAnalysisError(result);
-    } else {
-      setAnalysis(result);
-    }
-    setIsLoading(false);
+    // setIsLoading(true);
+    // setAnalysisError("");
+    // setAnalysis(null);
+    // const result = await analyzeInvestmentStyle(MOCK_TRANSACTIONS);
+    // if (typeof result === "string") {
+    //   setAnalysisError(result);
+    // } else {
+    //   setAnalysis(result);
+    // }
+    // setIsLoading(false);
   };
 
   return (
