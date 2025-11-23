@@ -16,7 +16,7 @@ def generate_icons():
             (192, "public/icon-192.png"),
             (512, "public/icon-512.png"),
             (180, "public/apple-touch-icon.png"),
-            (32, "public/favicon.png"),
+            (48, "public/favicon.png"),
         ]
 
         for size, filename in icons:
@@ -25,8 +25,8 @@ def generate_icons():
             print(f"Generated {filename} ({size}x{size})")
 
         # Generate favicon.ico specifically
-        img.resize((32, 32), Image.Resampling.LANCZOS).save("public/favicon.ico")
-        print("Generated public/favicon.ico (32x32)")
+        img.resize((48, 48), Image.Resampling.LANCZOS).save("public/favicon.ico")
+        print("Generated public/favicon.ico (48x48)")
 
     except Exception as e:
         print(f"An error occurred: {e}")
