@@ -75,7 +75,7 @@ export const Header: React.FC = () => {
           >
             <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
               <img
-                src="/new_logo.png"
+                src="/icon-192.png"
                 alt="StockIt Logo"
                 className="w-full h-full object-cover"
               />
