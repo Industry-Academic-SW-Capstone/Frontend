@@ -8,6 +8,11 @@ import TwoFactorSettings from "@/components/settings/TwoFactorSettings";
 import { useLogout } from "@/lib/hooks/auth/useLogout";
 import { useFetchInfo, usePutInfo } from "@/lib/hooks/me/useInfo";
 import Toast, { ToastType } from "@/components/ui/Toast";
+import {
+  isTokenRegistered,
+  requestNotificationPermission,
+  deleteFCMToken,
+} from "@/lib/services/notificationService";
 
 interface ProfileScreenProps {
   user: User; // Fallback or initial data
@@ -37,7 +42,7 @@ const AchievementItem: React.FC<{ achievement: Achievement }> = ({
     <div
       className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 card-hover overflow-hidden relative group ${
         achievement.unlocked
-          ? "bg-gradient-to-br from-bg-primary to-bg-secondary border border-accent/20 shadow-sm"
+          ? "bg-linear-to-br from-bg-primary to-bg-secondary border border-accent/20 shadow-sm"
           : "bg-bg-primary/50 opacity-60 grayscale"
       }`}
     >
@@ -109,6 +114,31 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
   const [editAvatar, setEditAvatar] = useState(user.avatar);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [customAvatarUrl, setCustomAvatarUrl] = useState("");
+
+  // Notification State
+  const [isPushEnabled, setIsPushEnabled] = useState(false);
+
+  useEffect(() => {
+    setIsPushEnabled(isTokenRegistered());
+  }, []);
+
+  const handleTogglePush = async () => {
+    if (isPushEnabled) {
+      if (confirm("푸시 알림을 끄시겠습니까?")) {
+        await deleteFCMToken();
+        setIsPushEnabled(false);
+        showToast("알림이 해제되었습니다.");
+      }
+    } else {
+      const permission = await requestNotificationPermission();
+      if (permission === "granted") {
+        setIsPushEnabled(true);
+        showToast("알림이 설정되었습니다.");
+      } else {
+        showToast("알림 권한이 차단되어 있습니다.", "error");
+      }
+    }
+  };
 
   // Toast State
   const [toast, setToast] = useState<{
@@ -455,17 +485,28 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
 
               {/* Notifications */}
-              <button className="w-full p-4 flex items-center justify-between hover:bg-gray-100 rounded-xl transition-colors mx-2 group">
+              <div className="p-4 flex justify-between items-center hover:bg-gray-100 rounded-xl transition-colors mx-2">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white rounded-lg text-text-secondary group-hover:text-primary transition-colors shadow-sm">
+                  <div className="p-2 bg-white rounded-lg text-text-secondary shadow-sm">
                     <Icons.BellIcon className="w-5 h-5" />
                   </div>
                   <span className="text-text-primary font-semibold">
                     알림 설정
                   </span>
                 </div>
-                <Icons.ChevronRightIcon className="w-5 h-5 text-text-secondary group-hover:translate-x-1 transition-transform" />
-              </button>
+                <button
+                  onClick={handleTogglePush}
+                  className={`relative inline-flex items-center h-7 rounded-full w-12 transition-all duration-300 focus:outline-none ${
+                    isPushEnabled ? "bg-accent" : "bg-gray-300 dark:bg-gray-600"
+                  }`}
+                >
+                  <span
+                    className={`inline-block w-5 h-5 transform bg-white rounded-full transition-all duration-300 shadow-md ${
+                      isPushEnabled ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
 
               <div className="mx-2">
                 <TwoFactorSettings />

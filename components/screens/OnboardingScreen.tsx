@@ -412,8 +412,8 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
           avatar: signupRequest.profileImage,
         }));
         setLoginRequest({
-          email: signupRequest.email,
-          password: signupRequest.password,
+          email: signupRequestRef.current.email,
+          password: signupRequestRef.current.password,
         });
         setStep("complete");
       },

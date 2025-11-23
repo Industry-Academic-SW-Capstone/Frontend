@@ -29,6 +29,7 @@ export interface SignUpRequest {
 export interface UpdateInfoRequest {
   name?: string;
   profileImage?: string;
+  notificationAgreement?: boolean;
 }
 
 export interface SignUpResponse {

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { deleteFCMToken } from "@/lib/services/notificationService";
 
 interface AuthState {
   token: string | null;
@@ -20,6 +21,11 @@ export const useAuthStore = create<AuthState>()(
         set({ token });
       },
       clearToken: () => {
+        // FCM 토큰 삭제 (비동기지만 로그아웃 처리는 즉시 진행)
+        deleteFCMToken().catch((err) =>
+          console.error("Failed to delete FCM token on logout:", err)
+        );
+
         set({ token: null });
         try {
           localStorage.removeItem("auth-token");

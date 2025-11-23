@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import Header from "@/components/Header";
 import BottomNavBar from "@/components/BottomNavBar";
 import MainSwiper from "@/components/navigation/MainSwiper";
@@ -15,16 +15,15 @@ import { Screen, Account, User } from "@/lib/types/stock";
 import { MOCK_USER } from "@/lib/constants";
 import { WebSocketProvider } from "@/lib/providers/SocketProvider";
 
-import {
-  getUnreadCount,
-  getStoredNotifications,
-  saveNotification,
-} from "@/lib/services/notificationService";
-import { MOCK_NOTIFICATIONS } from "@/lib/constants";
 import { useAccounts } from "@/lib/hooks/useAccounts";
 import { useAccountStore } from "@/lib/store/useAccountStore";
-import { useFetchInfo } from "@/lib/hooks/me/useInfo";
+import { useFetchInfo, usePutInfo } from "@/lib/hooks/me/useInfo";
 import { useAuthStore } from "@/lib/stores/useAuthStore";
+import { useUnreadCount } from "@/lib/hooks/notifications/useUnreadCount";
+import {
+  isTokenRegistered,
+  requestNotificationPermission,
+} from "@/lib/services/notificationService";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,12 +39,14 @@ export default function Home() {
     enabled: !!token,
   });
 
-  // Transform userInfo to match User interface if necessary, or use directly if compatible
-  // Assuming userInfo matches or we map it.
-  // The User interface in types/stock.ts: { username, avatar, title, group: { id, name, averageReturn } }
-  // The SignUpResponse (userInfo) might be different. Let's check types later.
-  // For now, we'll assume we need to map or it matches partially.
-  // Let's use a default user if loading or not found for safety during transition.
+  const { mutate: updateInfo } = usePutInfo();
+
+  // Use hook for unread notifications
+  const { data: unreadCountData, refetch: refetchUnreadCount } =
+    useUnreadCount();
+  const unreadNotifications = unreadCountData?.unreadCount || 0;
+
+  // Transform userInfo to match User interface if necessary
   const user: User = userInfo
     ? {
         username: userInfo.name,
@@ -59,7 +60,39 @@ export default function Home() {
   const [isAccountSwitcherOpen, setIsAccountSwitcherOpen] = useState(false);
   const [isStocksViewActive, setIsStocksViewActive] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [isPermissionPopupOpen, setIsPermissionPopupOpen] = useState(false);
+
+  // Check notification permission on load
+  useEffect(() => {
+    if (userInfo && userInfo.notificationAgreement) {
+      // Check if token is registered in localStorage
+      // We need to wait for mount to access localStorage safely, but useEffect runs on mount.
+      const hasToken = isTokenRegistered();
+      if (!hasToken) {
+        // If user agreed but no token on this device, ask to enable
+        // Use a small timeout to not block initial render
+        setTimeout(() => {
+          setIsPermissionPopupOpen(true);
+        }, 1000);
+      }
+    }
+  }, [userInfo]);
+
+  const handlePermissionConfirm = async () => {
+    setIsPermissionPopupOpen(false);
+    const permission = await requestNotificationPermission();
+    if (permission !== "granted") {
+      // If denied or closed, we should probably update the agreement to false
+      // to reflect the actual state, or just leave it as is?
+      // User said: "If no, set notificationAgreement to false via usePutInfo"
+      updateInfo({ notificationAgreement: false });
+    }
+  };
+
+  const handlePermissionDeny = () => {
+    setIsPermissionPopupOpen(false);
+    updateInfo({ notificationAgreement: false });
+  };
 
   useEffect(() => {
     // const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -68,18 +101,9 @@ export default function Home() {
       setIsDarkMode(true);
     }
 
-    // 초기 모의 알림 데이터 로드 (한 번만)
-    const storedNotifications = getStoredNotifications();
-    if (storedNotifications.length === 0) {
-      MOCK_NOTIFICATIONS.forEach((notif) => saveNotification(notif));
-    }
-
-    // 읽지 않은 알림 개수 초기화
-    setUnreadNotifications(getUnreadCount());
-
     // 알림 업데이트 이벤트 리스너
     const handleNotificationUpdate = () => {
-      setUnreadNotifications(getUnreadCount());
+      refetchUnreadCount();
     };
 
     window.addEventListener("notificationUpdate", handleNotificationUpdate);
@@ -89,7 +113,7 @@ export default function Home() {
         handleNotificationUpdate
       );
     };
-  }, []);
+  }, [refetchUnreadCount]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -226,10 +250,43 @@ export default function Home() {
           <SlidingScreen
             isOpen={isNotificationsOpen}
             onClose={() => setIsNotificationsOpen(false)}
-            title="알림"
           >
-            <NotificationsScreen />
+            <NotificationsScreen
+              onClose={() => setIsNotificationsOpen(false)}
+            />
           </SlidingScreen>
+
+          {/* Permission Popup Modal */}
+          {isPermissionPopupOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-scaleIn p-6 text-center">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <span className="text-3xl">🔔</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#191f28] mb-2">
+                  알림을 켜시겠어요?
+                </h3>
+                <p className="text-[#4e5968] mb-8 leading-relaxed">
+                  중요한 투자 정보와 체결 알림을 <br />
+                  놓치지 않고 받아보세요.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handlePermissionDeny}
+                    className="flex-1 py-3.5 rounded-xl bg-[#f2f4f6] text-[#6b7684] font-semibold hover:bg-[#e5e8eb] transition-colors active:scale-[0.98]"
+                  >
+                    다음에
+                  </button>
+                  <button
+                    onClick={handlePermissionConfirm}
+                    className="flex-1 py-3.5 rounded-xl bg-[#3182f6] text-white font-semibold hover:bg-[#1b64da] transition-colors shadow-lg shadow-blue-500/30 active:scale-[0.98]"
+                  >
+                    좋아요
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </WebSocketProvider>
     </>

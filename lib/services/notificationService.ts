@@ -6,10 +6,7 @@ import {
   onMessage,
 } from "firebase/messaging";
 import defaultClient from "../api/axiosClient";
-import type {
-  Notification as AppNotification,
-  NotificationType,
-} from "../types/stock";
+import { NotificationType } from "../types/notification";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYSh2TsK2F9ZigoyF-QYMIVLxw6Wa3l88",
@@ -38,6 +35,9 @@ if (typeof window !== "undefined") {
         data: payload.data,
       };
       showLocalNotification(title, options);
+
+      // Dispatch event to trigger React Query refetch
+      window.dispatchEvent(new CustomEvent("notificationUpdate"));
     });
   } catch (err) {
     console.error("Firebase Messaging initialization failed", err);
@@ -105,6 +105,9 @@ export const registerFCMToken = async () => {
     if (currentToken) {
       console.log("FCM Token:", currentToken);
       await sendTokenToServer(currentToken);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("fcm_registered", "true");
+      }
     } else {
       console.log("No registration token available.");
     }
@@ -129,10 +132,19 @@ export const deleteFCMToken = async () => {
   try {
     await deleteToken(messaging);
     await defaultClient.delete("/api/members/fcm-token");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("fcm_registered");
+    }
     console.log("FCM token deleted");
   } catch (error) {
     console.error("Failed to delete FCM token:", error);
   }
+};
+
+// 토큰 등록 여부 확인
+export const isTokenRegistered = (): boolean => {
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem("fcm_registered") === "true";
 };
 
 // 로컬 알림 표시
@@ -152,155 +164,27 @@ export const showLocalNotification = (
 // 알림 타입에 따른 아이콘 및 스타일 결정
 export const getNotificationConfig = (type: NotificationType) => {
   const configs = {
-    order_filled: {
+    [NotificationType.EXECUTION]: {
       icon: "✅",
       color: "#22c55e",
     },
-    ranking_up: {
+    [NotificationType.RANKING]: {
       icon: "🏆",
       color: "#f59e0b",
     },
-    achievement: {
+    [NotificationType.ACHIEVEMENT]: {
       icon: "🎉",
       color: "#9333ea",
     },
-    competition: {
+    [NotificationType.CONTEST]: {
       icon: "🏅",
       color: "#4f46e5",
     },
-    system: {
+    [NotificationType.SYSTEM]: {
       icon: "ℹ️",
       color: "#64748b",
     },
   };
 
-  return configs[type] || configs.system;
-};
-
-// 알림 생성 헬퍼
-export const createNotification = (
-  type: NotificationType,
-  title: string,
-  message: string,
-  metadata?: any
-): AppNotification => {
-  return {
-    id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    type,
-    title,
-    message,
-    timestamp: new Date(),
-    read: false,
-    metadata,
-  };
-};
-
-// 로컬 스토리지에 알림 저장
-export const saveNotification = (notification: AppNotification): void => {
-  const notifications = getStoredNotifications();
-  notifications.unshift(notification);
-
-  if (notifications.length > 100) {
-    notifications.pop();
-  }
-
-  localStorage.setItem("notifications", JSON.stringify(notifications));
-};
-
-// 저장된 알림 가져오기
-export const getStoredNotifications = (): AppNotification[] => {
-  try {
-    const stored = localStorage.getItem("notifications");
-    if (!stored) return [];
-
-    const notifications = JSON.parse(stored);
-    return notifications.map((n: any) => ({
-      ...n,
-      timestamp: new Date(n.timestamp),
-    }));
-  } catch (error) {
-    console.error("알림 로드 실패:", error);
-    return [];
-  }
-};
-
-// 알림 읽음 처리
-export const markNotificationAsRead = (notificationId: string): void => {
-  const notifications = getStoredNotifications();
-  const updated = notifications.map((n) =>
-    n.id === notificationId ? { ...n, read: true } : n
-  );
-  localStorage.setItem("notifications", JSON.stringify(updated));
-};
-
-// 모든 알림 읽음 처리
-export const markAllNotificationsAsRead = (): void => {
-  const notifications = getStoredNotifications();
-  const updated = notifications.map((n) => ({ ...n, read: true }));
-  localStorage.setItem("notifications", JSON.stringify(updated));
-};
-
-// 알림 삭제
-export const deleteNotification = (notificationId: string): void => {
-  const notifications = getStoredNotifications();
-  const filtered = notifications.filter((n) => n.id !== notificationId);
-  localStorage.setItem("notifications", JSON.stringify(filtered));
-};
-
-// 모든 알림 삭제
-export const clearAllNotifications = (): void => {
-  localStorage.setItem("notifications", JSON.stringify([]));
-};
-
-// 읽지 않은 알림 개수
-export const getUnreadCount = (): number => {
-  const notifications = getStoredNotifications();
-  return notifications.filter((n) => !n.read).length;
-};
-
-// 테스트 알림 전송
-export const sendTestNotification = async (): Promise<void> => {
-  const testNotifications = [
-    {
-      type: "order_filled" as NotificationType,
-      title: "주문 체결 완료",
-      message: "삼성전자 50주 매수 주문이 체결되었습니다.",
-      metadata: {
-        ticker: "005930",
-        orderType: "buy",
-        shares: 50,
-        price: 82000,
-      },
-    },
-    {
-      type: "ranking_up" as NotificationType,
-      title: "랭킹 상승!",
-      message: "축하합니다! 전체 랭킹이 3단계 상승했습니다. (7위 → 4위)",
-      metadata: { rankChange: 3 },
-    },
-    {
-      type: "achievement" as NotificationType,
-      title: "업적 달성",
-      message: '"포트폴리오 다각화" 업적을 달성했습니다!',
-      metadata: { achievementId: "ach-3" },
-    },
-  ];
-
-  const randomNotif =
-    testNotifications[Math.floor(Math.random() * testNotifications.length)];
-  const notification = createNotification(
-    randomNotif.type,
-    randomNotif.title,
-    randomNotif.message,
-    randomNotif.metadata
-  );
-
-  saveNotification(notification);
-
-  // 로컬 알림 표시
-  showLocalNotification(randomNotif.title, {
-    body: randomNotif.message,
-  });
-
-  window.dispatchEvent(new CustomEvent("notificationUpdate"));
+  return configs[type] || configs[NotificationType.SYSTEM];
 };
