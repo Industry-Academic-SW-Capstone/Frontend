@@ -385,7 +385,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   };
   const handleRegister = async () => {
     // Mock register process
-    console.log("크아악");
     console.log(signupRequestRef.current.name);
     if (!signupRequestRef.current.name) {
       setErrorMessage("이름을 입력해주세요.");
@@ -400,14 +399,11 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
       setErrorMessage("이름에 특수문자는 사용할 수 없습니다.");
       return;
     }
-    console.log("크아악");
 
     const latestRequest = signupRequestRef.current;
-    console.log("크아악");
 
     doPutInfo(latestRequest, {
       onSuccess: () => {
-        console.log("크아악");
         setErrorMessage(null);
         setNewUser((prev) => ({
           ...prev,
@@ -422,7 +418,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         setStep("complete");
       },
       onError: (err: any) => {
-        console.log("크아악");
         const data = err?.response?.data;
         const message =
           typeof data === "string"
