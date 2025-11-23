@@ -15,7 +15,7 @@ export default function useKakaoOAuth() {
    * @param onLoginSuccess - 로그인 성공 시 수행할 콜백 (Access Token 전달됨)
    * @param onLoginFail - 로그인 실패 시 수행할 콜백
    */
-  const loginWithKakao = (redirectUri?: string) => {
+  const loginWithKakao = (state?: string) => {
     // 1. SDK 로드 여부 체크
     if (typeof window === "undefined" || !window.Kakao) {
       alert("카카오 SDK가 로드되지 않았습니다. 잠시 후 다시 시도해주세요.");
@@ -32,7 +32,8 @@ export default function useKakaoOAuth() {
     // 3. 리다이렉트 로그인 실행
     console.log("Kakao Login Start (Redirect)");
     window.Kakao.Auth.authorize({
-      redirectUri: redirectUri || window.location.origin,
+      redirectUri: window.location.origin + "/pwa",
+      state,
     });
   };
 
@@ -40,11 +41,11 @@ export default function useKakaoOAuth() {
   // 카카오 로그인 콜백 함수
   // @param code - 카카오 로그인 콜백으로 전달된 code
   // */
-  const fetchKakaoCallback = async (code: string, redirectUri?: string) => {
+  const fetchKakaoCallback = async (code: string, state?: string) => {
     const res = await defaultClient.get(
       `/api/auth/kakao/callback?code=${code}&redirect_uri=${
-        redirectUri || window.location.origin
-      }`
+        window.location.origin + "/pwa"
+      }&state=${state}`
     );
     return res.data;
   };

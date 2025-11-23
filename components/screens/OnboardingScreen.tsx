@@ -9,13 +9,16 @@ import { useLogin } from "@/lib/hooks/auth/useLogin";
 import { useSignup } from "@/lib/hooks/auth/useSignup";
 import useKakaoOAuth from "@/lib/hooks/auth/useKakaoOAuth";
 import { useSearchParams } from "next/navigation";
-import axios from "axios";
 import { usePutInfo } from "@/lib/hooks/me/useInfo";
+import defaultClient from "@/lib/api/axiosClient";
+import { useAuthStore } from "@/lib/stores/useAuthStore";
 
 type AuthStep =
   | "welcome"
   | "login"
   | "signup"
+  | "kakaoConfirmSignUp"
+  | "kakaoConfirmLogin"
   | "pass"
   | "username"
   | "avatar"
@@ -106,46 +109,51 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [isKakaoSignup, setIsKakaoSignup] = useState(false);
+  const [kakaoImage, setKakaoImage] = useState<string | null>(null);
+  const [kakaoToken, setKakaoToken] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const { loginWithKakao, isLoading, fetchKakaoCallback } = useKakaoOAuth();
 
   useEffect(() => {
     const code = searchParams.get("code");
-    if (code) {
-      handleKakaoCallback(code);
+    const state = searchParams.get("state");
+    console.log("으악", code, state);
+    if (code && (state === "kakaoOauthLogin" || state === "kakaoOauthSignIn")) {
+      handleKakaoCallback(code, state);
     }
   }, [searchParams]);
 
-  const handleKakaoCallback = async (code: string) => {
+  const handleKakaoCallback = async (code: string, state: string) => {
     setIsAuthLoading(true);
     try {
-      const data = await fetchKakaoCallback(code, window.location.origin);
-
-      if (data.token) {
-        // 이미 가입된 유저 -> 로그인 처리
-        onLoginSuccess({ username: "Kakao User" }); // 실제 유저 정보가 있다면 여기서 파싱
-        // 토큰 저장 로직 필요 (useLogin 훅 내부 로직 참고하거나 직접 저장)
-        // 예: localStorage.setItem("accessToken", data.token);
-        // useAuthStore.getState().setToken(data.token); // 만약 store 밖에서 쓴다면
-        alert("카카오 로그인 성공!");
-      } else if (data.userInfo) {
-        // 미가입 유저 -> 회원가입 진행
-        const { email, name, profile_image } = data.userInfo;
-        if (confirm("계정이 없습니다. 회원가입 하시겠습니까?")) {
-          setIsKakaoSignup(true);
-          setSignupRequest((prev) => ({
-            ...prev,
-            email,
-            name,
-            profile_image,
-            password: "KAKAO_LOGIN_USER", // 더미 패스워드 혹은 별도 처리
-          }));
-          setStep("signup");
-          // 바로 다음 단계로 넘길지, 아니면 signup 화면에서 보여줄지 결정
-          // 여기서는 signup 화면으로 보내서 정보 확인하게 함
+      console.log("카카오 로그인 성공", code, state);
+      const data = await fetchKakaoCallback(code, state);
+      if (state === "kakaoOauthLogin") {
+        if (data.newUser) {
+          // 회원가입 할건지 물어보기
+          setStep("kakaoConfirmSignUp");
         } else {
-          // 취소 시
-          setStep("welcome");
+          setToken(data.token.accessToken);
+          onLoginSuccess({ username: "Kakao User" });
+        }
+      } else if (state === "kakaoOauthSignIn") {
+        if (!data.newUser) {
+          // 로그인 할건지 물어보기
+          setKakaoToken(data.token.accessToken);
+          setStep("kakaoConfirmLogin");
+        } else {
+          setIsKakaoSignup(true);
+          setKakaoImage(data.signupInfo.profileImage);
+          setSignupRequest((prev) => {
+            return {
+              ...prev,
+              email: data.signupInfo.email,
+              name: data.signupInfo.name,
+              profileImage: data.signupInfo.profileImage,
+              password: "KAKAO_LOGIN_USER",
+            };
+          });
+          setStep("username");
         }
       }
     } catch (error: any) {
@@ -199,13 +207,24 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         setStep("avatar");
         break;
       case "avatar":
-        setStep("notification");
+        if (isKakaoSignup) {
+          handleKakaoRegister();
+        } else {
+          setStep("notification");
+        }
         break;
       case "notification":
         setStep("2FA");
         break;
       case "2FA":
         handleRegister();
+        break;
+      case "kakaoConfirmSignUp":
+        setStep("username");
+        break;
+      case "kakaoConfirmLogin":
+        setToken(kakaoToken ? kakaoToken : "");
+        onLoginSuccess({ username: "Kakao User" });
         break;
     }
   };
@@ -226,10 +245,18 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         setStep("username");
         break;
       case "notification":
-        setStep("avatar");
+        if (!isKakaoSignup) {
+          setStep("avatar");
+        }
         break;
       case "2FA":
         setStep("notification");
+        break;
+      case "kakaoConfirmSignUp":
+        setStep("login");
+        break;
+      case "kakaoConfirmLogin":
+        setStep("signup");
         break;
     }
   };
@@ -326,8 +353,40 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
       },
     });
   };
+  const { setToken } = useAuthStore();
+  const handleKakaoRegister = async () => {
+    if (isKakaoSignup) {
+      try {
+        const result = await defaultClient.post(
+          `/api/auth/kakao/signup/complete`,
+          {
+            email: signupRequestRef.current.email,
+            name: signupRequestRef.current.name,
+            profileImage: signupRequestRef.current.profileImage,
+          }
+        );
+        if (result.data && result.data.accessToken) {
+          setToken(result.data.accessToken);
+        }
+        setErrorMessage(null);
+        setNewUser((prev) => ({
+          ...prev,
+          username: signupRequestRef.current.name,
+          group: { id: "hsu", name: "한성대학교", averageReturn: 18.5 },
+          avatar: signupRequestRef.current.profileImage,
+        }));
+        setStep("notification");
+      } catch (error) {
+        console.error("Kakao Signup Complete Error:", error);
+        setErrorMessage("카카오 회원가입 완료 중 오류가 발생했습니다.");
+      }
+      return;
+    }
+  };
   const handleRegister = async () => {
     // Mock register process
+    console.log("크아악");
+    console.log(signupRequestRef.current.name);
     if (!signupRequestRef.current.name) {
       setErrorMessage("이름을 입력해주세요.");
       return;
@@ -337,39 +396,18 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     } else if (signupRequestRef.current.name.length > 20) {
       setErrorMessage("이름은 최대 20자 이하여야 합니다.");
       return;
-    } else if (/[^a-zA-Z0-9가-힣]/.test(signupRequestRef.current.name)) {
+    } else if (/[^a-zA-Z0-9ㄱ-ㅎ가-힣]/.test(signupRequestRef.current.name)) {
       setErrorMessage("이름에 특수문자는 사용할 수 없습니다.");
       return;
     }
-
-    if (isKakaoSignup) {
-      try {
-        await axios.post(`/api/auth/kakao/signup/complete`, {
-          email: signupRequestRef.current.email,
-          name: signupRequestRef.current.name,
-          profileImage: signupRequestRef.current.profileImage,
-        });
-        setErrorMessage(null);
-        setNewUser((prev) => ({
-          ...prev,
-          username: signupRequestRef.current.name,
-          group: { id: "hsu", name: "한성대학교", averageReturn: 18.5 },
-          avatar: signupRequestRef.current.profileImage,
-        }));
-        // 카카오 로그인은 비밀번호가 없으므로 자동 로그인 처리가 필요할 수 있음
-        // 여기서는 일단 완료 단계로 이동
-        setStep("complete");
-      } catch (error) {
-        console.error("Kakao Signup Complete Error:", error);
-        setErrorMessage("카카오 회원가입 완료 중 오류가 발생했습니다.");
-      }
-      return;
-    }
+    console.log("크아악");
 
     const latestRequest = signupRequestRef.current;
+    console.log("크아악");
 
     doPutInfo(latestRequest, {
       onSuccess: () => {
+        console.log("크아악");
         setErrorMessage(null);
         setNewUser((prev) => ({
           ...prev,
@@ -384,6 +422,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         setStep("complete");
       },
       onError: (err: any) => {
+        console.log("크아악");
         const data = err?.response?.data;
         const message =
           typeof data === "string"
@@ -416,7 +455,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
 
   const renderContent = () => {
     const avatars = Array.from(
-      { length: 6 },
+      { length: isKakaoSignup ? 5 : 6 },
       (_, i) => `https://picsum.photos/seed/avatar${i + 1}/100`
     );
     const groups: UserGroup[] = [
@@ -602,7 +641,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
               >
                 <OAuthButtons
                   title="소셜 계정으로 로그인"
-                  onOAuth={() => loginWithKakao()}
+                  onOAuth={() => loginWithKakao("kakaoOauthLogin")}
                   disabled={isAuthLoading}
                 />
               </div>
@@ -733,12 +772,85 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                 <OAuthButtons
                   title="소셜 계정으로 진행하기"
                   disabled={isLoading}
-                  onOAuth={() => loginWithKakao()}
+                  onOAuth={() => loginWithKakao("kakaoOauthSignIn")}
                 />
               </div>
             </div>
           </div>
         );
+      case "kakaoConfirmSignUp":
+        return (
+          <div className="p-6 flex flex-col h-full animate-fadeInUp text-center">
+            <button onClick={handleBack} className="self-start mb-4">
+              <Icons.ArrowLeftIcon className="w-6 h-6" />
+            </button>
+            <div className="h-full flex flex-col justify-between">
+              <div>
+                <h2 className="text-4xl font-extrabold mt-4">
+                  연결된 계정이 없습니다!
+                </h2>
+                <p className="text-text-secondary text-lg mt-3 mb-8">
+                  카카오 계정으로 새로 가입하시겠습니까?
+                </p>
+              </div>
+              <div>
+                <div className="space-y-3 mt-6">
+                  <button
+                    onClick={async () => {
+                      handleNext();
+                    }}
+                    className="w-full bg-primary text-white font-bold py-3.5 rounded-xl"
+                  >
+                    카카오 계정으로 가입하기
+                  </button>
+                  <button
+                    onClick={handleBack}
+                    className="w-full text-text-secondary font-semibold py-3"
+                  >
+                    다른 계정으로 로그인하기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case "kakaoConfirmLogin":
+        return (
+          <div className="p-6 flex flex-col h-full animate-fadeInUp text-center">
+            <button onClick={handleBack} className="self-start mb-4">
+              <Icons.ArrowLeftIcon className="w-6 h-6" />
+            </button>
+            <div className="h-full flex flex-col justify-between">
+              <div>
+                <h2 className="text-4xl font-extrabold mt-4">
+                  이미 계정이 있습니다!
+                </h2>
+                <p className="text-text-secondary text-lg mt-3 mb-8">
+                  이 계정으로 로그인하시겠습니까?
+                </p>
+              </div>
+              <div>
+                <div className="space-y-3 mt-6">
+                  <button
+                    onClick={async () => {
+                      handleNext();
+                    }}
+                    className="w-full bg-primary text-white font-bold py-3.5 rounded-xl"
+                  >
+                    이 계정으로 로그인하기
+                  </button>
+                  <button
+                    onClick={handleBack}
+                    className="w-full text-text-secondary font-semibold py-3"
+                  >
+                    다른 계정으로 가입하기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
       case "pass":
         return (
           <div className="p-6 flex flex-col h-full animate-fadeInUp text-center">
@@ -833,6 +945,21 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
               선택하세요.
             </h2>
             <div className="grid grid-cols-3 gap-4 mb-auto">
+              {isKakaoSignup && kakaoImage && (
+                <button
+                  key={kakaoImage}
+                  onClick={() => setNewUser({ ...newUser, avatar: kakaoImage })}
+                  className={`p-2 rounded-full transition-all duration-200 ${
+                    newUser.avatar === kakaoImage ? "ring-4 ring-primary" : ""
+                  }`}
+                >
+                  <img
+                    src={kakaoImage}
+                    alt="avatar"
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                </button>
+              )}
               {avatars.map((avatarUrl) => (
                 <button
                   key={avatarUrl}
