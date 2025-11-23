@@ -87,7 +87,7 @@ export const Header: React.FC = () => {
                   : "text-white"
               }`}
             >
-              StockIt!
+              스톡잇!
             </span>
           </a>
 
