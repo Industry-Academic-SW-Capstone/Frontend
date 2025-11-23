@@ -407,9 +407,9 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         setErrorMessage(null);
         setNewUser((prev) => ({
           ...prev,
-          username: signupRequest.name,
+          username: signupRequestRef.current.name,
           group: { id: "hsu", name: "한성대학교", averageReturn: 18.5 },
-          avatar: signupRequest.profileImage,
+          avatar: signupRequestRef.current.profileImage,
         }));
         setLoginRequest({
           email: signupRequestRef.current.email,
@@ -943,9 +943,16 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
               {isKakaoSignup && kakaoImage && (
                 <button
                   key={kakaoImage}
-                  onClick={() => setNewUser({ ...newUser, avatar: kakaoImage })}
+                  onClick={() =>
+                    setSignupRequest({
+                      ...signupRequest,
+                      profileImage: kakaoImage,
+                    })
+                  }
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    newUser.avatar === kakaoImage ? "ring-4 ring-primary" : ""
+                    signupRequest.profileImage === kakaoImage
+                      ? "ring-4 ring-primary"
+                      : ""
                   }`}
                 >
                   <img
@@ -958,9 +965,16 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
               {avatars.map((avatarUrl) => (
                 <button
                   key={avatarUrl}
-                  onClick={() => setNewUser({ ...newUser, avatar: avatarUrl })}
+                  onClick={() =>
+                    setSignupRequest({
+                      ...signupRequest,
+                      profileImage: avatarUrl,
+                    })
+                  }
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    newUser.avatar === avatarUrl ? "ring-4 ring-primary" : ""
+                    signupRequest.profileImage === avatarUrl
+                      ? "ring-4 ring-primary"
+                      : ""
                   }`}
                 >
                   <img

@@ -42,8 +42,11 @@ export default function Home() {
   const { mutate: updateInfo } = usePutInfo();
 
   // Use hook for unread notifications
-  const { data: unreadCountData, refetch: refetchUnreadCount } =
-    useUnreadCount();
+  const { data: unreadCountData, refetch: refetchUnreadCount } = useUnreadCount(
+    {
+      enabled: !!token,
+    }
+  );
   const unreadNotifications = unreadCountData?.unreadCount || 0;
 
   // Transform userInfo to match User interface if necessary

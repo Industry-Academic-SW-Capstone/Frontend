@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import defaultClient from "@/lib/api/axiosClient";
 import { UnreadCountResponse } from "@/lib/types/notification";
 
-export const useUnreadCount = () => {
+export const useUnreadCount = (options?: { enabled?: boolean }) => {
   return useQuery<UnreadCountResponse>({
     queryKey: ["notifications", "unread-count"],
     queryFn: async () => {
@@ -13,5 +13,6 @@ export const useUnreadCount = () => {
     },
     // Refetch periodically or rely on invalidation
     refetchInterval: 60000, // Check every minute as a fallback
+    enabled: options?.enabled,
   });
 };

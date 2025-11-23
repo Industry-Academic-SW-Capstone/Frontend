@@ -30,6 +30,7 @@ export interface UpdateInfoRequest {
   name?: string;
   profileImage?: string;
   notificationAgreement?: boolean;
+  twoFactorEnabled?: boolean;
 }
 
 export interface SignUpResponse {
