@@ -1,26 +1,70 @@
+import { initializeApp } from "firebase/app";
+import {
+  getMessaging,
+  getToken,
+  deleteToken,
+  onMessage,
+} from "firebase/messaging";
+import defaultClient from "../api/axiosClient";
 import type {
   Notification as AppNotification,
   NotificationType,
 } from "../types/stock";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyBYSh2TsK2F9ZigoyF-QYMIVLxw6Wa3l88",
+  authDomain: "stockit-7a0f4.firebaseapp.com",
+  projectId: "stockit-7a0f4",
+  storageBucket: "stockit-7a0f4.firebasestorage.app",
+  messagingSenderId: "811459523193",
+  appId: "1:811459523193:web:ea0bc8904890a6d07a1aa8",
+  measurementId: "G-K37M1BKTPY",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+let messaging: any = null;
+
+if (typeof window !== "undefined") {
+  try {
+    messaging = getMessaging(app);
+    onMessage(messaging, (payload) => {
+      console.log("Message received. ", payload);
+      const title = payload.notification?.title || "StockIt";
+      const options = {
+        body: payload.notification?.body,
+        icon: "/new_logo.png",
+        badge: "/new_logo.png",
+        data: payload.data,
+      };
+      showLocalNotification(title, options);
+    });
+  } catch (err) {
+    console.error("Firebase Messaging initialization failed", err);
+  }
+}
+
 // 알림 권한 상태 확인
 export const checkNotificationPermission = (): NotificationPermission => {
-  if (!("Notification" in window)) {
+  if (typeof window === "undefined" || !("Notification" in window)) {
     return "denied";
   }
   return Notification.permission;
 };
 
-// 알림 권한 요청
+// 알림 권한 요청 및 토큰 등록
 export const requestNotificationPermission =
   async (): Promise<NotificationPermission> => {
-    if (!("Notification" in window)) {
+    if (typeof window === "undefined" || !("Notification" in window)) {
       console.warn("이 브라우저는 알림을 지원하지 않습니다.");
       return "denied";
     }
 
     try {
       const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        await registerFCMToken();
+      }
       return permission;
     } catch (error) {
       console.error("알림 권한 요청 실패:", error);
@@ -31,15 +75,12 @@ export const requestNotificationPermission =
 // 서비스 워커 등록
 export const registerServiceWorker =
   async (): Promise<ServiceWorkerRegistration | null> => {
-    if (!("serviceWorker" in navigator)) {
-      console.warn("이 브라우저는 서비스 워커를 지원하지 않습니다.");
+    if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
       return null;
     }
 
     try {
-      const registration = await navigator.serviceWorker.register("/sw.js", {
-        scope: "/pwa",
-      });
+      const registration = await navigator.serviceWorker.register("/sw.js");
       console.log("서비스 워커가 성공적으로 등록되었습니다:", registration);
       return registration;
     } catch (error) {
@@ -48,52 +89,51 @@ export const registerServiceWorker =
     }
   };
 
-// 푸시 구독
-export const subscribeToPush = async (
-  registration: ServiceWorkerRegistration
-): Promise<PushSubscription | null> => {
-  try {
-    // VAPID 공개 키 (실제 환경에서는 환경 변수로 관리)
-    // 이것은 테스트용 키이며, 실제 운영 환경에서는 서버에서 생성한 키를 사용해야 합니다.
-    const vapidPublicKey =
-      "BEl62iUYgUivxIkv69yViEuiBIa-Ib37J8xQmrCD6A0wvN0Q8OhqmC7Zr6qTmUmVgIIHpN95ckscMgU1XmZ-rI8";
+// FCM 토큰 등록
+export const registerFCMToken = async () => {
+  if (!messaging) return;
 
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as any,
+  try {
+    const registration = await registerServiceWorker();
+    if (!registration) return;
+
+    const currentToken = await getToken(messaging, {
+      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+      serviceWorkerRegistration: registration,
     });
 
-    console.log("푸시 구독 성공:", subscription);
-
-    // 실제 환경에서는 이 구독 정보를 서버에 전송해야 합니다.
-    // await fetch('/api/subscribe', {
-    //   method: 'POST',
-    //   body: JSON.stringify(subscription),
-    //   headers: { 'Content-Type': 'application/json' },
-    // });
-
-    return subscription;
-  } catch (error) {
-    console.error("푸시 구독 실패:", error);
-    return null;
+    if (currentToken) {
+      console.log("FCM Token:", currentToken);
+      await sendTokenToServer(currentToken);
+    } else {
+      console.log("No registration token available.");
+    }
+  } catch (err) {
+    console.log("An error occurred while retrieving token. ", err);
   }
 };
 
-// VAPID 키 변환 헬퍼 함수
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, "+")
-    .replace(/_/g, "/");
-
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
+// 토큰 서버 전송
+const sendTokenToServer = async (token: string) => {
+  try {
+    await defaultClient.put("/api/members/fcm-token", { fcm_token: token });
+    console.log("FCM token sent to server");
+  } catch (error) {
+    console.error("Failed to send FCM token to server:", error);
   }
-  return outputArray;
-}
+};
+
+// FCM 토큰 삭제
+export const deleteFCMToken = async () => {
+  if (!messaging) return;
+  try {
+    await deleteToken(messaging);
+    await defaultClient.delete("/api/members/fcm-token");
+    console.log("FCM token deleted");
+  } catch (error) {
+    console.error("Failed to delete FCM token:", error);
+  }
+};
 
 // 로컬 알림 표시
 export const showLocalNotification = (
@@ -107,22 +147,6 @@ export const showLocalNotification = (
       ...options,
     });
   }
-};
-
-// 서비스 워커를 통한 푸시 알림 표시 (백그라운드에서도 작동)
-export const showPushNotification = async (
-  title: string,
-  options?: NotificationOptions
-): Promise<void> => {
-  const registration = await navigator.serviceWorker.ready;
-
-  await registration.showNotification(title, {
-    icon: "/new_logo.png",
-    badge: "/new_logo.png",
-    tag: "stonkapp-notification",
-    requireInteraction: false,
-    ...options,
-  });
 };
 
 // 알림 타입에 따른 아이콘 및 스타일 결정
@@ -176,7 +200,6 @@ export const saveNotification = (notification: AppNotification): void => {
   const notifications = getStoredNotifications();
   notifications.unshift(notification);
 
-  // 최대 100개까지만 저장
   if (notifications.length > 100) {
     notifications.pop();
   }
@@ -191,7 +214,6 @@ export const getStoredNotifications = (): AppNotification[] => {
     if (!stored) return [];
 
     const notifications = JSON.parse(stored);
-    // Date 객체로 변환
     return notifications.map((n: any) => ({
       ...n,
       timestamp: new Date(n.timestamp),
@@ -273,27 +295,12 @@ export const sendTestNotification = async (): Promise<void> => {
     randomNotif.metadata
   );
 
-  // 로컬 저장
   saveNotification(notification);
 
-  // 푸시 알림 표시
-  const config = getNotificationConfig(randomNotif.type);
+  // 로컬 알림 표시
+  showLocalNotification(randomNotif.title, {
+    body: randomNotif.message,
+  });
 
-  try {
-    await showPushNotification(randomNotif.title, {
-      body: randomNotif.message,
-      icon: "/new_logo.png",
-      badge: "/new_logo.png",
-      tag: notification.id,
-      data: notification,
-    });
-  } catch (error) {
-    // 서비스 워커를 사용할 수 없으면 로컬 알림으로 대체
-    showLocalNotification(randomNotif.title, {
-      body: randomNotif.message,
-    });
-  }
-
-  // CustomEvent로 알림 업데이트 전파
   window.dispatchEvent(new CustomEvent("notificationUpdate"));
 };

@@ -2,11 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { User, UserGroup } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
-import {
-  requestNotificationPermission,
-  registerServiceWorker,
-  subscribeToPush,
-} from "@/lib/services/notificationService";
+import { requestNotificationPermission } from "@/lib/services/notificationService";
 import TFARegisterPage from "../auth/TFARegisterPage";
 import { LoginRequest, SignUpRequest } from "@/lib/types/auth";
 import { useLogin } from "@/lib/hooks/auth/useLogin";
@@ -939,14 +935,10 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                     onClick={async () => {
                       const permission = await requestNotificationPermission();
                       if (permission === "granted") {
-                        const registration = await registerServiceWorker();
-                        if (registration) {
-                          await subscribeToPush(registration);
-                          setSignupRequest((prev) => ({
-                            ...prev,
-                            notification_agreement: true,
-                          }));
-                        }
+                        setSignupRequest((prev) => ({
+                          ...prev,
+                          notification_agreement: true,
+                        }));
                       }
                       handleNext();
                     }}

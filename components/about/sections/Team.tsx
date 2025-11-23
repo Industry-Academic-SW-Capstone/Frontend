@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import { TEAM_MEMBERS } from "../constants";
 import { FadeIn, Stagger, StaggerItem } from "@/components/about/ui/Motion";
@@ -30,11 +31,15 @@ export const Team: React.FC = () => {
               <div className="group bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 text-center">
                 <div className="relative w-32 h-32 mx-auto mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg transform scale-110"></div>
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-md group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md group-hover:scale-105 transition-transform duration-300">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-1">
                   {member.name}
@@ -66,11 +71,15 @@ export const Team: React.FC = () => {
               <div className="group bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 text-center">
                 <div className="relative w-32 h-32 mx-auto mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg transform scale-110"></div>
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-md group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md group-hover:scale-105 transition-transform duration-300">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-1">
                   {member.name}

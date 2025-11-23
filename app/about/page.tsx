@@ -1,10 +1,32 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { Header } from "@/components/about/Header";
 import { Hero } from "@/components/about/sections/Hero";
-import { Features } from "@/components/about/sections/Features";
-import { AppDemo } from "@/components/about/sections/AppDemo";
-import { Team } from "@/components/about/sections/Team";
 import { Footer } from "@/components/about/Footer";
+
+// Lazy load heavy components
+const Features = dynamic(
+  () =>
+    import("@/components/about/sections/Features").then((mod) => mod.Features),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse" />,
+  }
+);
+
+const AppDemo = dynamic(
+  () =>
+    import("@/components/about/sections/AppDemo").then((mod) => mod.AppDemo),
+  {
+    loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
+  }
+);
+
+const Team = dynamic(
+  () => import("@/components/about/sections/Team").then((mod) => mod.Team),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse" />,
+  }
+);
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://stockit.live"),
