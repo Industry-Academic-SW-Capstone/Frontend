@@ -72,7 +72,10 @@ export const useMarketOrder = () => {
   return useMutation<OrderResponse, OrderErrorResponse, MarketOrderRequest>({
     mutationFn: (data) => {
       if (!selectedAccount) throw new Error("No account selected");
-      return postMarketOrder({ ...data, account_id: selectedAccount.id });
+      return postMarketOrder({
+        ...data,
+        account_id: selectedAccount.id,
+      });
     },
   });
 };

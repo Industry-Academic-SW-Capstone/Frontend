@@ -24,6 +24,8 @@ import {
   isTokenRegistered,
   requestNotificationPermission,
 } from "@/lib/services/notificationService";
+import TutorialOverlay from "@/components/tutorial/TutorialOverlay";
+import { useTutorialStore } from "@/lib/store/useTutorialStore";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -162,6 +164,38 @@ export default function Home() {
     }, 400);
   }, []);
 
+  // Tutorial Trigger
+  const { hasSeenHomeTutorial, startHomeTutorial, setUserId } =
+    useTutorialStore();
+
+  // Sync user ID with tutorial store
+  useEffect(() => {
+    if (userInfo?.memberId) {
+      setUserId(userInfo.memberId);
+    }
+  }, [userInfo, setUserId]);
+
+  useEffect(() => {
+    if (
+      isLoggedIn &&
+      !hasSeenHomeTutorial &&
+      !isAccountsLoading &&
+      !isUserLoading
+    ) {
+      // Small delay to ensure UI is ready
+      const timer = setTimeout(() => {
+        startHomeTutorial();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [
+    isLoggedIn,
+    hasSeenHomeTutorial,
+    isAccountsLoading,
+    isUserLoading,
+    startHomeTutorial,
+  ]);
+
   // If not logged in and not loading (or if we know there's no token), show Onboarding
   if (!token || !isLoggedIn) {
     return (
@@ -290,6 +324,8 @@ export default function Home() {
               </div>
             </div>
           )}
+
+          <TutorialOverlay />
         </div>
       </WebSocketProvider>
     </>

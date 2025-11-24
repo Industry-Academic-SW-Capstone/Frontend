@@ -356,14 +356,18 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({
             ? Array.from({ length: 5 }).map((_, i) => (
                 <PopularStockSkeleton key={i} />
               ))
-            : popularStocks.map((stock) => (
-                <PopularStockCard
-                  type={activePopularTab}
+            : popularStocks.map((stock, index) => (
+                <div
                   key={`${activePopularTab}-${stock.stockCode}`}
-                  stockCode={stock.stockCode}
-                  initialData={stock}
-                  onClick={() => onSelectStock(stock.stockCode)}
-                />
+                  id={index === 0 ? "popular-stock-1" : undefined}
+                >
+                  <PopularStockCard
+                    type={activePopularTab}
+                    stockCode={stock.stockCode}
+                    initialData={stock}
+                    onClick={() => onSelectStock(stock.stockCode)}
+                  />
+                </div>
               ))}
         </div>
       </div>

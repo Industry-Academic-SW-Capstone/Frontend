@@ -34,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* 알림 버튼 */}
           {onNotificationClick && (
             <button
+              id="header-notification"
               onClick={onNotificationClick}
               className="relative p-1 hover:bg-bg-secondary rounded-full transition-colors"
             >
@@ -46,6 +47,7 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* 계좌 전환 버튼 */}
           <button
+            id="header-account-switcher"
             onClick={onAccountSwitch}
             className="flex items-center gap-1 bg-bg-secondary px-3 py-1.5 rounded-full text-sm text-text-secondary active:text-text-primary font-semibold hover:bg-border-color transition-colors"
           >

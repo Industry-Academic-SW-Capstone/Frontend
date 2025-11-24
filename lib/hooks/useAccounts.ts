@@ -18,7 +18,7 @@ export const useAccounts = (options?: { enabled?: boolean }) => {
   const query = useQuery({
     queryKey: ["accounts"],
     queryFn: fetchAccounts,
-    enabled: options?.enabled,
+    enabled: options?.enabled ?? true,
   });
 
   useEffect(() => {

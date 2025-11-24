@@ -62,6 +62,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
             return (
               <button
                 key={item.screen}
+                id={`bottom-nav-${item.screen}`}
                 onClick={() => handleNavClick(item.screen)}
                 className={`flex flex-col items-center justify-center w-16 h-14 transition-all duration-300 ease-out rounded-xl relative group ${
                   isActive

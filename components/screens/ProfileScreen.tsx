@@ -13,6 +13,7 @@ import {
   requestNotificationPermission,
   deleteFCMToken,
 } from "@/lib/services/notificationService";
+import { useTutorialStore } from "@/lib/store/useTutorialStore";
 
 interface ProfileScreenProps {
   user: User; // Fallback or initial data
@@ -94,6 +95,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
     refetch,
   } = useFetchInfo();
   const { mutate: updateInfo, isPending: isUpdating } = usePutInfo();
+  const { resetTutorial } = useTutorialStore();
 
   const user = fetchedUser
     ? {
@@ -237,6 +239,16 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         },
       }
     );
+  };
+
+  const handleResetTutorial = () => {
+    if (confirm("튜토리얼을 초기화하시겠습니까?")) {
+      resetTutorial();
+      showToast(
+        "튜토리얼이 초기화되었습니다. 홈 화면으로 이동하면 다시 시작됩니다.",
+        "success"
+      );
+    }
   };
 
   return (
@@ -518,6 +530,24 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       isPushEnabled ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
+                </button>
+              </div>
+
+              {/* Tutorial Reset */}
+              <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-bg-secondary rounded-lg text-text-secondary shadow-sm">
+                    <Icons.AcademicCapIcon className="w-5 h-5" />
+                  </div>
+                  <span className="text-text-primary font-semibold">
+                    튜토리얼 초기화
+                  </span>
+                </div>
+                <button
+                  onClick={handleResetTutorial}
+                  className="px-4 py-2 bg-bg-secondary text-text-primary text-sm font-bold rounded-lg border border-border-color hover:bg-bg-primary transition-colors"
+                >
+                  초기화
                 </button>
               </div>
 

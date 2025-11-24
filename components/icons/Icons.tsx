@@ -55,6 +55,7 @@ import {
   HiArrowRight,
   HiHeart,
   HiTrash,
+  HiAcademicCap,
 } from "react-icons/hi2";
 import { MdPhone, MdKey, MdEmail, MdError } from "react-icons/md";
 import { IconBaseProps } from "react-icons";
@@ -231,3 +232,6 @@ export const ExclamationCircleIcon = (props: IconProps) => (
 export const ArrowRightIcon = (props: IconProps) => <HiArrowRight {...props} />;
 export const HeartIcon = (props: IconProps) => <HiHeart {...props} />;
 export const TrashIcon = (props: IconProps) => <HiTrash {...props} />;
+export const AcademicCapIcon = (props: IconProps) => (
+  <HiAcademicCap {...props} />
+);

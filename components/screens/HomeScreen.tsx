@@ -93,6 +93,7 @@ const MissionSummary: React.FC<{
 }> = ({ onClick, data }) => {
   return (
     <div
+      id="mission-card"
       onClick={onClick}
       className="bg-bg-secondary p-5 pb-3 pt-3 rounded-2xl cursor-pointer group transition-colors hover:bg-bg-tertiary"
     >
@@ -375,6 +376,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Total Assets Section */}
         <div
+          id="total-assets-card"
           className={`p-5 py-3 bg-bg-secondary rounded-2xl flex flex-col cursor-pointer group overflow-hidden relative transition-all duration-200 active:bg-border-color active:scale-95`}
           onClick={handleNavigateToPortfolio}
         >

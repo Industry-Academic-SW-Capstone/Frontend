@@ -16,6 +16,8 @@ import { useAccountStore } from "@/lib/store/useAccountStore";
 import { SlidingTabs } from "../ui/SlidingTabs";
 import { useStockAnalyze } from "@/lib/hooks/stock/useStockAnalyze";
 import { ChevronDownIcon } from "lucide-react";
+import { useTutorialStore } from "@/lib/store/useTutorialStore";
+import StockDetailTutorialOverlay from "../tutorial/StockDetailTutorialOverlay";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -37,6 +39,19 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   onBack,
 }) => {
   const { selectedAccount, setSelectedAccount, accounts } = useAccountStore();
+  const { hasSeenStockDetailTutorial, startStockDetailTutorial } =
+    useTutorialStore();
+
+  // Trigger tutorial on mount
+  useEffect(() => {
+    if (!hasSeenStockDetailTutorial) {
+      const timer = setTimeout(() => {
+        startStockDetailTutorial();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSeenStockDetailTutorial, startStockDetailTutorial]);
+
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
   const [chartStartPrice, setChartStartPrice] = useState<number | null>(null);
@@ -99,7 +114,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     }
   };
 
-  const { data: accountAssets } = useAccountAssets(selectedAccount?.id); // Assuming accountId 1 for now
+  const { data: accountAssets } = useAccountAssets(selectedAccount?.id);
   const cashBalance = accountAssets?.cash || 0;
   const ownedStock = accountAssets?.holdings.find(
     (h) => h.stockCode === ticker
@@ -224,6 +239,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
             </button>
           </div>
           <button
+            id="stock-favorite-button"
             onClick={handleToggleFavorite}
             className="p-2 rounded-full hover:bg-bg-secondary transition-colors"
           >
@@ -257,8 +273,12 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           {/* Tab Navigation */}
           <SlidingTabs
             tabs={[
-              { id: "chart", label: "차트" },
-              { id: "orderbook", label: "호가" },
+              { id: "chart", label: "차트", elementId: "stock-tab-chart" },
+              {
+                id: "orderbook",
+                label: "호가",
+                elementId: "stock-tab-orderbook",
+              },
             ]}
             activeTab={activeTab}
             onTabChange={(id) => setActiveTab(id as "chart" | "orderbook")}
@@ -358,12 +378,14 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto p-4 bg-bg-primary border-t border-border-color">
             <div className="flex gap-3">
               <button
+                id="stock-sell-button"
                 onClick={() => handleOpenOrderModal("sell")}
                 className="w-full py-3 bg-negative text-white font-bold rounded-lg"
               >
                 매도
               </button>
               <button
+                id="stock-buy-button"
                 onClick={() => handleOpenOrderModal("buy")}
                 className="w-full py-3 bg-positive text-white font-bold rounded-lg"
               >
@@ -389,6 +411,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         isVisible={toastState.isVisible}
         onClose={() => setToastState((prev) => ({ ...prev, isVisible: false }))}
       />
+      <StockDetailTutorialOverlay />
     </>
   );
 };

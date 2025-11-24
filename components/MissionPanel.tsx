@@ -166,6 +166,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-text-primary">미션</h2>
               <button
+                id="mission-close-button"
                 onClick={onClose}
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-bg-primary hover:bg-bg-primary/80 transition-colors"
               >
@@ -190,6 +191,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
                     </p>
                   </div>
                   <button
+                    id="mission-attendance-button"
                     onClick={handleAttendance}
                     className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors active:scale-95"
                   >
@@ -202,7 +204,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
               </div>
 
               {/* Mission List */}
-              <div>
+              <div id="mission-daily-list">
                 <div
                   className="flex items-center justify-between"
                   onClick={() => setIsDailyOpen(!isDailyOpen)}

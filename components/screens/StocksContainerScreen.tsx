@@ -11,6 +11,8 @@ interface StocksContainerScreenProps {
 }
 
 import { useStockStore } from "@/lib/stores/useStockStore";
+import { useTutorialStore } from "@/lib/store/useTutorialStore";
+import StocksTutorialOverlay from "../tutorial/StocksTutorialOverlay";
 
 const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
   onExit,
@@ -18,6 +20,19 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
 }) => {
   const { stocksView: currentView, setStocksView: setCurrentView } =
     useStockStore();
+  const { hasSeenStocksTutorial, startStocksTutorial } = useTutorialStore();
+
+  // Trigger tutorial on mount
+  React.useEffect(() => {
+    if (!hasSeenStocksTutorial) {
+      // Small delay to ensure UI is ready
+      const timer = setTimeout(() => {
+        startStocksTutorial();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSeenStocksTutorial, startStocksTutorial]);
+
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
 
   const handleSelectStock = (ticker: string) => {
@@ -71,6 +86,8 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
           <StockDetailScreen ticker={selectedTicker} onBack={handleBack} />
         )}
       </SlidingScreen>
+
+      <StocksTutorialOverlay />
     </div>
   );
 };

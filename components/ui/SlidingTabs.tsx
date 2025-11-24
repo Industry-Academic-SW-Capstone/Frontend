@@ -1,9 +1,10 @@
 // components/common/SlidingTabs.tsx
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 interface TabItem {
   id: string;
   label: string;
+  elementId?: string;
 }
 
 interface SlidingTabsProps {
@@ -32,6 +33,7 @@ export const SlidingTabs = ({
       {tabs.map((tab) => (
         <button
           key={tab.id}
+          id={tab.elementId}
           onClick={() => onTabChange(tab.id)}
           className={`flex-1 py-2 text-sm transition-colors duration-300 ${
             activeTab === tab.id
