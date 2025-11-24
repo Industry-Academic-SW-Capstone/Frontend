@@ -29,7 +29,7 @@ const CompetitionsScreen: React.FC = () => {
   const PULL_THRESHOLD = 80;
   const queryClient = useQueryClient();
 
-  const { data: competitions, isLoading, error } = useContests();
+  const { data: competitions, isFetching, error, refetch } = useContests();
 
   const handleAdminClick = (competition: Competition) => {
     setSelectedCompetition(competition);
@@ -76,7 +76,7 @@ const CompetitionsScreen: React.FC = () => {
     if (pullCurrentY > PULL_THRESHOLD) {
       setIsRefreshing(true);
       try {
-        await queryClient.invalidateQueries();
+        await refetch();
       } catch (error) {
         console.error("Refresh failed", error);
       } finally {
@@ -156,7 +156,7 @@ const CompetitionsScreen: React.FC = () => {
       </div>
 
       {/* Content Area */}
-      {isLoading ? (
+      {isFetching ? (
         <div className="flex flex-col items-center justify-center py-20 text-primary">
           <SpinnerIcon className="w-10 h-10 animate-spin mb-4" />
           <p className="text-sm font-medium animate-pulse">

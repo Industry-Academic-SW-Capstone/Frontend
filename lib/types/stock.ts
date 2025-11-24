@@ -300,6 +300,13 @@ export interface ChartData {
 
 export type PopularStockCategory = "gainers" | "losers" | "volume" | "amount";
 
+export type StockStyleAnalysis = {
+  stockCode: string;
+  stockName: string;
+  finalStyleTag: string;
+  styleDescription: string;
+};
+
 export interface InvestmentStyleAnalysis {
   personaName: string;
   description: string;

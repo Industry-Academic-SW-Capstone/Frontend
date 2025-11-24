@@ -2,24 +2,14 @@
 import React, { useState } from "react";
 import { AccountAssetHolding } from "@/lib/types/stock";
 import {
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
   ClockIcon,
-  XMarkIcon,
   ChevronRightIcon,
   ChevronDownIcon,
-  ChevronUpIcon,
 } from "@/components/icons/Icons";
 import PortfolioDonutChart from "@/components/PortfolioDonutChart";
 import { generateLogo } from "@/lib/utils";
 import { useAccountAssets } from "@/lib/hooks/useAccount";
-import {
-  usePendingOrders,
-  useOrderDetail,
-  useCancelOrder,
-  PendingOrder,
-} from "@/lib/hooks/useOrders";
-import { Drawer } from "vaul";
+import { usePendingOrders, PendingOrder } from "@/lib/hooks/useOrders";
 import OrderDetailModal from "@/components/OrderDetailModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowPathIcon } from "@/components/icons/Icons";
@@ -267,7 +257,7 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
               포트폴리오 구성
             </h3>
             <div
-              className={`p-1 rounded-full bg-gray-50 text-text-secondary group-hover:bg-gray-100 transition-colors ${
+              className={`p-1 rounded-full bg-bg-secondary text-text-secondary group-active:bg-bg-primary transition-colors ${
                 isChartOpen ? "rotate-180" : ""
               }`}
             >

@@ -2,13 +2,8 @@
 import React, { useEffect, useState } from "react";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
-import {
-  ArrowLeftIcon,
-  BookmarkIcon,
-  HeartIcon,
-} from "@/components/icons/Icons";
+import { ArrowLeftIcon, HeartIcon } from "@/components/icons/Icons";
 import { useStockDetail } from "@/lib/hooks/stock/useStockDetail";
-import { generateLogo } from "@/lib/utils";
 import {
   useFavoriteStocks,
   useAddFavorite,
@@ -19,6 +14,8 @@ import Toast, { ToastType } from "@/components/ui/Toast";
 import OrderBook from "@/components/OrderBook";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 import { SlidingTabs } from "../ui/SlidingTabs";
+import { useStockAnalyze } from "@/lib/hooks/stock/useStockAnalyze";
+import { ChevronDownIcon } from "lucide-react";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -47,6 +44,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   const [chartChangedAmount, setChartChangedAmount] = useState<number | null>(
     null
   );
+  const [isDetailInfoOpen, setIsDetailInfoOpen] = useState<boolean>(false);
   const [isPositive, setIsPositive] = useState<boolean>(true);
   const [changeString, setChangeString] = useState<string>("");
   const [toastState, setToastState] = useState<{
@@ -69,6 +67,8 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     isLoading: isStockLoading,
     refetch: refetchStockDetail,
   } = useStockDetail(ticker);
+
+  const { data: stockAnalyze } = useStockAnalyze(ticker);
 
   const { data: favoriteStocks } = useFavoriteStocks();
   const addFavoriteMutation = useAddFavorite();
@@ -235,7 +235,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           </button>
         </header>
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-y-auto">
           <div className="px-4 pb-2 shrink-0">
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-text-primary">
@@ -292,28 +292,53 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
                     return (
                       <>
-                        <InfoRow
-                          label="시가총액"
-                          value={formatMarketCap(stock.marketCap)}
-                        />
-                        <InfoRow label="주가수익비율(PER)" value={stock.per} />
-                        <InfoRow label="주당순이익 (EPS)" value={stock.eps} />
-                        <InfoRow
-                          label="주가순자산비율 (PBR)"
-                          value={stock.pbr}
-                        />
+                        <div
+                          className="flex justify-between items-center py-3 border-b border-t border-border-color"
+                          onClick={() => setIsDetailInfoOpen(!isDetailInfoOpen)}
+                        >
+                          <span className="text-text-primary font-semibold">
+                            주가 지표 보기
+                          </span>
+                          <div
+                            className={`p-1 rounded-full bg-bg-secondary text-text-secondary group-active:bg-bg-primary transition-colors ${
+                              isDetailInfoOpen ? "rotate-180" : ""
+                            }`}
+                          >
+                            <ChevronDownIcon className="w-5 h-5" />
+                          </div>
+                        </div>
+                        <div
+                          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                            isDetailInfoOpen ? "max-h-96" : "max-h-0"
+                          }`}
+                        >
+                          <InfoRow
+                            label="시가총액"
+                            value={formatMarketCap(stock.marketCap)}
+                          />
+
+                          <InfoRow
+                            label="주가수익비율(PER)"
+                            value={stock.per}
+                          />
+                          <InfoRow label="주당순이익 (EPS)" value={stock.eps} />
+                          <InfoRow
+                            label="주가순자산비율 (PBR)"
+                            value={stock.pbr}
+                          />
+                        </div>
                       </>
                     );
                   })()}
                 </div>
 
-                <div className="mt-8 p-4 bg-bg-secondary rounded-2xl border border-border-color">
-                  <h3 className="font-bold text-lg mb-2">기업 정보</h3>
+                <div className="mt-4 p-4 bg-bg-secondary rounded-2xl border border-border-color">
+                  <p className="text-text-primary font-semibold">
+                    기업 타입:{" "}
+                    {stockAnalyze?.finalStyleTag.replaceAll(/\[|\]/g, "")}
+                  </p>
                   <p className="text-text-secondary text-sm">
-                    {
-                      // stock.description
-                      "설명이 들어갑니다"
-                    }
+                    {stockAnalyze?.styleDescription}
                   </p>
                 </div>
               </div>
