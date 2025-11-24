@@ -14,18 +14,7 @@ const AnalysisScreen: React.FC<{ isActive: boolean }> = ({ isActive }) => {
     refetch,
     error,
   } = usePortfolioAnalysis(selectedAccount?.id.toString() || null, {
-    enabled: false, // Don't fetch automatically on mount, wait for user action or if we want auto fetch?
-    // User said "API 요청은 훅의 형태로...". Usually analysis is triggered by user or auto.
-    // The original code had "handleAnalyze".
-    // Let's keep the "analyze" button behavior for now, or maybe fetch on mount if account exists?
-    // The original code had a "Start Analysis" state.
-    // If I look at the mock, it starts with a "Start Analysis" screen.
-    // Let's keep the manual trigger for the "first time" feel, or maybe just fetch if we have data?
-    // Actually, if we have data, we show it.
-    // Let's make it so that if we don't have analysis, we show the start screen.
-    // But the API fetches existing analysis? Or triggers a new one?
-    // GET /api/portfolio/analyze usually implies fetching existing analysis or calculating it.
-    // Let's assume it fetches the analysis.
+    enabled: false,
   });
 
   // If we want to trigger analysis on button click:
@@ -34,11 +23,11 @@ const AnalysisScreen: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   };
 
   return (
-    <div className="pt-4 space-y-8 animate-fadeInUp max-w-4xl mx-auto">
+    <div className="pt-4 space-y-8 max-w-4xl mx-auto">
       {/* Main Content Area */}
-      <div className="transition-all duration-500 ease-in-out">
+      <div className="">
         {analysis ? (
-          <div className="animate-fadeIn">
+          <div className="">
             <InvestmentAnalysisCard analysis={analysis} />
             <div className="mt-6 flex justify-center">
               <button

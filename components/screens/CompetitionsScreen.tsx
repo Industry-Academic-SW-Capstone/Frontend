@@ -91,7 +91,10 @@ const CompetitionsScreen: React.FC = () => {
       {/* Floating Action Button for Creation */}
       <button
         onClick={() => setShowCreate(true)}
-        className="fixed bottom-44 right-5 z-50 bg-primary text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center"
+        className="fixed bottom-44 right-5 z-50 bg-primary text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center justify-center
+        animate-fadeInUp
+        "
+        style={{ animationDelay: "0.5s" }}
         aria-label="대회 만들기"
       >
         <PlusCircleIcon className="w-6 h-6" />
