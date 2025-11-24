@@ -137,7 +137,7 @@ const CompetitionsScreen: React.FC = () => {
           onClick={() => setView("ongoing")}
           className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all duration-300 ${
             view === "ongoing"
-              ? "bg-bg-primary text-primary shadow-sm"
+              ? "bg-bg-primary text-text-primary shadow-sm"
               : "text-text-secondary hover:text-text-primary"
           }`}
         >
@@ -157,7 +157,7 @@ const CompetitionsScreen: React.FC = () => {
 
       {/* Content Area */}
       {isFetching ? (
-        <div className="flex flex-col items-center justify-center py-20 text-primary">
+        <div className="flex flex-col items-center justify-center py-20 text-text-primary">
           <SpinnerIcon className="w-10 h-10 animate-spin mb-4" />
           <p className="text-sm font-medium animate-pulse">
             대회 목록을 불러오는 중...

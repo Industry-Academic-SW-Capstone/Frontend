@@ -153,15 +153,15 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               <ArrowLeftIcon className="w-6 h-6 text-text-primary" />
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
-              <div className="h-6 w-24 bg-gray-200 rounded animate-pulse" />
+              <div className="w-8 h-8 rounded-full bg-bg-secondary animate-pulse" />
+              <div className="h-6 w-24 bg-bg-secondary rounded animate-pulse" />
             </div>
           </header>
 
           <div className="flex-1 overflow-y-auto px-4 pb-24">
             <div className="pt-4 pb-8">
-              <div className="h-10 w-48 bg-gray-200 rounded animate-pulse mb-2" />
-              <div className="h-6 w-36 bg-gray-200 rounded animate-pulse" />
+              <div className="h-10 w-48 bg-bg-secondary rounded animate-pulse mb-2" />
+              <div className="h-6 w-36 bg-bg-secondary rounded animate-pulse" />
             </div>
 
             {/* StockChart 스켈레톤 */}
@@ -173,29 +173,29 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
             <div className="mt-8">
               <div className="flex justify-between items-center py-3 border-b border-border-color">
-                <div className="h-5 w-20 bg-gray-200 rounded animate-pulse" />
-                <div className="h-5 w-24 bg-gray-200 rounded animate-pulse" />
+                <div className="h-5 w-20 bg-bg-secondary rounded animate-pulse" />
+                <div className="h-5 w-24 bg-bg-secondary rounded animate-pulse" />
               </div>
               <div className="flex justify-between items-center py-3 border-b border-border-color">
-                <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
-                <div className="h-5 w-16 bg-gray-200 rounded animate-pulse" />
+                <div className="h-5 w-32 bg-bg-secondary rounded animate-pulse" />
+                <div className="h-5 w-16 bg-bg-secondary rounded animate-pulse" />
               </div>
             </div>
 
             <div className="mt-8 p-4 bg-bg-secondary rounded-2xl border border-border-color">
-              <div className="h-6 w-24 bg-gray-200 rounded animate-pulse mb-2" />
+              <div className="h-6 w-24 bg-bg-secondary rounded animate-pulse mb-2" />
               <div className="space-y-2">
-                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
-                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
-                <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-full bg-bg-secondary rounded animate-pulse" />
+                <div className="h-4 w-full bg-bg-secondary rounded animate-pulse" />
+                <div className="h-4 w-3/4 bg-bg-secondary rounded animate-pulse" />
               </div>
             </div>
           </div>
 
           <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto p-4 bg-bg-primary border-t border-border-color">
             <div className="flex gap-3">
-              <div className="w-full h-12 bg-gray-200 rounded-lg animate-pulse" />
-              <div className="w-full h-12 bg-gray-200 rounded-lg animate-pulse" />
+              <div className="w-full h-12 bg-bg-secondary rounded-lg animate-pulse" />
+              <div className="w-full h-12 bg-bg-secondary rounded-lg animate-pulse" />
             </div>
           </div>
         </div>
@@ -235,7 +235,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           </button>
         </header>
 
-        <div className="flex-1 flex flex-col overflow-y-auto">
+        <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden">
           <div className="px-4 pb-2 shrink-0">
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-text-primary">

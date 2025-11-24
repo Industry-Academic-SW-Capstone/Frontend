@@ -1,9 +1,7 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MagnifyingGlassIcon,
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
   FireIcon,
   BookmarkIcon,
 } from "@/components/icons/Icons";
@@ -136,15 +134,15 @@ const PopularStockCard: React.FC<{
 const StockRowSkeleton = () => (
   <div className="w-full flex items-center justify-between p-4 rounded-xl">
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-xl bg-gray-200 animate-pulse" />
+      <div className="w-10 h-10 rounded-xl bg-bg-secondary animate-pulse" />
       <div>
-        <div className="h-5 w-24 bg-gray-200 rounded animate-pulse mb-1" />
-        <div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
+        <div className="h-5 w-24 bg-bg-secondary rounded animate-pulse mb-1" />
+        <div className="h-4 w-16 bg-bg-secondary rounded animate-pulse" />
       </div>
     </div>
     <div className="text-right">
-      <div className="h-5 w-20 bg-gray-200 rounded animate-pulse mb-1" />
-      <div className="h-4 w-16 bg-gray-200 rounded animate-pulse ml-auto" />
+      <div className="h-5 w-20 bg-bg-secondary rounded animate-pulse mb-1" />
+      <div className="h-4 w-16 bg-bg-secondary rounded animate-pulse ml-auto" />
     </div>
   </div>
 );
@@ -261,10 +259,10 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({
   // 인기주식 스켈레톤 컴포넌트
   const PopularStockSkeleton = () => (
     <div className="shrink-0 w-32 min-h-40 bg-bg-secondary border border-border-color rounded-2xl p-3 px-0 flex flex-col justify-between items-center animate-pulse">
-      <div className="w-16 h-16 rounded-3xl mb-2 bg-gray-200" />
-      <div className="h-4 bg-gray-200 rounded w-1/2 my-0.5" />
-      <div className="h-5 bg-gray-200 rounded w-3/5 my-0.5" />
-      <div className="h-3 bg-gray-200 rounded w-3/7 my-0.5" />
+      <div className="w-16 h-16 rounded-3xl mb-2 bg-bg-secondary" />
+      <div className="h-4 bg-bg-secondary rounded w-1/2 my-0.5" />
+      <div className="h-5 bg-bg-secondary rounded w-3/5 my-0.5" />
+      <div className="h-3 bg-bg-secondary rounded w-3/7 my-0.5" />
     </div>
   );
 
@@ -301,10 +299,10 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({
                       key={i}
                       className="w-full flex items-center gap-3 p-2 animate-pulse"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-gray-200" />
+                      <div className="w-10 h-10 rounded-xl bg-bg-secondary" />
                       <div className="flex-1 space-y-2">
-                        <div className="h-4 w-1/3 bg-gray-200 rounded" />
-                        <div className="h-3 w-1/4 bg-gray-200 rounded" />
+                        <div className="h-4 w-1/3 bg-bg-secondary rounded" />
+                        <div className="h-3 w-1/4 bg-bg-secondary rounded" />
                       </div>
                     </div>
                   ))}
@@ -390,7 +388,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({
               <>
                 {[1, 2, 3].map((sectorIndex) => (
                   <div key={sectorIndex}>
-                    <div className="h-6 w-32 bg-gray-200 rounded animate-pulse px-2 mb-1" />
+                    <div className="h-6 w-32 bg-bg-secondary rounded animate-pulse px-2 mb-1" />
                     {[1, 2, 3].map((stockIndex) => (
                       <StockRowSkeleton key={`${sectorIndex}-${stockIndex}`} />
                     ))}

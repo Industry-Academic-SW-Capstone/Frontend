@@ -294,7 +294,7 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
             ))}
           </div>
         ) : (
-          <div className="text-center py-3 bg-gray-50 rounded-3xl">
+          <div className="text-center py-3 rounded-3xl">
             <p className="text-text-secondary mb-4">보유한 주식이 없어요</p>
             <button
               onClick={onNavigateToExplore}

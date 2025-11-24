@@ -21,20 +21,20 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
 
   if (!orderBook) {
     return (
-      <div className="flex flex-col h-full overflow-y-auto bg-white animate-pulse">
+      <div className="flex flex-col h-full overflow-y-auto bg-bg-primary animate-pulse">
         {/* Asks Skeleton */}
         <div className="flex flex-col-reverse">
           {[...Array(10)].map((_, i) => (
             <div
               key={`ask-skeleton-${i}`}
-              className="flex h-12 border-b border-border-color relative bg-[#ffebee]/30"
+              className="flex h-12 border-b border-border-color relative bg-bg-third"
             >
               <div className="flex w-full z-10 items-center px-4">
                 <div className="flex-1 text-right">
-                  <div className="h-4 bg-gray-200 rounded w-20 ml-auto" />
+                  <div className="h-4 bg-bg-secondary rounded w-20 ml-auto" />
                 </div>
                 <div className="flex-1 text-right">
-                  <div className="h-4 bg-gray-200 rounded w-12 ml-auto" />
+                  <div className="h-4 bg-bg-secondary rounded w-12 ml-auto" />
                 </div>
               </div>
             </div>
@@ -42,8 +42,8 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
         </div>
 
         {/* Summary Skeleton */}
-        <div className="py-2 text-center border-y border-border-color bg-gray-50">
-          <div className="h-6 bg-gray-200 rounded w-32 mx-auto" />
+        <div className="py-2 text-center border-y border-border-color bg-bg-primary">
+          <div className="h-6 bg-bg-secondary rounded w-32 mx-auto" />
         </div>
 
         {/* Bids Skeleton */}
@@ -51,14 +51,14 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
           {[...Array(10)].map((_, i) => (
             <div
               key={`bid-skeleton-${i}`}
-              className="flex h-12 border-b border-border-color relative bg-[#e3f2fd]/30"
+              className="flex h-12 border-b border-border-color relative bg-bg-secondary"
             >
               <div className="flex w-full z-10 items-center px-4">
                 <div className="flex-1 text-left">
-                  <div className="h-4 bg-gray-200 rounded w-12" />
+                  <div className="h-4 bg-bg-secondary rounded w-12" />
                 </div>
                 <div className="flex-1 text-left">
-                  <div className="h-4 bg-gray-200 rounded w-20" />
+                  <div className="h-4 bg-bg-secondary rounded w-20" />
                 </div>
               </div>
             </div>
@@ -158,14 +158,14 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
   );
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-white">
+    <div className="flex flex-col h-full overflow-y-auto bg-bg-primary">
       {/* Asks */}
       <div className="flex flex-col-reverse">
         {asks.map((level) => renderRow(level, "ask"))}
       </div>
 
       {/* Summary / Current Price Indicator could go here */}
-      <div className="py-2 text-center font-bold text-lg border-y border-border-color bg-gray-50">
+      <div className="py-2 text-center font-bold text-lg border-y border-border-color bg-bg-primary">
         {orderBook.expected_price?.toLocaleString() || "-"}
       </div>
 

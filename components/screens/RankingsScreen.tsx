@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { Account, User, RankingEntry } from "@/lib/types/stock";
-import UserProfileModal from "@/components/UserProfileModal";
 import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
@@ -38,13 +37,13 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
       onClick={onClick}
       disabled={isMe}
       className={`w-full flex items-center px-5 py-4 text-left transition-colors duration-200 ${
-        isMe ? "bg-blue-50/50" : "hover:bg-gray-50"
+        isMe ? "bg-primary/5" : "hover:bg-bg-third"
       }`}
     >
       {/* Rank number */}
       <div
         className={`w-8 text-center text-lg font-bold ${
-          entry.rank <= 3 ? "text-blue-500" : "text-gray-400"
+          entry.rank <= 3 ? "text-primary" : "text-text-secondary"
         }`}
       >
         {entry.rank}
@@ -54,7 +53,9 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
         {/* Avatar Placeholder */}
         <div
           className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
-            isMe ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+            isMe
+              ? "bg-primary/10 text-primary"
+              : "bg-bg-third text-text-secondary"
           }`}
         >
           {entry.nickname[0]}
@@ -64,13 +65,13 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
           <div className="flex items-center gap-2">
             <p
               className={`font-bold text-base ${
-                isMe ? "text-blue-600" : "text-gray-900"
+                isMe ? "text-primary" : "text-text-primary"
               }`}
             >
               {entry.nickname}
             </p>
             {isMe && (
-              <span className="text-[10px] font-bold bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded">
                 ME
               </span>
             )}
@@ -78,7 +79,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
           {showReturnRate && (
             <p
               className={`text-sm font-medium mt-0.5 ${
-                entry.returnRate >= 0 ? "text-red-500" : "text-blue-500"
+                entry.returnRate >= 0 ? "text-error" : "text-primary"
               }`}
             >
               {entry.returnRate > 0 ? "+" : ""}
@@ -89,7 +90,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
       </div>
 
       <div className="text-right">
-        <p className="font-bold text-gray-900 text-base">
+        <p className="font-bold text-text-primary text-base">
           {Number(entry.balance).toLocaleString()}원
         </p>
       </div>
@@ -167,7 +168,7 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
   if (isRankingLoading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -206,10 +207,10 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
           </div>
         </div>
         {/* My Ranking Summary */}
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-500 to-blue-600 p-7 shadow-lg shadow-blue-200 transition-transform hover:scale-[1.01] active:scale-[0.99]">
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary to-secondary p-7 shadow-lg shadow-primary/10 transition-transform hover:scale-[1.01] active:scale-[0.99]">
           {/* Background Patterns */}
           <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-blue-400/20 blur-2xl" />
+          <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-primary/20 blur-2xl" />
 
           {isMyRankingLoading ? (
             <div className="animate-pulse space-y-4">
@@ -224,21 +225,21 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
             <div className="relative z-10">
               <div className="mb-6 flex items-start justify-between">
                 <div>
-                  <p className="mb-1 text-sm font-medium text-blue-100">
+                  <p className="mb-1 text-sm font-medium text-white/80">
                     내 순위
                   </p>
                   <div className="flex items-baseline gap-1">
                     <h2 className="text-4xl font-extrabold text-white">
                       {myRankingData.balanceRank}
                     </h2>
-                    <span className="text-lg font-medium text-blue-100">
+                    <span className="text-lg font-medium text-white/80">
                       위
                     </span>
                   </div>
                 </div>
                 {!isRegularAccount && (
                   <div className="text-right">
-                    <p className="mb-1 text-sm font-medium text-blue-100">
+                    <p className="mb-1 text-sm font-medium text-white/80">
                       수익률
                     </p>
                     <h2 className="text-2xl font-bold text-white">
@@ -249,7 +250,7 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
               </div>
 
               <div className="flex items-center justify-between rounded-2xl bg-white/10 px-5 py-4 backdrop-blur-md">
-                <span className="font-medium text-blue-50">현재 자산</span>
+                <span className="font-medium text-white/90">현재 자산</span>
                 <span className="text-xl font-bold text-white">
                   {Number(myRankingData.myBalance).toLocaleString()}원
                 </span>
@@ -264,14 +265,14 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
 
         {/* Ranking List */}
         <div className="space-y-0">
-          <div className="px-2 py-2 text-sm font-semibold text-gray-500">
+          <div className="px-2 py-2 text-sm font-semibold text-text-secondary">
             전체 랭킹
           </div>
-          <div className="overflow-hidden rounded-[1.5rem] border border-gray-100 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-[1.5rem] border border-border-color bg-bg-secondary shadow-sm">
             {rankingData?.rankings.map((entry, index) => (
               <div
                 key={entry.rank + entry.nickname}
-                className={`border-b border-gray-50 last:border-none ${
+                className={`border-b border-border-color last:border-none ${
                   index < 10 ? "animate-fadeInUp" : ""
                 }`}
                 style={{ animationDelay: `${index * 30}ms` }}
@@ -285,7 +286,7 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
               </div>
             ))}
             {rankingData?.rankings.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-16 text-text-secondary">
                 <div className="mb-2 text-4xl">📉</div>
                 <p>랭킹 데이터가 없습니다.</p>
               </div>

@@ -278,7 +278,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
       <div className="bg-bg-secondary rounded-3xl p-8 flex flex-col items-center text-center shadow-sm border border-border-color">
         <div className="relative inline-block mb-5">
           <img
-            src={user.avatar}
+            src={
+              user.avatar
+                ? user.avatar
+                : "https://picsum.photos/seed/avatar1/100"
+            }
             alt="User Avatar"
             className="w-32 h-32 rounded-full border-4 border-bg-primary shadow-sm object-cover"
           />
@@ -310,11 +314,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         {/* Account Info Section */}
         <div>
           <button
-            className={`w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors`}
+            className={`w-full flex items-center justify-between p-6 hover:bg-bg-third transition-colors`}
             onClick={() => handleAccordion("account")}
           >
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-blue-50 rounded-xl text-blue-500">
+              <div className="p-2 bg-bg-third rounded-xl text-text-secondary">
                 <Icons.UserIcon className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-lg text-text-primary">계정 정보</h3>
@@ -333,10 +337,10 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 : "max-h-0 opacity-0"
             }`}
           >
-            <div className="p-2 space-y-1 bg-gray-50/50">
-              <div className="p-4 flex items-center justify-between hover:bg-gray-100 rounded-xl transition-colors mx-2">
+            <div className="p-2 space-y-1 bg-bg-third/50">
+              <div className="p-4 flex items-center justify-between hover:bg-bg-third rounded-xl transition-colors mx-2">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white rounded-lg text-text-secondary shadow-sm">
+                  <div className="p-2 bg-bg-secondary rounded-lg text-text-secondary shadow-sm">
                     <Icons.EnvelopeIcon className="w-5 h-5" />
                   </div>
                   <div>
@@ -352,10 +356,10 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
               <button
                 onClick={() => setIsEditingProfile(true)}
-                className="w-full p-4 flex items-center justify-between hover:bg-gray-100 rounded-xl transition-colors mx-2 group"
+                className="w-full p-4 flex items-center justify-between hover:bg-bg-third rounded-xl transition-colors mx-2 group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
+                  <div className="p-2 bg-bg-secondary rounded-lg text-text-secondary group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
                     <Icons.PencilSquareIcon className="w-5 h-5" />
                   </div>
                   <span className="text-text-primary font-semibold group-hover:text-primary transition-colors">
@@ -371,11 +375,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         {/* Achievements Section */}
         <div>
           <button
-            className={`w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors`}
+            className={`w-full flex items-center justify-between p-6 hover:bg-bg-third transition-colors`}
             onClick={() => handleAccordion("achievements")}
           >
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-yellow-50 rounded-xl text-yellow-500">
+              <div className="p-2 bg-bg-third rounded-xl text-text-secondary">
                 <Icons.TrophyIcon className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-lg text-text-primary">업적</h3>
@@ -394,7 +398,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 : "max-h-0 opacity-0"
             }`}
           >
-            <div className="p-4 space-y-3 bg-gray-50/50">
+            <div className="p-4 space-y-3 bg-bg-third/50">
               <div className="grid grid-cols-1 gap-3">
                 {visibleAchievements.map((ach, index) => (
                   <div
@@ -432,11 +436,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         {/* Settings Section */}
         <div>
           <button
-            className={`w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors`}
+            className={`w-full flex items-center justify-between p-6 hover:bg-bg-third transition-colors`}
             onClick={() => handleAccordion("settings")}
           >
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-gray-100 rounded-xl text-gray-500">
+              <div className="p-2 bg-bg-third rounded-xl text-text-secondary">
                 <Icons.Cog6ToothIcon className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-lg text-text-primary">설정</h3>
@@ -455,11 +459,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 : "max-h-0 opacity-0"
             }`}
           >
-            <div className="p-2 space-y-1 bg-gray-50/50">
+            <div className="p-2 space-y-1 bg-bg-third/50">
               {/* Dark Mode */}
-              <div className="p-4 flex justify-between items-center hover:bg-gray-100 rounded-xl transition-colors mx-2">
+              <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white rounded-lg text-text-secondary shadow-sm">
+                  <div className="p-2 bg-bg-secondary rounded-lg text-text-secondary shadow-sm">
                     {isDarkMode ? (
                       <Icons.MoonIcon className="w-5 h-5" />
                     ) : (
@@ -473,7 +477,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <button
                   onClick={() => setIsDarkMode(!isDarkMode)}
                   className={`relative inline-flex items-center h-7 rounded-full w-12 transition-all duration-300 focus:outline-none ${
-                    isDarkMode ? "bg-primary" : "bg-gray-300 dark:bg-gray-600"
+                    isDarkMode
+                      ? "bg-primary"
+                      : "bg-border-color dark:bg-bg-third"
                   }`}
                 >
                   <span
@@ -485,9 +491,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
 
               {/* Notifications */}
-              <div className="p-4 flex justify-between items-center hover:bg-gray-100 rounded-xl transition-colors mx-2">
+              <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white rounded-lg text-text-secondary shadow-sm">
+                  <div className="p-2 bg-bg-secondary rounded-lg text-text-secondary shadow-sm">
                     <Icons.BellIcon className="w-5 h-5" />
                   </div>
                   <span className="text-text-primary font-semibold">
@@ -497,7 +503,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <button
                   onClick={handleTogglePush}
                   className={`relative inline-flex items-center h-7 rounded-full w-12 transition-all duration-300 focus:outline-none ${
-                    isPushEnabled ? "bg-accent" : "bg-gray-300 dark:bg-gray-600"
+                    isPushEnabled
+                      ? "bg-accent"
+                      : "bg-border-color dark:bg-bg-third"
                   }`}
                 >
                   <span
@@ -517,13 +525,13 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="w-full p-4 flex items-center justify-between hover:bg-red-50 rounded-xl transition-colors mx-2 group"
+                className="w-full p-4 flex items-center justify-between hover:bg-error/5 rounded-xl transition-colors mx-2 group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-red-100 rounded-lg text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors shadow-sm">
+                  <div className="p-2 bg-error/10 rounded-lg text-error group-hover:bg-error group-hover:text-white transition-colors shadow-sm">
                     <Icons.ArrowRightOnRectangleIcon className="w-5 h-5" />
                   </div>
-                  <span className="text-red-500 font-semibold">
+                  <span className="text-error font-semibold">
                     {isLoggingOut ? "로그아웃 중..." : "로그아웃"}
                   </span>
                 </div>

@@ -226,7 +226,7 @@ const NotificationsScreen: React.FC<{ onClose: () => void }> = ({
         ) : (
           Object.entries(groupedNotifications).map(([dateGroup, items]) => (
             <div key={dateGroup} className="mb-6 animate-fadeIn">
-              <h3 className="text-[13px] font-semibold text-[#8b95a1] mb-2 mt-6 first:mt-2">
+              <h3 className="text-[13px] font-semibold text-text-secondary mb-2 mt-6 first:mt-2">
                 {dateGroup}
               </h3>
               <div className="space-y-0">
@@ -239,10 +239,16 @@ const NotificationsScreen: React.FC<{ onClose: () => void }> = ({
                         !notification.isRead &&
                         handleMarkAsRead(notification.notificationId)
                       }
-                      className={`flex gap-4 py-4 border-b border-gray-50 last:border-0 transition-colors duration-200 active:bg-gray-50 cursor-pointer group relative`}
+                      className={`flex gap-4 py-4 border-b border-border-color last:border-0 transition-colors duration-200 active:bg-bg-third cursor-pointer group relative`}
                     >
                       {/* Icon */}
-                      <div className="flex-shrink-0 pt-0.5">
+                      <div
+                        className={`flex-shrink-0 pt-0.5 ${
+                          notification.isRead
+                            ? "text-text-secondary/80"
+                            : "text-text-primary"
+                        }`}
+                      >
                         {getNotificationIcon(notification.type)}
                       </div>
 
@@ -252,13 +258,13 @@ const NotificationsScreen: React.FC<{ onClose: () => void }> = ({
                           <h4
                             className={`text-[16px] font-semibold leading-snug ${
                               !notification.isRead
-                                ? "text-text-secondary"
+                                ? "text-text-primary"
                                 : "text-text-secondary/80"
                             }`}
                           >
                             {notification.title}
                           </h4>
-                          <span className="text-xs text-[#b0b8c1] whitespace-nowrap ml-2 mt-0.5">
+                          <span className="text-xs text-text-secondary whitespace-nowrap ml-2 mt-0.5">
                             {formatTime(notification.createdAt)}
                           </span>
                         </div>
@@ -303,7 +309,7 @@ const NotificationsScreen: React.FC<{ onClose: () => void }> = ({
                           e.stopPropagation();
                           handleDelete(notification.notificationId);
                         }}
-                        className="absolute right-0 top-4 p-2 text-[#b0b8c1] hover:text-[#ef4444] opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute right-0 top-4 p-2 text-text-secondary hover:text-text-secondary/80 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <Icons.XMarkIcon className="w-4 h-4" />
                       </button>

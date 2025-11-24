@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { ChartData, ChartDataPoint, PeriodType } from "@/lib/types/stock";
+import { ChartData, PeriodType } from "@/lib/types/stock";
 import { useStockChart } from "@/lib/hooks/stock/useStockChart";
 import { FaChartLine } from "react-icons/fa6";
 import { FaChartColumn } from "react-icons/fa6";
@@ -567,9 +567,9 @@ const StockChart: React.FC<StockChartProps> = ({
           }}
         >
           {chartMode !== "line" ? (
-            <FaChartColumn size={16} color="#1e293b" />
+            <FaChartColumn size={16} className="text-text-primary" />
           ) : (
-            <FaChartLine size={16} color="#1e293b" />
+            <FaChartLine size={16} className="text-text-primary" />
           )}
         </button>
       </div>
