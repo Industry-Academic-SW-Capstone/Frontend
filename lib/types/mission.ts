@@ -10,7 +10,7 @@ export interface MissionListItem {
   description: string;
   currentValue: number;
   goalValue: number;
-  isCompleted: boolean;
+  completed: boolean;
   rewardMoney: number;
   rewardTitle: string | null;
 }

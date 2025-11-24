@@ -1,28 +1,36 @@
 "use client";
-import React, { useState } from "react";
-import { MOCK_ANALYSIS_RESULT } from "@/lib/constants";
-import { InvestmentStyleAnalysis } from "@/lib/types/stock";
+import React from "react";
 import * as Icons from "@/components/icons/Icons";
 import InvestmentAnalysisCard from "@/components/InvestmentAnalysisCard";
+import { usePortfolioAnalysis } from "@/lib/hooks/me/usePortfolioAnalysis";
+import { useAccountStore } from "@/lib/store/useAccountStore";
 
 const AnalysisScreen: React.FC<{ isActive: boolean }> = ({ isActive }) => {
-  const [analysis, setAnalysis] = useState<InvestmentStyleAnalysis | null>(
-    MOCK_ANALYSIS_RESULT
-  );
-  const [analysisError, setAnalysisError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { selectedAccount } = useAccountStore();
+  const {
+    data: analysis,
+    isLoading,
+    isError,
+    refetch,
+    error,
+  } = usePortfolioAnalysis(selectedAccount?.id.toString() || null, {
+    enabled: false, // Don't fetch automatically on mount, wait for user action or if we want auto fetch?
+    // User said "API 요청은 훅의 형태로...". Usually analysis is triggered by user or auto.
+    // The original code had "handleAnalyze".
+    // Let's keep the "analyze" button behavior for now, or maybe fetch on mount if account exists?
+    // The original code had a "Start Analysis" state.
+    // If I look at the mock, it starts with a "Start Analysis" screen.
+    // Let's keep the manual trigger for the "first time" feel, or maybe just fetch if we have data?
+    // Actually, if we have data, we show it.
+    // Let's make it so that if we don't have analysis, we show the start screen.
+    // But the API fetches existing analysis? Or triggers a new one?
+    // GET /api/portfolio/analyze usually implies fetching existing analysis or calculating it.
+    // Let's assume it fetches the analysis.
+  });
 
-  const handleAnalyze = async () => {
-    // setIsLoading(true);
-    // setAnalysisError("");
-    // setAnalysis(null);
-    // const result = await analyzeInvestmentStyle(MOCK_TRANSACTIONS);
-    // if (typeof result === "string") {
-    //   setAnalysisError(result);
-    // } else {
-    //   setAnalysis(result);
-    // }
-    // setIsLoading(false);
+  // If we want to trigger analysis on button click:
+  const handleAnalyze = () => {
+    refetch();
   };
 
   return (
@@ -63,16 +71,18 @@ const AnalysisScreen: React.FC<{ isActive: boolean }> = ({ isActive }) => {
                 맞춤형 조언을 제공해드립니다.
               </p>
 
-              {analysisError && (
+              {isError && (
                 <div className="bg-negative/10 text-negative px-4 py-3 rounded-xl mb-6 text-sm font-medium animate-fadeIn flex items-center justify-center gap-2">
                   <Icons.ExclamationCircleIcon className="w-5 h-5" />
-                  {analysisError}
+                  {error instanceof Error
+                    ? error.message
+                    : "분석 중 오류가 발생했습니다."}
                 </div>
               )}
 
               <button
                 onClick={handleAnalyze}
-                disabled={isLoading}
+                disabled={isLoading || !selectedAccount}
                 className="w-full bg-secondary text-white font-bold py-4 px-8 rounded-xl disabled:opacity-50 hover:shadow-lg hover:shadow-secondary/20 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 active:scale-95 flex items-center justify-center gap-2"
               >
                 {isLoading ? (

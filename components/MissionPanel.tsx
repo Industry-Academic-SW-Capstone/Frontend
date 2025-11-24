@@ -37,7 +37,7 @@ const MissionItem: React.FC<{ mission: MissionListItem }> = ({ mission }) => {
     (mission.currentValue / mission.goalValue) * 100,
     100
   );
-  const isCompleted = mission.isCompleted;
+  const isCompleted = mission.completed;
 
   // Determine color based on track or default
   const badgeColor = difficultyColors[mission.track] || "bg-gray-500";
@@ -45,11 +45,7 @@ const MissionItem: React.FC<{ mission: MissionListItem }> = ({ mission }) => {
 
   return (
     <div
-      className={`p-4 border-b border-border-color transition-all ${
-        isCompleted
-          ? "border-green-200"
-          : "border-border-color hover:border-primary"
-      }`}
+      className={`p-4 border-b border-border-color transition-all hover:border-primary`}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
@@ -208,7 +204,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
               {/* Mission List */}
               <div>
                 <div
-                  className="flex items-center justify-between mb-4"
+                  className="flex items-center justify-between"
                   onClick={() => setIsDailyOpen(!isDailyOpen)}
                 >
                   <h3 className="text-lg font-bold text-text-primary">
@@ -218,7 +214,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
                     <p className="text-sm pr-4 text-text-secondary">
                       {missions?.filter(
                         (mission) =>
-                          mission.track === "DAILY" && mission.isCompleted
+                          mission.track === "DAILY" && mission.completed
                       ).length ?? 0}
                       /
                       {missions?.filter((mission) => mission.track === "DAILY")
@@ -235,9 +231,9 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div
-                  className={`rounded-2xl border border-border-color bg-bg-secondary overflow-hidden transition-all duration-300 ${
+                  className={`rounded-2xl border border-border-color bg-bg-secondary overflow-y-auto no-scrollbar transition-all duration-300 ${
                     isDailyOpen
-                      ? "max-h-[400px] opacity-100"
+                      ? "max-h-[400px] opacity-100 mt-4"
                       : "max-h-0 opacity-0"
                   }`}
                 >
@@ -253,7 +249,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
               </div>
               <div>
                 <div
-                  className="flex items-center justify-between mb-4"
+                  className="flex items-center justify-between"
                   onClick={() => setIsDefaultOpen(!isDefaultOpen)}
                 >
                   <h3 className="text-lg font-bold text-text-primary">
@@ -270,7 +266,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
                 <div
                   className={`rounded-2xl border border-border-color bg-bg-secondary overflow-auto no-scrollbar transition-all duration-300 ${
                     isDefaultOpen
-                      ? "max-h-[400px] opacity-100"
+                      ? "max-h-[400px] opacity-100 mt-4 "
                       : "max-h-0 opacity-0"
                   }`}
                 >
@@ -286,7 +282,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
               </div>
               <div>
                 <div
-                  className="flex items-center justify-between mb-4"
+                  className="flex items-center justify-between"
                   onClick={() => setIsAchievementOpen(!isAchievementOpen)}
                 >
                   <h3 className="text-lg font-bold text-text-primary">
@@ -303,7 +299,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
                 <div
                   className={`rounded-2xl border border-border-color bg-bg-secondary overflow-auto no-scrollbar transition-all duration-300 ${
                     isAchievementOpen
-                      ? "max-h-[400px] opacity-100"
+                      ? "max-h-[400px] opacity-100 mt-4"
                       : "max-h-0 opacity-0"
                   }`}
                 >

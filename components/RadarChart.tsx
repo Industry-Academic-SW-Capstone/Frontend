@@ -6,6 +6,14 @@ interface RadarChartProps {
 }
 
 const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex justify-center items-center w-full h-full text-text-secondary text-xs">
+        데이터 없음
+      </div>
+    );
+  }
+
   const size = 200;
   const center = size / 2;
   const radius = size * 0.4;
