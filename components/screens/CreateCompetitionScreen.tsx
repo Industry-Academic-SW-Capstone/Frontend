@@ -9,7 +9,6 @@ import {
   CheckCircleIcon,
   BanknotesIcon,
   ClockIcon,
-  ChartBarIcon,
 } from "@/components/icons/Icons";
 import { CreateCompetitionRequest } from "@/lib/types/stock";
 import { useCreateContest } from "@/lib/hooks/useContest";
@@ -409,7 +408,7 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
   };
 
   return (
-    <div className="h-full bg-bg-primary flex flex-col">
+    <div className="h-full z-30 bg-bg-primary flex flex-col">
       {step < 5 && (
         <header className="flex items-center justify-between p-4 border-b border-border-color">
           {step > 1 ? (

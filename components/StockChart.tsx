@@ -12,6 +12,8 @@ import { FaChartLine } from "react-icons/fa6";
 import { FaChartColumn } from "react-icons/fa6";
 import { useWebSocket } from "@/lib/providers/SocketProvider";
 import { useChartStore } from "@/lib/stores/useChartStore";
+import { useAccountStore } from "@/lib/store/useAccountStore";
+import { useAccountAssets } from "@/lib/hooks/useAccount";
 interface StockChartProps {
   stockCode: string;
   isPositive: boolean;
@@ -41,6 +43,14 @@ const StockChart: React.FC<StockChartProps> = ({
     isLoading: isChartLoading,
     refetch: refetchChartData,
   } = useStockChart(stockCode || "", period);
+
+  const { selectedAccount } = useAccountStore();
+
+  const {
+    data: assets,
+    isFetching: isAssetsLoading,
+    refetch,
+  } = useAccountAssets(selectedAccount?.id);
 
   // Subscribe to socket on mount or stockCode change
   useEffect(() => {
@@ -125,104 +135,123 @@ const StockChart: React.FC<StockChartProps> = ({
   const volumeHeight = 40;
   const yAxisWidth = 50;
 
-  const { path, volumeBars, minPrice, maxPrice, maxVolume, candlesticks } =
-    useMemo(() => {
-      if (!sortedChartDatas || sortedChartDatas.length === 0)
-        return {
-          path: "",
-          volumeBars: [],
-          minPrice: 0,
-          maxPrice: 0,
-          maxVolume: 0,
-          candlesticks: [],
-          maxPriceIndex: 0,
-          minPriceIndex: 0,
-        };
-      const closePrices = sortedChartDatas.map((p: ChartData) => p.closePrice);
-      const highPrices = sortedChartDatas.map(
-        (p: ChartData) => p.highPrice || p.closePrice
-      ); // Fallback to close if high is missing
-      const lowPrices = sortedChartDatas.map(
-        (p: ChartData) => p.lowPrice || p.closePrice
-      );
-      const volumes = sortedChartDatas.map((p: ChartData) => p.volume || 0);
+  const {
+    path,
+    volumeBars,
+    minPrice,
+    maxPrice,
+    holdPrice,
+    holdPriceY,
+    maxVolume,
+    candlesticks,
+  } = useMemo(() => {
+    if (!sortedChartDatas || sortedChartDatas.length === 0)
+      return {
+        path: "",
+        volumeBars: [],
+        minPrice: 0,
+        maxPrice: 0,
+        holdPrice: 0,
+        holdPriceY: null,
+        maxVolume: 0,
+        candlesticks: [],
+        maxPriceIndex: 0,
+        minPriceIndex: 0,
+      };
+    const closePrices = sortedChartDatas.map((p: ChartData) => p.closePrice);
+    const highPrices = sortedChartDatas.map(
+      (p: ChartData) => p.highPrice || p.closePrice
+    ); // Fallback to close if high is missing
+    const lowPrices = sortedChartDatas.map(
+      (p: ChartData) => p.lowPrice || p.closePrice
+    );
+    const volumes = sortedChartDatas.map((p: ChartData) => p.volume || 0);
+    const holdPrice = assets?.holdings.find(
+      (h) => h.stockCode === stockCode
+    )?.averagePrice;
 
-      // Calculate min/max with some padding or exact
-      const min = Math.min(...lowPrices);
-      const max = Math.max(...highPrices);
-      const maxVol = Math.max(...volumes);
-      const range = max - min === 0 ? 1 : max - min;
+    // Calculate min/max with some padding or exact
+    const min = Math.min(...lowPrices);
+    const max = Math.max(...highPrices);
+    const maxVol = Math.max(...volumes);
+    const range = max - min === 0 ? 1 : max - min;
 
-      // 최고가/최저가 인덱스 찾기
-      const maxPriceIndex = highPrices.indexOf(max);
-      const minPriceIndex = lowPrices.indexOf(min);
+    const holdPriceY =
+      holdPrice && holdPrice > min && holdPrice < max
+        ? mainHeight - ((holdPrice - min) / range) * mainHeight
+        : null;
 
-      const points = sortedChartDatas.map((point: ChartData, i: number) => {
-        const x = (i / (sortedChartDatas.length - 1)) * width;
-        const y = mainHeight - ((point.closePrice - min) / range) * mainHeight;
-        return { x, y };
-      });
+    // 최고가/최저가 인덱스 찾기
+    const maxPriceIndex = highPrices.indexOf(max);
+    const minPriceIndex = lowPrices.indexOf(min);
 
-      const vBars = sortedChartDatas.map((point: ChartData, i: number) => {
-        const x = (i / (sortedChartDatas.length - 1)) * width;
-        const barHeight =
-          maxVol === 0 ? 0 : ((point.volume || 0) / maxVol) * volumeHeight;
-        return {
-          x: x - width / sortedChartDatas.length / 2 + 1,
-          y: volumeHeight - barHeight,
-          width: Math.max(1, width / sortedChartDatas.length - 2),
-          height: barHeight,
-        };
-      });
+    const points = sortedChartDatas.map((point: ChartData, i: number) => {
+      const x = (i / (sortedChartDatas.length - 1)) * width;
+      const y = mainHeight - ((point.closePrice - min) / range) * mainHeight;
+      return { x, y };
+    });
 
-      // Candlestick 데이터 생성
-      const candles = sortedChartDatas.map((point: ChartData, i: number) => {
-        const x = (i / (sortedChartDatas.length - 1)) * width;
-        const candleWidth = Math.max(2, width / sortedChartDatas.length - 1);
+    const vBars = sortedChartDatas.map((point: ChartData, i: number) => {
+      const x = (i / (sortedChartDatas.length - 1)) * width;
+      const barHeight =
+        maxVol === 0 ? 0 : ((point.volume || 0) / maxVol) * volumeHeight;
+      return {
+        x: x - width / sortedChartDatas.length / 2 + 1,
+        y: volumeHeight - barHeight,
+        width: Math.max(1, width / sortedChartDatas.length - 2),
+        height: barHeight,
+      };
+    });
 
-        // 시가, 종가, 고가, 저가 (실제 데이터가 없으면 closePrice로 대체)
-        const open = point.openPrice || point.closePrice;
-        const close = point.closePrice;
-        const high = point.highPrice || point.closePrice;
-        const low = point.lowPrice || point.closePrice;
+    // Candlestick 데이터 생성
+    const candles = sortedChartDatas.map((point: ChartData, i: number) => {
+      const x = (i / (sortedChartDatas.length - 1)) * width;
+      const candleWidth = Math.max(2, width / sortedChartDatas.length - 1);
 
-        const isUp = close >= open;
+      // 시가, 종가, 고가, 저가 (실제 데이터가 없으면 closePrice로 대체)
+      const open = point.openPrice || point.closePrice;
+      const close = point.closePrice;
+      const high = point.highPrice || point.closePrice;
+      const low = point.lowPrice || point.closePrice;
 
-        const highY = mainHeight - ((high - min) / range) * mainHeight;
-        const lowY = mainHeight - ((low - min) / range) * mainHeight;
-        const openY = mainHeight - ((open - min) / range) * mainHeight;
-        const closeY = mainHeight - ((close - min) / range) * mainHeight;
+      const isUp = close >= open;
 
-        const bodyTop = Math.min(openY, closeY);
-        const bodyHeight = Math.abs(closeY - openY) || 1;
+      const highY = mainHeight - ((high - min) / range) * mainHeight;
+      const lowY = mainHeight - ((low - min) / range) * mainHeight;
+      const openY = mainHeight - ((open - min) / range) * mainHeight;
+      const closeY = mainHeight - ((close - min) / range) * mainHeight;
 
-        return {
-          x,
-          candleWidth,
-          highY,
-          lowY,
-          bodyTop,
-          bodyHeight,
-          isUp,
-        };
-      });
+      const bodyTop = Math.min(openY, closeY);
+      const bodyHeight = Math.abs(closeY - openY) || 1;
 
       return {
-        path: `M ${points
-          .map(
-            (p: { x: number; y: number }) =>
-              `${p.x.toFixed(2)},${p.y.toFixed(2)}`
-          )
-          .join(" L ")}`,
-        volumeBars: vBars,
-        minPrice: min,
-        maxPrice: max,
-        maxVolume: maxVol,
-        candlesticks: candles,
-        maxPriceIndex,
-        minPriceIndex,
+        x,
+        candleWidth,
+        highY,
+        lowY,
+        bodyTop,
+        bodyHeight,
+        isUp,
       };
-    }, [sortedChartDatas]);
+    });
+
+    return {
+      path: `M ${points
+        .map(
+          (p: { x: number; y: number }) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`
+        )
+        .join(" L ")}`,
+      volumeBars: vBars,
+      minPrice: min,
+      maxPrice: max,
+      holdPrice: holdPrice || 0,
+      holdPriceY,
+      maxVolume: maxVol,
+      candlesticks: candles,
+      maxPriceIndex,
+      minPriceIndex,
+    };
+  }, [sortedChartDatas]);
 
   const handleMouseMove = useCallback(
     (event: React.MouseEvent<SVGSVGElement>) => {
@@ -432,6 +461,35 @@ const StockChart: React.FC<StockChartProps> = ({
                 >
                   최저 {minPrice.toLocaleString()}
                 </text>
+
+                {/* 평단가 선 */}
+                {holdPrice &&
+                  holdPrice > minPrice &&
+                  holdPrice < maxPrice &&
+                  holdPriceY && (
+                    <>
+                      <line
+                        x1="0"
+                        y1={holdPriceY}
+                        x2={width}
+                        y2={holdPriceY}
+                        stroke="#9ea6b0"
+                        strokeWidth="1"
+                        strokeDasharray="4,4"
+                        opacity="0.5"
+                      />
+                      <text
+                        x={width - 5}
+                        y={mainHeight - 3}
+                        fill="#9ea6b0"
+                        fontSize="10"
+                        textAnchor="end"
+                        fontWeight="600"
+                      >
+                        평단 {holdPrice.toLocaleString()}
+                      </text>
+                    </>
+                  )}
               </>
             )}
 

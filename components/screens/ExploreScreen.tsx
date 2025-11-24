@@ -437,7 +437,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({
                 />
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 bg-bg-secondary/30 rounded-2xl border border-dashed border-border-color">
+              <div className="flex flex-col items-center justify-center py-12">
                 <div className="w-16 h-16 bg-bg-secondary rounded-full flex items-center justify-center mb-4">
                   <BookmarkIcon className="w-8 h-8 text-text-tertiary" />
                 </div>
@@ -445,7 +445,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({
                   관심 종목이 없습니다
                 </p>
                 <p className="text-text-secondary text-sm text-center max-w-[200px]">
-                  종목을 검색하고 별 아이콘을 눌러 관심 종목으로 등록해보세요.
+                  종목을 검색하고 하트 아이콘을 눌러 관심 종목으로 등록해보세요.
                 </p>
               </div>
             )}

@@ -51,7 +51,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
 
       <div className="flex items-center gap-4 flex-1 ml-4">
         {/* Avatar Placeholder */}
-        <div
+        {/* <div
           className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
             isMe
               ? "bg-primary/10 text-primary"
@@ -59,7 +59,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
           }`}
         >
           {entry.nickname[0]}
-        </div>
+        </div> */}
 
         <div className="flex-1">
           <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
               </span>
             )}
           </div>
-          {showReturnRate && (
+          {showReturnRate && entry.returnRate !== undefined && (
             <p
               className={`text-sm font-medium mt-0.5 ${
                 entry.returnRate >= 0 ? "text-error" : "text-primary"

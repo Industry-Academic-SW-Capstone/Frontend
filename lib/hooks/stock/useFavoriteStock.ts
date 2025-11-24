@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { BasicStockInfo, StockDetailInfo, StockInfo } from "@/lib/types/stock";
+import { StockDetailInfo, StockInfo } from "@/lib/types/stock";
 import defaultClient from "../../api/axiosClient";
 
 // Favorite Item Type from API
@@ -106,10 +106,10 @@ export function useDeleteFavorite() {
   return useMutation({
     mutationFn: async (stockCode: string) => {
       // Assuming DELETE also accepts body or we send it as data
-      const res = await defaultClient.delete("/api/members/me/favorites", {
-        data: { stockCode },
-      });
-      if (res.status !== 200) {
+      const res = await defaultClient.delete(
+        `/api/members/me/favorites/${stockCode}`
+      );
+      if (res.status !== 204) {
         throw new Error("Failed to delete favorite");
       }
       return res.data;

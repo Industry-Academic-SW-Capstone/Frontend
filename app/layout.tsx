@@ -45,7 +45,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: "cover",
   themeColor: [
     // globals.css의 :root { --bg-primary: #f7f9fb } 값과 일치
     { media: "(prefers-color-scheme: light)", color: "#f7f9fb" },

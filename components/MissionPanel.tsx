@@ -1,111 +1,156 @@
 "use client";
-import React from "react";
-import { Mission, MissionProgress } from "@/lib/types/stock";
-import { MOCK_MISSIONS, MOCK_MISSION_PROGRESS } from "@/lib/constants";
+import React, { useState } from "react";
 import Portal from "@/components/Portal";
+import { MissionListItem } from "@/lib/types/mission";
+import {
+  useMissionList,
+  useMissionTitles,
+} from "@/lib/hooks/missions/useMissionList";
+import { useMissionDashboard } from "@/lib/hooks/missions/useMissionDashboard";
+import {
+  useAttendance,
+  useAnalyzePortfolio,
+  useBankruptcy,
+  useViewReport,
+} from "@/lib/hooks/missions/useMissionActions";
+import { ChevronDownIcon } from "lucide-react";
 
 interface MissionPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const difficultyColors = {
-  beginner: "bg-green-500",
-  intermediate: "bg-yellow-500",
-  advanced: "bg-red-500",
+const difficultyColors: Record<string, string> = {
+  DAILY: "bg-green-500",
+  SHORT_TERM: "bg-yellow-500",
+  ACHIEVEMENT: "bg-purple-500",
 };
 
-const difficultyLabels = {
-  beginner: "입문",
-  intermediate: "중급",
-  advanced: "고급",
+const difficultyLabels: Record<string, string> = {
+  DAILY: "일일",
+  SHORT_TERM: "단기",
+  ACHIEVEMENT: "업적",
 };
 
-const MissionItem: React.FC<{ mission: Mission }> = ({ mission }) => {
-  const progressPercent = (mission.progress / mission.maxProgress) * 100;
-  const isLocked = mission.status === "locked";
-  const isCompleted = mission.status === "completed";
+const MissionItem: React.FC<{ mission: MissionListItem }> = ({ mission }) => {
+  const progressPercent = Math.min(
+    (mission.currentValue / mission.goalValue) * 100,
+    100
+  );
+  const isCompleted = mission.isCompleted;
+
+  // Determine color based on track or default
+  const badgeColor = difficultyColors[mission.track] || "bg-gray-500";
+  const badgeLabel = difficultyLabels[mission.track] || mission.track;
 
   return (
     <div
-      className={`p-4 rounded-2xl border transition-all ${
-        isLocked
-          ? "bg-gray-50 border-gray-200 opacity-60"
-          : isCompleted
-          ? "bg-green-50 border-green-200"
-          : "bg-white border-border-color hover:border-primary"
+      className={`p-4 border-b border-border-color transition-all ${
+        isCompleted
+          ? "border-green-200"
+          : "border-border-color hover:border-primary"
       }`}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span
-              className={`text-xs px-2 py-0.5 rounded-full text-white font-medium ${
-                difficultyColors[mission.difficulty]
-              }`}
-            >
-              {difficultyLabels[mission.difficulty]}
-            </span>
+            {badgeLabel !== "일일" && (
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full text-white font-medium ${badgeColor}`}
+              >
+                {badgeLabel}
+              </span>
+            )}
             {isCompleted && (
               <span className="text-xs text-green-600 font-semibold">
                 ✓ 완료
               </span>
             )}
-            {isLocked && (
-              <span className="text-xs text-gray-400 font-medium">🔒</span>
-            )}
+            <h4 className="font-bold text-text-primary text-sm">
+              {mission.title}
+            </h4>
           </div>
-          <h4 className="font-bold text-text-primary text-sm">
-            {mission.title}
-          </h4>
-          <p className="text-xs text-text-secondary mt-1">
-            {mission.description}
-          </p>
+
+          {mission.description !== mission.title && (
+            <p className="text-xs text-text-secondary mt-1">
+              {mission.description}
+            </p>
+          )}
         </div>
-        <div className="text-right ml-3">
+        <div className="text-right ml-3 min-w-[60px]">
           <p className="text-xs text-text-secondary">보상</p>
           <p className="font-bold text-primary text-sm">
-            {mission.reward.toLocaleString()}원
+            {mission.rewardMoney > 0
+              ? `${mission.rewardMoney.toLocaleString()}원`
+              : mission.rewardTitle || "없음"}
           </p>
         </div>
       </div>
 
-      {!isLocked && (
-        <div className="mt-3">
-          <div className="flex justify-between items-center text-xs mb-1">
-            <span className="text-text-secondary">
-              {mission.progress}/{mission.maxProgress}
-            </span>
-            <span className="font-semibold text-text-primary">
-              {progressPercent.toFixed(0)}%
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
-            <div
-              className={`h-1.5 rounded-full transition-all duration-500 ${
-                isCompleted ? "bg-green-500" : "bg-primary"
-              }`}
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
+      <div className="mt-3">
+        <div className="flex justify-between items-center text-xs mb-1">
+          <span className="text-text-secondary">
+            {mission.currentValue}/{mission.goalValue}
+          </span>
+          <span className="font-semibold text-text-primary">
+            {progressPercent.toFixed(0)}%
+          </span>
         </div>
-      )}
+        <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+          <div
+            className={`h-1.5 rounded-full transition-all duration-500 ${
+              isCompleted ? "bg-green-500" : "bg-primary"
+            }`}
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
 const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
-  const missions = MOCK_MISSIONS;
+  const { data: missions } = useMissionList();
+  const { data: dashboard } = useMissionDashboard();
+  const { mutate: attendance } = useAttendance();
+  const { mutate: analyzePortfolio } = useAnalyzePortfolio();
+  const { mutate: bankruptcy } = useBankruptcy();
+  const { mutate: viewReport } = useViewReport();
 
-  // Mock Attendance Data
-  const attendance = {
-    streak: 12,
-    todayChecked: false,
-    history: [true, true, true, true, true, false, false], // Last 7 days (reverse order or specific dates)
+  const handleAttendance = () => {
+    attendance(undefined, {
+      onSuccess: (data) => {
+        alert(data.message);
+      },
+      onError: (error: any) => {
+        alert(error.response?.data?.message || "출석 실패");
+      },
+    });
   };
 
-  const days = ["월", "화", "수", "목", "금", "토", "일"];
-  const todayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1; // Mon=0, Sun=6
+  const handleAction = (
+    action: () => void,
+    name: string,
+    confirmMsg?: string
+  ) => {
+    if (confirmMsg && !confirm(confirmMsg)) return;
+    action();
+  };
+
+  const dailyMissions = missions?.filter(
+    (mission) => mission.track === "DAILY"
+  );
+  const [isDailyOpen, setIsDailyOpen] = useState(true);
+  const achievementMissions = missions?.filter(
+    (mission) => mission.track === "ACHIEVEMENT"
+  );
+  const [isAchievementOpen, setIsAchievementOpen] = useState(false);
+
+  const defaultMissions = missions?.filter(
+    (mission) => mission.track !== "DAILY" && mission.track !== "ACHIEVEMENT"
+  );
+
+  const [isDefaultOpen, setIsDefaultOpen] = useState(false);
 
   if (!isOpen) return null;
 
@@ -126,7 +171,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
               <h2 className="text-xl font-bold text-text-primary">미션</h2>
               <button
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-bg-primary hover:bg-bg-primary/80 transition-colors"
               >
                 <span className="text-lg text-text-primary">✕</span>
               </button>
@@ -134,73 +179,203 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Content */}
-          <div className="p-5 space-y-6 pb-24">
-            {/* Attendance Section */}
-            <div className="bg-bg-secondary p-6 rounded-3xl">
-              <div className="flex justify-between items-end mb-4">
-                <div>
-                  <h3 className="text-text-secondary text-sm font-medium mb-1">
-                    연속 출석
-                  </h3>
-                  <p className="text-3xl font-bold text-primary">
-                    {attendance.streak}일째 <span className="text-2xl">🔥</span>
-                  </p>
+          <div className="p-5 h-full flex flex-col justify-between">
+            <div className="space-y-6">
+              {/* Attendance Section */}
+              <div className="bg-bg-secondary p-6 rounded-3xl">
+                <div className="flex justify-between items-end mb-4">
+                  <div>
+                    <h3 className="text-text-secondary text-sm font-medium mb-1">
+                      연속 출석
+                    </h3>
+                    <p className="text-3xl font-bold text-primary">
+                      {dashboard?.consecutiveAttendanceDays ?? 0}일째{" "}
+                      <span className="text-2xl">🔥</span>
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleAttendance}
+                    className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors active:scale-95"
+                  >
+                    출석하기
+                  </button>
                 </div>
-                <button className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors">
-                  출석하기
-                </button>
+                <p className="text-xs text-text-secondary">
+                  매일 출석하고 보상을 받아보세요!
+                </p>
               </div>
 
-              <div className="flex justify-between">
-                {days.map((day, index) => {
-                  const isToday = index === todayIndex;
-                  const isChecked =
-                    index < todayIndex ||
-                    (index === todayIndex && attendance.todayChecked);
-
-                  return (
-                    <div key={day} className="flex flex-col items-center gap-2">
-                      <span
-                        className={`text-xs ${
-                          isToday
-                            ? "font-bold text-text-primary"
-                            : "text-text-secondary"
-                        }`}
-                      >
-                        {day}
-                      </span>
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                          isChecked
-                            ? "bg-primary text-white"
-                            : isToday
-                            ? "bg-bg-primary border-2 border-primary text-primary"
-                            : "bg-bg-primary text-text-tertiary"
-                        }`}
-                      >
-                        {isChecked ? "✓" : ""}
-                      </div>
+              {/* Mission List */}
+              <div>
+                <div
+                  className="flex items-center justify-between mb-4"
+                  onClick={() => setIsDailyOpen(!isDailyOpen)}
+                >
+                  <h3 className="text-lg font-bold text-text-primary">
+                    일일 미션
+                  </h3>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm pr-4 text-text-secondary">
+                      {missions?.filter(
+                        (mission) =>
+                          mission.track === "DAILY" && mission.isCompleted
+                      ).length ?? 0}
+                      /
+                      {missions?.filter((mission) => mission.track === "DAILY")
+                        .length ?? 0}
+                    </p>
+                    <div
+                      className={`p-1 rounded-full bg-bg-primary text-text-primary group-active:bg-bg-secondary transition-colors ${
+                        isDailyOpen ? "rotate-180" : ""
+                      }`}
+                    >
+                      <ChevronDownIcon className="w-5 h-5" />
                     </div>
-                  );
-                })}
+                  </div>
+                </div>
+
+                <div
+                  className={`rounded-2xl border border-border-color bg-bg-secondary overflow-hidden transition-all duration-300 ${
+                    isDailyOpen
+                      ? "max-h-[400px] opacity-100"
+                      : "max-h-0 opacity-0"
+                  }`}
+                >
+                  {dailyMissions?.map((mission) => (
+                    <MissionItem key={mission.id} mission={mission} />
+                  ))}
+                  {(!dailyMissions || dailyMissions.length === 0) && (
+                    <div className="text-center py-10 text-text-tertiary">
+                      일일미션이 없습니다.
+                    </div>
+                  )}
+                </div>
               </div>
+              <div>
+                <div
+                  className="flex items-center justify-between mb-4"
+                  onClick={() => setIsDefaultOpen(!isDefaultOpen)}
+                >
+                  <h3 className="text-lg font-bold text-text-primary">
+                    기본 미션
+                  </h3>
+                  <div
+                    className={`p-1 rounded-full bg-bg-primary text-text-primary group-active:bg-bg-secondary transition-colors ${
+                      isDefaultOpen ? "rotate-180" : ""
+                    }`}
+                  >
+                    <ChevronDownIcon className="w-5 h-5" />
+                  </div>
+                </div>
+                <div
+                  className={`rounded-2xl border border-border-color bg-bg-secondary overflow-auto no-scrollbar transition-all duration-300 ${
+                    isDefaultOpen
+                      ? "max-h-[400px] opacity-100"
+                      : "max-h-0 opacity-0"
+                  }`}
+                >
+                  {defaultMissions?.map((mission) => (
+                    <MissionItem key={mission.id} mission={mission} />
+                  ))}
+                  {(!defaultMissions || defaultMissions.length === 0) && (
+                    <div className="text-center py-10 text-text-tertiary">
+                      기본 미션이 없습니다.
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <div
+                  className="flex items-center justify-between mb-4"
+                  onClick={() => setIsAchievementOpen(!isAchievementOpen)}
+                >
+                  <h3 className="text-lg font-bold text-text-primary">
+                    도전 과제
+                  </h3>
+                  <div
+                    className={`p-1 rounded-full bg-bg-primary text-text-primary group-active:bg-bg-secondary transition-colors ${
+                      isAchievementOpen ? "rotate-180" : ""
+                    }`}
+                  >
+                    <ChevronDownIcon className="w-5 h-5" />
+                  </div>
+                </div>
+                <div
+                  className={`rounded-2xl border border-border-color bg-bg-secondary overflow-auto no-scrollbar transition-all duration-300 ${
+                    isAchievementOpen
+                      ? "max-h-[400px] opacity-100"
+                      : "max-h-0 opacity-0"
+                  }`}
+                >
+                  {achievementMissions?.map((mission) => (
+                    <MissionItem key={mission.id} mission={mission} />
+                  ))}
+                  {(!achievementMissions ||
+                    achievementMissions.length === 0) && (
+                    <div className="text-center py-10 text-text-tertiary">
+                      도전 과제가 없습니다.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Titles Section */}
+              <TitlesSection />
             </div>
 
-            {/* Mission List */}
-            <div>
-              <h3 className="text-lg font-bold text-text-primary mb-4">
-                도전 과제
-              </h3>
-              <div className="space-y-3">
-                {missions.map((mission) => (
-                  <MissionItem key={mission.id} mission={mission} />
-                ))}
-              </div>
+            {/* Special Actions */}
+            <div className="w-full">
+              <button
+                onClick={() =>
+                  handleAction(
+                    () =>
+                      bankruptcy(undefined, {
+                        onSuccess: (d) => alert(d.message),
+                      }),
+                    "파산 신청",
+                    "정말로 파산 신청을 하시겠습니까? 모든 자산이 초기화됩니다."
+                  )
+                }
+                className="w-full p-4 mb-24 bg-red-50 rounded-2xl text-left hover:bg-red-100 transition-colors flex items-center justify-between"
+              >
+                <div>
+                  <span className="font-bold text-red-900 text-sm block">
+                    파산 신청 (인생 2회차)
+                  </span>
+                  <span className="text-xs text-red-700">
+                    자산이 초기화되고 새로운 시작을 할 수 있습니다.
+                  </span>
+                </div>
+                <span className="text-2xl">💸</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </Portal>
+  );
+};
+
+const TitlesSection: React.FC = () => {
+  const { data: titles } = useMissionTitles();
+
+  if (!titles || titles.length === 0) return null;
+
+  return (
+    <div className="mt-6 mb-6">
+      <h3 className="text-lg font-bold text-text-primary mb-3">보유 칭호</h3>
+      <div className="flex flex-wrap gap-2 w-full overflow-auto no-scrollbar p-2 rounded-2xl border border-border-color bg-bg-secondary">
+        {titles.map((title) => (
+          <div
+            key={title.titleId}
+            className="px-3 py-1.5 bg-yellow-50 border border-yellow-200 rounded-full text-yellow-800 text-xs font-bold"
+            title={title.description}
+          >
+            {title.name}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

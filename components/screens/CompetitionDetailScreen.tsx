@@ -276,13 +276,13 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
                   대회 참가하기
                 </Drawer.Title>
                 <p className="text-text-secondary mb-8">
-                  이 대회에서 사용할 닉네임을 입력해주세요.
+                  이 대회에서 사용할 계좌의 별칭을 입력해주세요.
                 </p>
 
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-text-secondary mb-2">
-                      참가 닉네임
+                      계좌 별칭
                     </label>
                     <input
                       type="text"

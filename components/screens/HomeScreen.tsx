@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Competition, AccountAssetHolding } from "@/lib/types/stock";
+import { Competition } from "@/lib/types/stock";
 import {
   TrophyIcon,
   CalendarIcon,
   ChevronRightIcon,
-  CheckCircleIcon,
 } from "@/components/icons/Icons";
 import MissionPanel from "@/components/MissionPanel";
 import HomeScreenSkeleton from "@/components/screens/HomeScreenSkeleton";
@@ -13,12 +12,13 @@ import { useAccounts } from "@/lib/hooks/useAccounts";
 import { useAccountAssets } from "@/lib/hooks/useAccount";
 import { useContests } from "@/lib/hooks/useContest";
 import { useMyRanking, useRanking } from "@/lib/hooks/useRanking";
-import { useAccountStore } from "@/lib/store/useAccountStore";
 import { useFetchInfo } from "@/lib/hooks/me/useInfo";
 import { useFavoriteStocks } from "@/lib/hooks/stock/useFavoriteStock";
 import { usePendingOrders } from "@/lib/hooks/useOrders";
 import { generateLogo } from "@/lib/utils";
 import CountUp from "react-countup";
+import { useMissionDashboard } from "@/lib/hooks/missions/useMissionDashboard";
+import { MissionDashboard } from "@/lib/types/mission";
 
 const FeaturedCompetition: React.FC<{ competition: Competition }> = ({
   competition,
@@ -87,7 +87,10 @@ const FeaturedCompetition: React.FC<{ competition: Competition }> = ({
   );
 };
 
-const MissionSummary: React.FC<{ onClick: () => void }> = ({ onClick }) => {
+const MissionSummary: React.FC<{
+  onClick: () => void;
+  data?: MissionDashboard;
+}> = ({ onClick, data }) => {
   return (
     <div
       onClick={onClick}
@@ -108,21 +111,18 @@ const MissionSummary: React.FC<{ onClick: () => void }> = ({ onClick }) => {
             연속 출석
           </span>
           <div className="flex items-center gap-1">
-            <span className="font-semibold text-text-primary">12일째</span>
+            <span className="font-semibold text-text-primary">
+              {data?.consecutiveAttendanceDays ?? 0}일째
+            </span>
           </div>
         </div>
 
         <div className="flex justify-between items-center px-1">
           <span className="text-sm text-text-secondary">남은 미션</span>
-          <span className="font-semibold text-text-primary">3개</span>
+          <span className="font-semibold text-text-primary">
+            {data?.remainingDailyMissions ?? 0}개
+          </span>
         </div>
-
-        {/* <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-          <div
-            className="bg-primary h-2 rounded-full transition-all duration-500"
-            style={{ width: "40%" }}
-          />
-        </div> */}
       </div>
     </div>
   );
@@ -228,6 +228,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         refetchPendingOrders();
         refetchMainRanking();
         refetchContests();
+        refetchMissionDashboard();
         setHelloVisible(false);
         // Optional: Show toast? ProfileScreen does.
       } catch (error) {
@@ -276,6 +277,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     refetch: refetchMainRanking,
   } = useRanking("returnRate");
   const { mutate: cancelOrder } = useCancelOrder();
+  const { data: missionDashboard, refetch: refetchMissionDashboard } =
+    useMissionDashboard();
 
   useEffect(() => {
     console.log("assetsLoading", assetsLoading);
@@ -322,7 +325,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   return (
     <>
       <div
-        className="space-y-2 pb-24 relative min-h-full"
+        className="space-y-2 pb-24 relative min-h-dvh"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -433,7 +436,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
               <FeaturedCompetition competition={displayCompetition} />
             </div>
           ) : (
-            <MissionSummary onClick={() => setIsMissionPanelOpen(true)} />
+            <MissionSummary
+              onClick={() => setIsMissionPanelOpen(true)}
+              data={missionDashboard}
+            />
           )}
         </div>
 

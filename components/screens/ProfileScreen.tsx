@@ -174,14 +174,19 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   // Pull to Refresh Handlers
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (window.scrollY === 0) {
+    const scrollContainer = e.currentTarget.closest(".overflow-y-auto");
+    if (scrollContainer && scrollContainer.scrollTop === 0) {
+      setPullStartY(e.touches[0].clientY);
+    } else if (!scrollContainer && window.scrollY === 0) {
       setPullStartY(e.touches[0].clientY);
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     const currentY = e.touches[0].clientY;
-    if (pullStartY > 0 && currentY > pullStartY && window.scrollY === 0) {
+    if (pullStartY > 0 && currentY > pullStartY) {
+      // Prevent default only if we are pulling down to refresh?
+      // No, we shouldn't prevent default indiscriminately.
       setPullCurrentY(currentY - pullStartY);
     }
   };
@@ -193,7 +198,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         await refetch();
         showToast("프로필 정보가 업데이트되었습니다.", "success");
       } catch (error) {
-        showToast("정보 업데이트에 실패했습니다.", "error");
+        console.error("Refresh failed", error);
       } finally {
         setIsRefreshing(false);
       }
@@ -250,7 +255,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* Pull to Refresh Indicator */}
       <div
-        className="absolute top-0 left-0 w-full flex justify-center pointer-events-none transition-all duration-300 ease-out"
+        className="absolute top-0 left-0 w-full flex justify-center pointer-events-none transition-all duration-300 ease-out z-10"
         style={{
           transform: `translateY(${
             pullCurrentY > 0 ? Math.min(pullCurrentY / 2, 60) : 0
@@ -260,7 +265,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         }}
       >
         <div
-          className={`p-2 rounded-full bg-bg-secondary shadow-md border border-border-color flex items-center justify-center ${
+          className={`p-2 rounded-full z-50 bg-bg-secondary shadow-md border border-border-color flex items-center justify-center ${
             isRefreshing ? "animate-spin" : ""
           }`}
         >
