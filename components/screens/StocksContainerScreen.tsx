@@ -12,7 +12,6 @@ interface StocksContainerScreenProps {
 
 import { useStockStore } from "@/lib/stores/useStockStore";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
-import StocksTutorialOverlay from "../tutorial/StocksTutorialOverlay";
 
 const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
   onExit,
@@ -87,7 +86,7 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
         )}
       </SlidingScreen>
 
-      <StocksTutorialOverlay />
+      {/* <StocksTutorialOverlay /> */}
     </div>
   );
 };

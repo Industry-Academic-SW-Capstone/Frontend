@@ -18,6 +18,12 @@ const STOCK_DETAIL_TUTORIAL_STEPS = [
     action: "click",
   },
   {
+    title: "호가창이 안나와요?",
+    description:
+      "호가는 국장이 열리는 오전 9시부터 오후 3시 30분 사이에만 볼 수 있어요.",
+    position: "center",
+  },
+  {
     targetId: "stock-tab-chart",
     title: "차트로 돌아가기",
     description: "다시 차트 탭으로 돌아가볼까요?",
