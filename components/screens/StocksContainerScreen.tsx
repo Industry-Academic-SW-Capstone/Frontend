@@ -4,7 +4,6 @@ import StocksBottomNavBar from "@/components/StocksBottomNavBar";
 import StocksSwiper from "@/components/navigation/StocksSwiper";
 import SlidingScreen from "@/components/navigation/SlidingScreen";
 import StockDetailScreen from "./StockDetailScreen";
-import StocksTutorialOverlay from "@/components/tutorial/StocksTutorialOverlay";
 
 interface StocksContainerScreenProps {
   onExit: () => void;
@@ -94,7 +93,7 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
         )}
       </SlidingScreen>
 
-      <StocksTutorialOverlay onComplete={handleTutorialComplete} />
+      {/* <StocksTutorialOverlay onComplete={handleTutorialComplete} /> */}
     </div>
   );
 };

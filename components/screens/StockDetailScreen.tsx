@@ -19,6 +19,7 @@ import { useStockAnalyze } from "@/lib/hooks/stocks/useStockAnalyze";
 import { ChevronDownIcon } from "lucide-react";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
 import StockDetailTutorialOverlay from "../tutorial/StockDetailTutorialOverlay";
+import OrderHistory from "@/components/OrderHistory";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -77,7 +78,9 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     message: "",
     type: "success",
   });
-  const [activeTab, setActiveTab] = useState<"chart" | "orderbook">("chart");
+  const [activeTab, setActiveTab] = useState<
+    "chart" | "orderbook" | "my_stock"
+  >("chart");
 
   const showToast = (message: string, type: ToastType = "success") => {
     setToastState({ isVisible: true, message, type });
@@ -285,9 +288,16 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
                 label: "호가",
                 elementId: "stock-tab-orderbook",
               },
+              {
+                id: "my_stock",
+                label: "내 주식",
+                elementId: "stock-tab-mystock",
+              },
             ]}
             activeTab={activeTab}
-            onTabChange={(id) => setActiveTab(id as "chart" | "orderbook")}
+            onTabChange={(id) =>
+              setActiveTab(id as "chart" | "orderbook" | "my_stock")
+            }
             isBlack
           />
 
@@ -368,11 +378,18 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
                   </p>
                 </div>
               </div>
-            ) : (
+            ) : activeTab === "orderbook" ? (
               <div className="h-full">
                 <OrderBook
                   stockCode={stock.stockCode}
                   onPriceClick={handleOrderBookPriceClick}
+                />
+              </div>
+            ) : (
+              <div className="h-full bg-bg-primary">
+                <OrderHistory
+                  stockCode={stock.stockCode}
+                  accountId={selectedAccount?.id.toString() || ""}
                 />
               </div>
             )}
