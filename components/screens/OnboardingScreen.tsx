@@ -86,8 +86,6 @@ const OAuthButtons: React.FC<{
 
 const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const [step, setStep] = useState<AuthStep>("welcome");
-  const apiBaseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "https://www.stockit.live";
   const [newUser, setNewUser] = useState<Partial<User>>({
     username: "",
     avatar: "https://picsum.photos/seed/avatar1/100",

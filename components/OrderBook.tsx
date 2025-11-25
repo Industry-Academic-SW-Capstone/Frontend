@@ -79,21 +79,6 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
     isBest: boolean = false
   ) => {
     const barWidth = `${(level.quantity / maxQuantity) * 100}%`;
-    const bgColor = type === "ask" ? "bg-blue-100" : "bg-red-100"; // Toss style: Ask=Blue, Bid=Red (Wait, Korea is opposite usually? No, Toss follows global or Korea? Korea: Red=Rise/Bid? No.
-    // Standard Korea: Red = Rise, Blue = Fall.
-    // Order Book:
-    // Ask (Sell) -> Blue background usually (associated with price going down/selling pressure? or just distinct).
-    // Bid (Buy) -> Red background usually (associated with price going up/buying pressure).
-    // Let's check the user's HTML.
-    // HTML: Ask-row: #ffebee (Red-ish), Bid-row: #e3f2fd (Blue-ish).
-    // HTML Price-ask: #d32f2f (Red), Price-bid: #1976d2 (Blue).
-    // Wait, the HTML says: Ask-row (Sell) is Red-ish, Bid-row (Buy) is Blue-ish.
-    // But usually in Korea: Red is UP (Buy/Bid support), Blue is DOWN (Sell/Ask resistance).
-    // Let's follow the HTML sample provided by the user to be safe.
-    // HTML: Ask -> #ffebee (Red tint), Bid -> #e3f2fd (Blue tint).
-    // This is slightly confusing vs standard Korean stocks where Red = Rise.
-    // But I will follow the HTML styles: Ask = Red tint, Bid = Blue tint.
-
     const rowBg = type === "ask" ? "bg-[#ffebee]" : "bg-[#e3f2fd]";
     const barColor = type === "ask" ? "bg-[#ffcdd2]" : "bg-[#bbdefb]";
     const priceColor = type === "ask" ? "text-[#d32f2f]" : "text-[#1976d2]";

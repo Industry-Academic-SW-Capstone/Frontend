@@ -2,10 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { StockDetailInfo } from "@/lib/types/stock";
 import defaultClient from "../../api/axiosClient";
 
-// 환경변수에서 API base URL을 읽음
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
-
 async function fetchStockDetailInfo(
   stockCode: string
 ): Promise<StockDetailInfo> {
