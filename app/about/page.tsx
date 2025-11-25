@@ -29,7 +29,7 @@ const Team = dynamic(
 );
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://stockit.live"),
+  metadataBase: new URL("https://www.stockit.live"),
   title: "스톡잇!",
   description:
     "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션으로 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
@@ -40,8 +40,10 @@ export const metadata: Metadata = {
     "투자연습",
     "StockIt",
     "스톡잇",
+    "스톡잇!",
     "금융교육",
     "Stock It",
+    "StockIt!",
   ],
   alternates: {
     canonical: "/about",
@@ -78,11 +80,11 @@ const jsonLd = {
   },
   description:
     "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션 플랫폼.",
-  image: "https://stockit.live/new_logo.png",
+  image: "https://www.stockit.live/new_logo.png",
   author: {
     "@type": "Organization",
     name: "Team GRIT",
-    url: "https://stockit.live",
+    url: "https://www.stockit.live",
   },
 };
 

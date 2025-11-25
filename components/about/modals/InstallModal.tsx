@@ -187,7 +187,7 @@ export const InstallModal: React.FC = () => {
             <div className="flex flex-col items-center justify-center py-4 space-y-6 text-center">
               <div className="p-4 bg-white border-2 border-red-100 rounded-xl">
                 <QRCodeSVG
-                  value={"https://stockit.live/about#install"}
+                  value={"https://www.stockit.live/about#install"}
                   size={160}
                   fgColor="#000000"
                   bgColor="#ffffff"

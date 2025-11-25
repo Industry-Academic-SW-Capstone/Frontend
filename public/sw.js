@@ -40,9 +40,6 @@ self.addEventListener("notificationclick", function (event) {
   console.log("[firebase-messaging-sw.js] Notification click received.");
 
   event.notification.close();
-
-  // 1. 이동할 URL 결정 (페이로드에 url이 있으면 그곳으로, 없으면 홈으로)
-  // self.location.origin은 'https://stockit.live' 같은 도메인을 의미
   const urlToOpen = new URL(
     event.notification.data?.url || "/pwa",
     self.location.origin
