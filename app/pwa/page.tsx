@@ -70,7 +70,10 @@ export default function Home() {
 
   // Check notification permission on load
   useEffect(() => {
-    if (userInfo && userInfo.notificationAgreement) {
+    if (isTutorialOn) {
+      setIsPermissionPopupOpen(false);
+      return;
+    } else if (userInfo && userInfo.notificationAgreement) {
       // Check if token is registered in localStorage
       // We need to wait for mount to access localStorage safely, but useEffect runs on mount.
       const hasToken = isTokenRegistered();
@@ -82,7 +85,7 @@ export default function Home() {
         }, 1000);
       }
     }
-  }, [userInfo]);
+  }, [userInfo, isTutorialOn]);
 
   const handlePermissionConfirm = async () => {
     setIsPermissionPopupOpen(false);
