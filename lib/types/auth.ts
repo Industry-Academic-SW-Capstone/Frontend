@@ -31,6 +31,9 @@ export interface UpdateInfoRequest {
   profileImage?: string;
   notificationAgreement?: boolean;
   twoFactorEnabled?: boolean;
+  mainTutorialCompleted?: boolean;
+  securitiesDepthTutorialCompleted?: boolean;
+  stockDetailTutorialCompleted?: boolean;
 }
 
 export interface SignUpResponse {
@@ -42,6 +45,9 @@ export interface SignUpResponse {
   createdAt: string;
   twoFactorEnabled: boolean;
   notificationAgreement: boolean;
+  mainTutorialCompleted: boolean;
+  securitiesDepthTutorialCompleted: boolean;
+  stockDetailTutorialCompleted: boolean;
 }
 
 export interface LoginRequest {

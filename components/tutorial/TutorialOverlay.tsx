@@ -91,7 +91,11 @@ const TUTORIAL_STEPS: StepData[] = [
   },
 ];
 
-export default function TutorialOverlay() {
+interface TutorialOverlayProps {
+  onComplete?: () => void;
+}
+
+const TutorialOverlay: React.FC<TutorialOverlayProps> = ({ onComplete }) => {
   const {
     isActive,
     activeTutorial,
@@ -150,10 +154,13 @@ export default function TutorialOverlay() {
         element.click();
       }
     }
-    if (isLastStep) {
-      endTutorial();
-    } else {
+    if (currentStep < TUTORIAL_STEPS.length - 1) {
       nextStep();
+    } else {
+      endTutorial();
+      if (onComplete) {
+        onComplete();
+      }
     }
   };
 
@@ -358,4 +365,6 @@ export default function TutorialOverlay() {
       )}
     </AnimatePresence>
   );
-}
+};
+
+export default TutorialOverlay;

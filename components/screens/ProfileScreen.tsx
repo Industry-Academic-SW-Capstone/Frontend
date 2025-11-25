@@ -13,7 +13,6 @@ import {
   requestNotificationPermission,
   deleteFCMToken,
 } from "@/lib/services/notificationService";
-import { useTutorialStore } from "@/lib/store/useTutorialStore";
 
 interface ProfileScreenProps {
   user: User; // Fallback or initial data
@@ -95,7 +94,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
     refetch,
   } = useFetchInfo();
   const { mutate: updateInfo, isPending: isUpdating } = usePutInfo();
-  const { resetTutorial } = useTutorialStore();
 
   const user = fetchedUser
     ? {
@@ -243,10 +241,25 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   const handleResetTutorial = () => {
     if (confirm("튜토리얼을 초기화하시겠습니까?")) {
-      resetTutorial();
-      showToast(
-        "튜토리얼이 초기화되었습니다. 홈 화면으로 이동하면 다시 시작됩니다.",
-        "success"
+      updateInfo(
+        {
+          mainTutorialCompleted: false,
+          securitiesDepthTutorialCompleted: false,
+          stockDetailTutorialCompleted: false,
+        },
+        {
+          onSuccess: () => {
+            showToast(
+              "튜토리얼이 초기화되었습니다. 홈 화면으로 이동하면 다시 시작됩니다.",
+              "success"
+            );
+            // Optionally refresh user info to ensure UI updates immediately
+            refetch();
+          },
+          onError: () => {
+            showToast("튜토리얼 초기화에 실패했습니다.", "error");
+          },
+        }
       );
     }
   };

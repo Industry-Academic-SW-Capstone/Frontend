@@ -9,6 +9,7 @@ import {
   useAddFavorite,
   useDeleteFavorite,
 } from "@/lib/hooks/stocks/useFavoriteStock";
+import { useFetchInfo, usePutInfo } from "@/lib/hooks/me/useInfo";
 import { useAccountAssets } from "@/lib/hooks/useAccount";
 import Toast, { ToastType } from "@/components/ui/Toast";
 import OrderBook from "@/components/OrderBook";
@@ -39,18 +40,23 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   onBack,
 }) => {
   const { selectedAccount, setSelectedAccount, accounts } = useAccountStore();
-  const { hasSeenStockDetailTutorial, startStockDetailTutorial } =
-    useTutorialStore();
+  const { mutate: updateInfo } = usePutInfo();
+  const { data: userInfo } = useFetchInfo();
+  const { startStockDetailTutorial } = useTutorialStore();
+
+  const handleTutorialComplete = () => {
+    updateInfo({ stockDetailTutorialCompleted: true });
+  };
 
   // Trigger tutorial on mount
   useEffect(() => {
-    if (!hasSeenStockDetailTutorial) {
+    if (userInfo && !userInfo.stockDetailTutorialCompleted) {
       const timer = setTimeout(() => {
         startStockDetailTutorial();
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [hasSeenStockDetailTutorial, startStockDetailTutorial]);
+  }, [userInfo, startStockDetailTutorial]);
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
@@ -411,7 +417,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         isVisible={toastState.isVisible}
         onClose={() => setToastState((prev) => ({ ...prev, isVisible: false }))}
       />
-      <StockDetailTutorialOverlay />
+      <StockDetailTutorialOverlay onComplete={handleTutorialComplete} />
     </>
   );
 };

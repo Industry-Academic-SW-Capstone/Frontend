@@ -27,9 +27,9 @@ if (typeof window !== "undefined") {
     messaging = getMessaging(app);
     onMessage(messaging, (payload) => {
       console.log("Message received. ", payload);
-      const title = payload.notification?.title || "StockIt";
+      const title = payload.data?.title || "StockIt";
       const options = {
-        body: payload.notification?.body,
+        body: payload.data?.body,
         icon: "/new_logo.png",
         badge: "/new_logo.png",
         data: payload.data,

@@ -165,20 +165,18 @@ export default function Home() {
   }, []);
 
   // Tutorial Trigger
-  const { hasSeenHomeTutorial, startHomeTutorial, setUserId } =
-    useTutorialStore();
+  const { startHomeTutorial } = useTutorialStore();
 
-  // Sync user ID with tutorial store
-  useEffect(() => {
-    if (userInfo?.memberId) {
-      setUserId(userInfo.memberId);
-    }
-  }, [userInfo, setUserId]);
+  // Handle tutorial completion
+  const handleTutorialComplete = () => {
+    updateInfo({ mainTutorialCompleted: true });
+  };
 
   useEffect(() => {
     if (
       isLoggedIn &&
-      !hasSeenHomeTutorial &&
+      userInfo &&
+      !userInfo.mainTutorialCompleted &&
       !isAccountsLoading &&
       !isUserLoading
     ) {
@@ -190,7 +188,7 @@ export default function Home() {
     }
   }, [
     isLoggedIn,
-    hasSeenHomeTutorial,
+    userInfo,
     isAccountsLoading,
     isUserLoading,
     startHomeTutorial,
@@ -325,7 +323,7 @@ export default function Home() {
             </div>
           )}
 
-          <TutorialOverlay />
+          <TutorialOverlay onComplete={handleTutorialComplete} />
         </div>
       </WebSocketProvider>
     </>

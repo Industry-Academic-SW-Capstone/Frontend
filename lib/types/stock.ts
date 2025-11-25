@@ -289,6 +289,39 @@ export interface FavoriteStock {
   addedAt: string; // ISO 날짜 문자열
 }
 
+export interface StockHolding {
+  averagePricePerShare: number;
+  quantity: number;
+  currentPrice: number;
+  totalValue: number;
+  investmentPrincipal: number;
+  profitLoss: number;
+  profitRate: number;
+}
+
+export interface StockOrderHistory {
+  year: number;
+  date: string;
+  orderId: number;
+  orderMethod: "BUY" | "SELL";
+  quantity: number;
+  orderPrice: number;
+  executionPrice: number;
+  executedQuantity: number;
+  totalAmount: number;
+  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  createdAt: string;
+}
+
+export interface StockHistory {
+  stockCode: string;
+  stockName: string;
+  marketType: string;
+  currentPrice: number;
+  holding: StockHolding;
+  orderHistory: StockOrderHistory[];
+}
+
 export type PeriodType = "1day" | "1week" | "3month" | "1year" | "5year";
 
 export interface ChartData {

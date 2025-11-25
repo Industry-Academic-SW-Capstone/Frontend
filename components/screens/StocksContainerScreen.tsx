@@ -4,6 +4,7 @@ import StocksBottomNavBar from "@/components/StocksBottomNavBar";
 import StocksSwiper from "@/components/navigation/StocksSwiper";
 import SlidingScreen from "@/components/navigation/SlidingScreen";
 import StockDetailScreen from "./StockDetailScreen";
+import StocksTutorialOverlay from "@/components/tutorial/StocksTutorialOverlay";
 
 interface StocksContainerScreenProps {
   onExit: () => void;
@@ -11,6 +12,7 @@ interface StocksContainerScreenProps {
 }
 
 import { useStockStore } from "@/lib/stores/useStockStore";
+import { useFetchInfo, usePutInfo } from "@/lib/hooks/me/useInfo";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
 
 const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
@@ -19,18 +21,24 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
 }) => {
   const { stocksView: currentView, setStocksView: setCurrentView } =
     useStockStore();
-  const { hasSeenStocksTutorial, startStocksTutorial } = useTutorialStore();
+  const { startStocksTutorial } = useTutorialStore();
+  const { data: userInfo } = useFetchInfo();
+  const { mutate: updateInfo } = usePutInfo();
+
+  const handleTutorialComplete = () => {
+    updateInfo({ securitiesDepthTutorialCompleted: true });
+  };
 
   // Trigger tutorial on mount
   React.useEffect(() => {
-    if (!hasSeenStocksTutorial) {
+    if (userInfo && !userInfo.securitiesDepthTutorialCompleted) {
       // Small delay to ensure UI is ready
       const timer = setTimeout(() => {
         startStocksTutorial();
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [hasSeenStocksTutorial, startStocksTutorial]);
+  }, [userInfo, startStocksTutorial]);
 
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
 
@@ -86,7 +94,7 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
         )}
       </SlidingScreen>
 
-      {/* <StocksTutorialOverlay /> */}
+      <StocksTutorialOverlay onComplete={handleTutorialComplete} />
     </div>
   );
 };

@@ -44,7 +44,13 @@ const STOCK_DETAIL_TUTORIAL_STEPS = [
   },
 ];
 
-export default function StockDetailTutorialOverlay() {
+interface StockDetailTutorialOverlayProps {
+  onComplete?: () => void;
+}
+
+export default function StockDetailTutorialOverlay({
+  onComplete,
+}: StockDetailTutorialOverlayProps) {
   const { isActive, activeTutorial, currentStep, nextStep, endTutorial } =
     useTutorialStore();
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
@@ -90,6 +96,9 @@ export default function StockDetailTutorialOverlay() {
     }
     if (isLastStep) {
       endTutorial();
+      if (onComplete) {
+        onComplete();
+      }
     } else {
       nextStep();
     }

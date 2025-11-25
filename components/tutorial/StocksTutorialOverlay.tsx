@@ -24,7 +24,13 @@ const STOCKS_TUTORIAL_STEPS = [
   },
 ];
 
-export default function StocksTutorialOverlay() {
+interface StocksTutorialOverlayProps {
+  onComplete?: () => void;
+}
+
+export default function StocksTutorialOverlay({
+  onComplete,
+}: StocksTutorialOverlayProps) {
   const { isActive, activeTutorial, currentStep, nextStep, endTutorial } =
     useTutorialStore();
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
@@ -71,6 +77,9 @@ export default function StocksTutorialOverlay() {
     }
     if (isLastStep) {
       endTutorial();
+      if (onComplete) {
+        onComplete();
+      }
     } else {
       nextStep();
     }
