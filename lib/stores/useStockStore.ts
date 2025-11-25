@@ -1,6 +1,6 @@
 // store/stockStore.ts
 import { create } from "zustand";
-import { StockInfo, StockDetailInfo } from "@/lib/types/stock";
+import { StockInfo, StockDetailInfo, BasicStockInfo } from "@/lib/types/stock";
 import camelcaseKeys from "camelcase-keys";
 
 // snake_case를 camelCase로 변환하는 유틸리티 (이전 답변)
@@ -13,7 +13,9 @@ interface TickerState {
 
   // 여러 종목을 한 번에 업데이트/삽입 (API 응답용)
   // StockInfo[] 또는 StockDetailInfo[] 모두 받을 수 있음
-  upsertTickers: (stocks: (StockInfo | StockDetailInfo)[]) => void;
+  upsertTickers: (
+    stocks: (BasicStockInfo | StockInfo | StockDetailInfo)[]
+  ) => void;
 
   // 소켓에서 오는 실시간 단일 업데이트용
   updateTickerFromSocket: (stockCode: string, socketData: any) => void;
