@@ -14,14 +14,14 @@
   --color-text-secondary: var(--text-secondary);
   --color-error: var(--error);
   --color-border-color: var(--border-color);
-  --color-positive: #22c55e;
-  --color-negative: var(--error);
+  --color-positive: #ff4d4f;
+  --color-negative: #228be6;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 :root {
-  --primary: #4053e4;
+  --primary: #3b5bdb;
   --secondary: #335eea;
   --accent: #f59e0b;
   --bg-primary: #f7f9fb;

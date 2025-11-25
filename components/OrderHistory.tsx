@@ -1,6 +1,7 @@
 import React from "react";
 import { useStockHistory } from "@/lib/hooks/stocks/useStockHistory";
 import { StockOrderHistory } from "@/lib/types/stock";
+import { FaQuestion } from "react-icons/fa6";
 
 interface OrderHistoryProps {
   stockCode: string;
@@ -38,8 +39,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
   if (!data || !data.orderHistory || data.orderHistory.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="w-16 h-16 bg-bg-third rounded-full flex items-center justify-center mb-4">
-          <span className="text-2xl">📝</span>
+        <div className="w-16 h-16 bg-bg-third text-text-secondary rounded-full flex items-center justify-center mb-4">
+          <FaQuestion size={32} />
         </div>
         <h3 className="text-lg font-bold text-text-primary mb-1">
           거래 내역이 없어요

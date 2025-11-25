@@ -129,7 +129,9 @@ const StockChart: React.FC<StockChartProps> = ({
   const volumeHeight = 40;
   const yAxisWidth = 50;
   const chartColor = isPositive ? "stroke-positive" : "stroke-negative";
-  const chartFillColor = isPositive ? "#22c55e" : "#ef4444";
+  const chartFillColor = isPositive
+    ? "var(--color-positive)"
+    : "var(--color-negative)";
 
   // --- Main Chart Rendering Logic ---
   const {

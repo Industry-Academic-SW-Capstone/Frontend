@@ -78,7 +78,7 @@ const Confetti: React.FC = () => {
     // Stop after 5 seconds
     const timeout = setTimeout(() => {
       cancelAnimationFrame(animationId);
-    }, 5000);
+    }, 15000);
 
     return () => {
       cancelAnimationFrame(animationId);

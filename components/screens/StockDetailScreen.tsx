@@ -295,9 +295,14 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               },
             ]}
             activeTab={activeTab}
-            onTabChange={(id) =>
-              setActiveTab(id as "chart" | "orderbook" | "my_stock")
-            }
+            onTabChange={(id) => {
+              setActiveTab(id as "chart" | "orderbook" | "my_stock");
+              const now = new Date();
+              const isMarketOpen = now.getHours() >= 9 && now.getHours() < 15;
+              if (id === "orderbook" && !isMarketOpen) {
+                showToast("호가는 내일 9시부터 다시 볼 수 있어요!");
+              }
+            }}
             isBlack
           />
 
@@ -403,16 +408,16 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               <button
                 id="stock-sell-button"
                 onClick={() => handleOpenOrderModal("sell")}
-                className="w-full py-3 bg-negative text-white font-bold rounded-lg"
+                className="w-full py-3 bg-negative text-white font-bold rounded-xl"
               >
-                매도
+                판매하기
               </button>
               <button
                 id="stock-buy-button"
                 onClick={() => handleOpenOrderModal("buy")}
-                className="w-full py-3 bg-positive text-white font-bold rounded-lg"
+                className="w-full py-3 bg-positive text-white font-bold rounded-xl"
               >
-                매수
+                구매하기
               </button>
             </div>
           </div>

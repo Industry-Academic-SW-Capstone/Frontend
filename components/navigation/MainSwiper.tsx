@@ -19,8 +19,6 @@ import ProfileScreen from "@/components/screens/ProfileScreen";
 interface MainSwiperProps {
   selectedAccount: Account;
   user: User;
-  isDarkMode: boolean;
-  setIsDarkMode: (value: boolean) => void;
   currentScreen: Screen;
   onSlideChange: (screen: Screen) => void;
 }
@@ -31,8 +29,6 @@ const screenOrder: Screen[] = ["home", "competitions", "rankings", "profile"];
 const MainSwiper: React.FC<MainSwiperProps> = ({
   selectedAccount,
   user,
-  isDarkMode,
-  setIsDarkMode,
   currentScreen,
   onSlideChange,
 }) => {
@@ -104,11 +100,7 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
       <SwiperSlide>
         <div className="h-full px-4 pb-28 overflow-y-auto">
           {currentScreen === "profile" ? (
-            <ProfileScreen
-              user={user}
-              isDarkMode={isDarkMode}
-              setIsDarkMode={setIsDarkMode}
-            />
+            <ProfileScreen user={user} onNavigate={onSlideChange} />
           ) : null}
         </div>
       </SwiperSlide>

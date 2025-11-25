@@ -30,6 +30,7 @@ import { useTutorialStore } from "@/lib/store/useTutorialStore";
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<Screen>("home");
+  const [isTutorialOn, setIsTutorialOn] = useState(false);
 
   // Use global store for accounts
   const token = useAuthStore((state) => state.token);
@@ -144,9 +145,6 @@ export default function Home() {
   };
 
   const handleLoginSuccess = (newUser: Partial<User>) => {
-    // Refetch user info or handle login success
-    // For now, just set logged in
-    console.log("너구나");
     setIsLoggedIn(true);
   };
 
@@ -169,6 +167,7 @@ export default function Home() {
 
   // Handle tutorial completion
   const handleTutorialComplete = () => {
+    setIsTutorialOn(false);
     updateInfo({ mainTutorialCompleted: true });
   };
 
@@ -180,6 +179,7 @@ export default function Home() {
       !isAccountsLoading &&
       !isUserLoading
     ) {
+      setIsTutorialOn(true);
       // Small delay to ensure UI is ready
       const timer = setTimeout(() => {
         startHomeTutorial();
@@ -258,8 +258,6 @@ export default function Home() {
             <MainSwiper
               selectedAccount={currentAccount}
               user={user}
-              isDarkMode={isDarkMode}
-              setIsDarkMode={setIsDarkMode}
               currentScreen={currentScreen}
               onSlideChange={handleSetCurrentScreen}
             />

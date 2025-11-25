@@ -32,13 +32,13 @@ const STOCK_DETAIL_TUTORIAL_STEPS = [
   },
   {
     targetId: "stock-buy-button",
-    title: "매수하기",
-    description: "이 버튼을 눌러 주식을 매수할 수 있어요.",
+    title: "구매하기",
+    description: "이 버튼을 눌러 주식을 구매할 수 있어요.",
     position: "top",
   },
   {
     targetId: "stock-sell-button",
-    title: "매도하기",
+    title: "판매하기",
     description: "보유한 주식을 판매하려면 이 버튼을 누르세요.",
     position: "top",
   },

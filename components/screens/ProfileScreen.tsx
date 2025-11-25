@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MOCK_ACHIEVEMENTS } from "@/lib/constants";
-import { Achievement, User } from "@/lib/types/stock";
+import { Achievement, Screen, User } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import TwoFactorSettings from "@/components/settings/TwoFactorSettings";
 import { useLogout } from "@/lib/hooks/auth/useLogout";
@@ -15,9 +15,8 @@ import {
 } from "@/lib/services/notificationService";
 
 interface ProfileScreenProps {
-  user: User; // Fallback or initial data
-  isDarkMode: boolean;
-  setIsDarkMode: (isDark: boolean) => void;
+  user: User;
+  onNavigate: (screen: Screen) => void;
 }
 
 const iconMap: { [key: string]: React.FC<any> } = {
@@ -83,8 +82,7 @@ const AchievementItem: React.FC<{ achievement: Achievement }> = ({
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({
   user: initialUser,
-  isDarkMode,
-  setIsDarkMode,
+  onNavigate,
 }) => {
   const router = useRouter();
   const { logout, isLoading: isLoggingOut } = useLogout();
@@ -250,9 +248,10 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         {
           onSuccess: () => {
             showToast(
-              "튜토리얼이 초기화되었습니다. 홈 화면으로 이동하면 다시 시작됩니다.",
+              "튜토리얼이 초기화되었습니다. 홈 화면으로 이동합니다.",
               "success"
             );
+            onNavigate("home" as unknown as Screen);
             // Optionally refresh user info to ensure UI updates immediately
             refetch();
           },

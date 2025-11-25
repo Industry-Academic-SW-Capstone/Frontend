@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({
             >
               <BellIcon className="w-6 h-6 text-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute top-0 right-1 bg-negative text-white text-xs font-bold rounded-full w-2 h-2 flex items-center justify-center"></span>
+                <span className="absolute top-0 right-1 bg-positive text-white text-xs font-bold rounded-full w-2 h-2 flex items-center justify-center"></span>
               )}
             </button>
           )}

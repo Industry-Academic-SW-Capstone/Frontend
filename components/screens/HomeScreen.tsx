@@ -168,7 +168,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const [selectedStockTicker, setSelectedStockTicker] = useState<string | null>(
     null
   );
-  const [helloVisible, setHelloVisible] = useState(true);
+  const [helloVisible, setHelloVisible] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setHelloVisible(true);
+    }, 300);
+  }, []);
 
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 
@@ -359,7 +364,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Greeting Section */}
         <div
-          className={`bg-bg-secondary p-5 rounded-2xl flex flex-col cursor-pointer overflow-hidden relative transition-all duration-700 ease-in ${
+          className={`bg-bg-secondary p-5 rounded-2xl flex flex-col cursor-pointer overflow-hidden relative transition-all duration-700 ease-in-out ${
             helloVisible
               ? "max-h-[100px] opacity-100 py-3"
               : "max-h-0 opacity-0 py-0"

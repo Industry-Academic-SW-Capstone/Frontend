@@ -175,7 +175,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
           <div className="flex justify-between items-center mb-6">
             <div>
               <Drawer.Title className={`text-2xl font-bold text-text-primary`}>
-                {orderType === "buy" ? "매수하기" : "매도하기"}
+                {orderType === "buy" ? "구매하기" : "판매하기"}
               </Drawer.Title>
               <p className="text-sm text-text-secondary mt-1">
                 {stock.stockName}
@@ -307,8 +307,8 @@ const OrderModal: React.FC<OrderModalProps> = ({
             {isPending
               ? "처리중..."
               : orderType === "buy"
-              ? "매수하기"
-              : "매도하기"}
+              ? "구매하기"
+              : "판매하기"}
           </button>
 
           {/* Safe Area Padding for Mobile */}

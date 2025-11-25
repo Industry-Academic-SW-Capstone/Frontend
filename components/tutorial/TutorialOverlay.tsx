@@ -179,7 +179,7 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({ onComplete }) => {
             {/* Backdrop */}
             <div
               className={`absolute inset-0 transition-colors duration-500 ${
-                targetRect ? "bg-transparent" : "bg-black/70"
+                targetRect ? "bg-transparent" : "bg-bg-secondary/70"
               } ${!isOverviewStep && !targetRect ? "backdrop-blur-sm" : ""} `}
             />
 
