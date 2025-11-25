@@ -43,7 +43,7 @@ export const AppDemoVisual: React.FC = () => {
         <div className="h-full bg-gray-50 relative flex flex-col">
           {/* Main Content Area */}
           <div
-            className="flex-1 overflow-y-auto scrollbar-hide pb-16"
+            className="flex-1 overflow-y-auto scrollbar-hide pt-6 pb-16"
             data-lenis-prevent
           >
             {currentScreen === "home" && (

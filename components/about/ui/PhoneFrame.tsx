@@ -6,7 +6,7 @@ interface PhoneFrameProps {
 
 export const PhoneFrame: React.FC<PhoneFrameProps> = ({ children }) => {
   return (
-    <div className="relative mx-auto border-gray-800 dark:border-gray-800 bg-gray-800 border-[21px] m-[21px] rounded-[4rem] h-[900px] w-[450px] shadow-xl transform transition-transform duration-500 scale-66 hover:scale-69">
+    <div className="relative mx-auto border-gray-800 dark:border-gray-800 bg-gray-800 border-[22px] m-[21px] overflow-hidden rounded-[4rem] h-[900px] w-[450px] shadow-xl transform transition-transform duration-500 scale-66 hover:scale-69">
       {/* Screen Notch */}
       <div className="w-[222px] h-[27px] bg-gray-800 top-[-1px] rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
 

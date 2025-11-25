@@ -34,7 +34,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  body.enable-dark-mode {
     --primary: #4053e4;
     --secondary: #335eea;
     --accent: #f59e0b;
@@ -58,6 +58,19 @@
   --text-primary: #f8fafc;
   --text-secondary: #9ca3af;
   --border-color: #2b2b2b;
+  --error: #ea4f4f;
+} */
+
+/* .white {
+  --primary: #4053e4;
+  --secondary: #335eea;
+  --accent: #f59e0b;
+  --bg-primary: #f7f9fb;
+  --bg-secondary: #ffffff;
+  --bg-third: #eff2f5;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e8ecf3;
   --error: #ea4f4f;
 } */
 
