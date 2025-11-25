@@ -1,6 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { Competition, UpdateCompetitionRequest } from "@/lib/types/stock";
+import {
+  Competition,
+  JoinCompetitionRequest,
+  UpdateCompetitionRequest,
+} from "@/lib/types/stock";
 import {
   XMarkIcon,
   CalendarIcon,
@@ -12,12 +16,18 @@ import {
   CheckCircleIcon,
   PencilIcon,
   TrashIcon,
+  LockClosedIcon,
 } from "@/components/icons/Icons";
+import Toast, { ToastType } from "@/components/ui/Toast";
+
+import { Base64 } from "js-base64";
 import { useCompetitionJoin } from "@/lib/hooks/competition/useCompetitionJoin";
 import { useCompetitionAdmin } from "@/lib/hooks/competition/useCompetitionAdmin";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 import { Drawer } from "vaul";
 import Portal from "@/components/Portal";
+import { ChevronDownIcon, Share } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 interface CompetitionDetailScreenProps {
   competition: Competition;
@@ -31,9 +41,23 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
   onJoin,
 }) => {
   const { selectedAccount } = useAccountStore();
-  const [accountName, setAccountName] = useState("");
+  const [joinInfo, setJoinInfo] = useState<JoinCompetitionRequest>({
+    accountName: "",
+    password: "",
+  });
   const [isJoinDrawerOpen, setIsJoinDrawerOpen] = useState(false);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [isShareDrawerOpen, setIsShareDrawerOpen] = useState(false);
+  const [isQROpen, setIsQROpen] = useState(false);
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    message: string;
+    type: ToastType;
+  }>({
+    visible: false,
+    message: "",
+    type: "success",
+  });
 
   // Admin Form State
   const [editForm, setEditForm] = useState<UpdateCompetitionRequest>({
@@ -44,11 +68,14 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
     commissionRate: competition.commissionRate,
     minMarketCap: competition.minMarketCap,
     maxMarketCap: competition.maxMarketCap,
+    password: "",
     dailyTradeLimit: competition.dailyTradeLimit,
     maxHoldingsCount: competition.maxHoldingsCount,
     buyCooldownMinutes: competition.buyCooldownMinutes,
     sellCooldownMinutes: competition.sellCooldownMinutes,
   });
+
+  const [password, setPassword] = useState("");
 
   const { mutate: joinCompetition, isPending: isJoining } = useCompetitionJoin({
     contestId: competition.contestId,
@@ -89,8 +116,12 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
     : "bg-bg-secondary text-text-secondary";
 
   const handleJoin = () => {
-    if (!accountName.trim()) return;
-    joinCompetition({ accountName });
+    if (!joinInfo.accountName.trim()) return;
+    if (competition.isPrivate && !joinInfo.password?.trim()) return;
+    joinCompetition({
+      accountName: joinInfo.accountName.trim(),
+      password: competition.isPrivate ? joinInfo.password?.trim() : undefined,
+    });
   };
 
   const handleDelete = () => {
@@ -132,22 +163,30 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
           <XMarkIcon className="w-6 h-6" />
         </button>
 
-        {isAdmin && (
-          <div className="flex gap-1">
-            <button
-              onClick={() => setIsEditDrawerOpen(true)}
-              className="p-2 rounded-full hover:bg-bg-secondary transition-colors text-text-primary"
-            >
-              <PencilIcon className="w-5 h-5" />
-            </button>
-            <button
-              onClick={handleDelete}
-              className="p-2 rounded-full hover:bg-red-500/10 transition-colors text-red-500"
-            >
-              <TrashIcon className="w-5 h-5" />
-            </button>
-          </div>
-        )}
+        <div className="flex gap-1">
+          <button
+            onClick={() => setIsShareDrawerOpen(true)}
+            className="p-2 rounded-full hover:bg-bg-secondary transition-colors text-text-primary"
+          >
+            <Share className="w-5 h-5" />
+          </button>
+          {isAdmin && (
+            <>
+              <button
+                onClick={() => setIsEditDrawerOpen(true)}
+                className="p-2 rounded-full hover:bg-bg-secondary transition-colors text-text-primary"
+              >
+                <PencilIcon className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleDelete}
+                className="p-2 rounded-full hover:bg-red-500/10 transition-colors text-red-500"
+              >
+                <TrashIcon className="w-5 h-5" />
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -159,9 +198,15 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
           >
             {statusText}
           </span>
-          <h1 className="text-3xl font-extrabold text-text-primary leading-tight mb-2">
-            {competition.contestName}
-          </h1>
+          <div className="flex items-center gap-2 mb-2">
+            <h1 className="text-3xl font-extrabold text-text-primary leading-tight">
+              {competition.contestName}
+            </h1>
+            {competition.isPrivate && (
+              <LockClosedIcon size={24} className="text-text-secondary" />
+            )}
+          </div>
+
           {competition.description && (
             <p className="text-text-secondary leading-relaxed mt-2">
               {competition.description}
@@ -242,16 +287,16 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-bg-primary via-bg-primary/95 to-transparent pt-8 safe-area-bottom z-20">
         <button
           onClick={() => setIsJoinDrawerOpen(true)}
-          disabled={competition.isJoined || isFinished}
+          disabled={competition.isParticipating || isFinished}
           className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-lg active:scale-[0.98] ${
-            competition.isJoined
+            competition.isParticipating
               ? "bg-bg-secondary text-text-secondary cursor-not-allowed"
               : isFinished
               ? "bg-bg-secondary text-text-secondary cursor-not-allowed"
               : "bg-primary text-white hover:bg-primary/90 shadow-primary/25"
           }`}
         >
-          {competition.isJoined ? (
+          {competition.isParticipating ? (
             <span className="flex items-center justify-center gap-2">
               <CheckCircleIcon className="w-6 h-6" />
               이미 참가중인 대회입니다
@@ -275,28 +320,57 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
                 <Drawer.Title className="font-bold text-2xl mb-2 text-text-primary">
                   대회 참가하기
                 </Drawer.Title>
-                <p className="text-text-secondary mb-8">
-                  이 대회에서 사용할 계좌의 별칭을 입력해주세요.
-                </p>
 
                 <div className="space-y-4">
+                  <p className="text-text-secondary mb-8">
+                    이 대회에서 사용할 계좌의 별칭을 입력해주세요.
+                  </p>
                   <div>
                     <label className="block text-sm font-medium text-text-secondary mb-2">
                       계좌 별칭
                     </label>
                     <input
                       type="text"
-                      value={accountName}
-                      onChange={(e) => setAccountName(e.target.value)}
+                      value={joinInfo.accountName}
+                      onChange={(e) =>
+                        setJoinInfo({
+                          ...joinInfo,
+                          accountName: e.target.value,
+                        })
+                      }
                       placeholder="예: 주식왕"
                       className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary text-lg font-medium placeholder:text-text-tertiary"
                       autoFocus
                     />
                   </div>
-
+                  {competition.isPrivate && (
+                    <>
+                      <p className="text-text-secondary mb-8">
+                        대회 참가 코드를 입력해주세요.
+                      </p>
+                      <div>
+                        <label className="block text-sm font-medium text-text-secondary mb-2">
+                          참가 코드
+                        </label>
+                        <input
+                          type="text"
+                          value={joinInfo.password}
+                          onChange={(e) =>
+                            setJoinInfo({
+                              ...joinInfo,
+                              password: e.target.value,
+                            })
+                          }
+                          placeholder="예: 주식왕"
+                          className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary text-lg font-medium placeholder:text-text-tertiary"
+                          autoFocus
+                        />
+                      </div>
+                    </>
+                  )}
                   <button
                     onClick={handleJoin}
-                    disabled={!accountName.trim() || isJoining}
+                    disabled={joinInfo.accountName.trim() === "" || isJoining}
                     className="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20 mt-4"
                   >
                     {isJoining ? "참가 처리 중..." : "참가 완료"}
@@ -321,21 +395,39 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
                 </Drawer.Title>
 
                 <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      대회명
-                    </label>
-                    <input
-                      type="text"
-                      value={editForm.contestName}
-                      onChange={(e) =>
-                        setEditForm({
-                          ...editForm,
-                          contestName: e.target.value,
-                        })
-                      }
-                      className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-text-secondary mb-2">
+                        대회명
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.contestName}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            contestName: e.target.value,
+                          })
+                        }
+                        className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-text-secondary mb-2">
+                        시드머니
+                      </label>
+                      <input
+                        type="number"
+                        value={editForm.seedMoney}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            seedMoney: Number(e.target.value),
+                          })
+                        }
+                        className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary"
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -368,23 +460,6 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
                         className="w-full p-3 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary text-sm"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-2">
-                      시드머니
-                    </label>
-                    <input
-                      type="number"
-                      value={editForm.seedMoney}
-                      onChange={(e) =>
-                        setEditForm({
-                          ...editForm,
-                          seedMoney: Number(e.target.value),
-                        })
-                      }
-                      className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary"
-                    />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -457,6 +532,22 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
                       />
                     </div>
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-2">
+                      {"참가코드(선택사항)"}
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.password}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          password: e.target.value,
+                        })
+                      }
+                      className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary"
+                    />
+                  </div>
                 </div>
 
                 <button
@@ -470,6 +561,114 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
             </div>
           </Drawer.Content>
         </Portal>
+      </Drawer.Root>
+
+      {/* Share Drawer */}
+      <Drawer.Root open={isShareDrawerOpen} onOpenChange={setIsShareDrawerOpen}>
+        <Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-100 backdrop-blur-sm" />
+          <Drawer.Content className="bg-bg-primary flex flex-col rounded-t-[20px] h-fit mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
+            <div className="p-6 bg-bg-primary rounded-t-[20px] flex-1 overflow-y-auto">
+              <div className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300/50 mb-8" />
+              <div className="max-w-md mx-auto space-y-6 pb-10">
+                <Drawer.Title className="font-bold text-2xl mb-6 text-text-primary">
+                  대회 공유
+                </Drawer.Title>
+
+                <div
+                  className={
+                    "transition-all duration-300 overflow-hidden flex items-center justify-center " +
+                    (isQROpen ? "max-h-60" : "max-h-0 -mb-2")
+                  }
+                >
+                  <QRCodeSVG
+                    className="h-60 w-60"
+                    value={`https://www.stockit.live/pwa#entry-${Base64.encode(
+                      `${competition.contestId}-@-${password}-@-${competition.contestName}`
+                    )}`}
+                  />
+                </div>
+                <div
+                  onClick={() => setIsQROpen(!isQROpen)}
+                  className="flex items-center justify-between"
+                >
+                  <h3>QR코드 열기</h3>
+                  <div
+                    className={`p-1 rounded-full bg-bg-secondary text-text-secondary group-active:bg-bg-primary transition-colors ${
+                      !isQROpen ? "rotate-180" : ""
+                    }`}
+                  >
+                    <ChevronDownIcon className="w-5 h-5" />
+                  </div>
+                </div>
+
+                {competition.isPrivate && (
+                  <div>
+                    <label className="block text-sm font-medium text-text-secondary mb-2">
+                      참여 패스워드
+                    </label>
+                    <input
+                      type="text"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary"
+                    />
+                  </div>
+                )}
+                <input
+                  type="text"
+                  value={`https://www.stockit.live/pwa#entry-${Base64.encode(
+                    `${competition.contestId}-@-${password}-@-${competition.contestName}`
+                  )}`}
+                  onClick={() =>
+                    navigator.clipboard
+                      .writeText(
+                        `https://www.stockit.live/pwa#entry-${Base64.encode(
+                          `${competition.contestId}-@-${password}-@-${competition.contestName}`
+                        )}`
+                      )
+                      .then(() =>
+                        setToast({
+                          visible: true,
+                          message: "공유 링크가 복사되었습니다.",
+                          type: "success",
+                        })
+                      )
+                  }
+                  readOnly
+                  className="w-full p-4 rounded-xl bg-bg-secondary border border-transparent focus:border-primary focus:bg-bg-primary transition-all outline-none text-text-primary"
+                />
+
+                <button
+                  onClick={() =>
+                    navigator.clipboard
+                      .writeText(
+                        `https://www.stockit.live/pwa#entry-${Base64.encode(
+                          `${competition.contestId}-@-${password}-@-${competition.contestName}`
+                        )}`
+                      )
+                      .then(() =>
+                        setToast({
+                          visible: true,
+                          message: "공유 링크가 복사되었습니다.",
+                          type: "success",
+                        })
+                      )
+                  }
+                  className="w-full py-4 mt-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary/90 shadow-lg shadow-primary/20"
+                >
+                  URL 복사하기
+                </button>
+              </div>
+            </div>
+          </Drawer.Content>
+        </Portal>
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.visible}
+          onClose={() => setToast((prev) => ({ ...prev, visible: false }))}
+        />
       </Drawer.Root>
     </div>
   );

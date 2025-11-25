@@ -478,7 +478,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
           >
             <div className="p-2 space-y-1 bg-bg-third/50">
               {/* Dark Mode */}
-              <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">
+              {/* <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-bg-secondary rounded-lg text-text-secondary shadow-sm">
                     {isDarkMode ? (
@@ -505,7 +505,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     }`}
                   />
                 </button>
-              </div>
+              </div> */}
 
               {/* Notifications */}
               <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">

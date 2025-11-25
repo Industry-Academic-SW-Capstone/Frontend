@@ -77,8 +77,9 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
       new Date(new Date().setDate(new Date().getDate() + 30))
         .toISOString()
         .split("T")[0] + "T18:00:00",
-    seedMoney: 10000000,
+    seedMoney: 1000000,
     commissionRate: 0.0015,
+    password: "",
     minMarketCap: 1000000000,
     maxMarketCap: 100000000000,
     dailyTradeLimit: 10,
@@ -144,15 +145,32 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
                 className="w-full bg-bg-secondary border border-border-color rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                비밀번호
+              </label>
+              <input
+                type="text"
+                value={formData.password}
+                onChange={(e) => handleChange("password", e.target.value)}
+                placeholder="예: Q1W2E3R4"
+                className="w-full bg-bg-secondary border border-border-color rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+              />
+            </div>
             <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
               <h3 className="font-bold text-primary mb-2 flex items-center gap-2">
                 <FlagIcon className="w-5 h-5" />
                 대회 팁
               </h3>
-              <p className="text-sm text-text-secondary">
+              <p className="text-sm text-text-secondary mb-2">
                 매력적인 대회 이름은 더 많은 참가자를 모을 수 있습니다!
                 <br />
                 명확하고 흥미로운 이름을 지어보세요.
+              </p>
+              <p className="text-sm text-text-secondary">
+                비밀번호를 설정할 경우에는 비밀번호를 통해서만
+                <br />
+                참가자들이 대회를 참여할 수 있습니다.
               </p>
             </div>
           </div>
@@ -170,8 +188,8 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
               <input
                 type="range"
                 min="1000000"
-                max="100000000"
-                step="1000000"
+                max="50000000"
+                step="500000"
                 value={formData.seedMoney}
                 onChange={(e) =>
                   handleChange("seedMoney", parseInt(e.target.value))
@@ -180,7 +198,7 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
               />
               <div className="flex justify-between text-xs text-text-secondary mt-2">
                 <span>100만원</span>
-                <span>1억원</span>
+                <span>5000만원</span>
               </div>
             </div>
             <div>

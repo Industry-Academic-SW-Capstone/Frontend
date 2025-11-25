@@ -99,6 +99,8 @@ export interface Competition {
   contestId: number;
   contestName: string;
   isDefault: boolean;
+  isPrivate: boolean;
+  isParticipating: boolean;
   managerMemberId: number;
   startDate: string;
   endDate: string;
@@ -114,7 +116,6 @@ export interface Competition {
   updatedAt: string;
   // Optional fields for UI compatibility if needed, or remove if fully replacing
   participants?: number; // Not in API response, might need to fetch separately or remove
-  isJoined?: boolean; // Not in API response
   rank?: number; // Not in API response
   returnPercent?: number; // Not in API response
   description?: string; // Not in API response
@@ -125,6 +126,7 @@ export interface CreateCompetitionRequest {
   startDate: string;
   endDate: string;
   seedMoney: number;
+  password: string;
   commissionRate: number;
   minMarketCap: number;
   maxMarketCap: number;
@@ -136,6 +138,7 @@ export interface CreateCompetitionRequest {
 
 export interface JoinCompetitionRequest {
   accountName: string;
+  password?: string;
 }
 
 export interface UpdateCompetitionRequest {
@@ -144,6 +147,7 @@ export interface UpdateCompetitionRequest {
   endDate: string;
   seedMoney: number;
   commissionRate: number;
+  password?: string;
   minMarketCap: number;
   maxMarketCap: number;
   dailyTradeLimit: number;

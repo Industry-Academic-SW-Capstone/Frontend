@@ -1,6 +1,11 @@
 import React from "react";
 import { Competition } from "@/lib/types/stock";
-import { CalendarIcon, GiftIcon, ChevronRightIcon } from "./icons/Icons";
+import {
+  CalendarIcon,
+  GiftIcon,
+  ChevronRightIcon,
+  LockClosedIcon,
+} from "./icons/Icons";
 
 interface CompetitionCardProps {
   competition: Competition;
@@ -49,9 +54,14 @@ const CompetitionCard: React.FC<CompetitionCardProps> = ({
 
       <div className="relative z-10 flex flex-col h-full justify-between">
         <div>
-          <h3 className="text-lg font-bold text-text-primary mb-2 group-active:text-primary transition-colors line-clamp-1">
-            {competition.contestName}
-          </h3>
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="text-xl font-bold text-text-primary mb-2 group-active:text-primary transition-colors line-clamp-1">
+              {competition.contestName}
+            </h3>
+            {competition.isPrivate && (
+              <LockClosedIcon size={20} className="text-text-secondary" />
+            )}
+          </div>
 
           <div className="space-y-2 mb-4">
             <div className="flex items-center gap-2 text-sm text-text-secondary">
