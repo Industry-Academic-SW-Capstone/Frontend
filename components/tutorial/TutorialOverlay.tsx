@@ -18,7 +18,7 @@ const TUTORIAL_STEPS: StepData[] = [
   {
     title: "스톡잇에 오신 것을 환영해요!",
     description:
-      "주식 투자가 처음이신가요? 걱정 마세요. 스톡잇과 함께라면 쉽고 재미있게 배울 수 있어요.",
+      "주식 투자가 처음이신가요? 걱정 마세요. \n스톡잇과 함께라면 쉽고 재미있게 배울 수 있어요.",
     position: "center",
   },
   {
@@ -36,7 +36,7 @@ const TUTORIAL_STEPS: StepData[] = [
   {
     targetId: "mission-card",
     title: "매일매일 미션 달성!",
-    description: "미션을 수행하고 보상을 받아보세요. 한번 들어가볼까요?",
+    description: "미션을 수행하고 보상을 받아보세요. \n한번 들어가볼까요?",
     position: "top",
     action: "click", // Click to enter mission panel
   },
@@ -49,7 +49,7 @@ const TUTORIAL_STEPS: StepData[] = [
   {
     targetId: "mission-daily-list",
     title: "오늘의 미션 확인",
-    description: "일일미션들을 통해 투자를 위한 원금을 모아보세요.",
+    description: "일일미션을 통해 보상을 모아보세요.",
     position: "top",
   },
   {
@@ -86,7 +86,7 @@ const TUTORIAL_STEPS: StepData[] = [
   {
     title: "이제 시작해볼까요?",
     description:
-      "준비되셨나요? 모의투자의 세계로 떠나보세요! 튜토리얼은 프로필 창에서 언제든지 다시 할 수 있어요.",
+      "준비되셨나요? 모의투자의 세계로 떠나보세요! \n튜토리얼은 프로필 창에서 언제든지 다시 할 수 있어요.",
     position: "center",
   },
 ];

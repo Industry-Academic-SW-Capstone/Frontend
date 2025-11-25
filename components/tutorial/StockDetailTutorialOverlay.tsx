@@ -11,6 +11,25 @@ const STOCK_DETAIL_TUTORIAL_STEPS = [
     description: "차트와 호가창을 활용하는 방법을 알려드릴게요.",
   },
   {
+    targetId: "stock-favorite-button",
+    title: "관심종목",
+    description: "이 종목을 관심종목으로 등록하려면 이 버튼을 누르세요.",
+    position: "bottom",
+  },
+  {
+    targetId: "stock-chart",
+    title: "차트 팁",
+    description:
+      "차트는 터치해서 자세한 정보를 보거나 두 손가락으로 확대할 수 있어요.",
+    position: "bottom",
+  },
+  {
+    targetId: "stock-period-mode-controls",
+    title: "차트 팁",
+    description: "이 버튼을 눌러서 차트의 기간과 스타일을 변경할 수 있어요.",
+    position: "bottom",
+  },
+  {
     targetId: "stock-tab-orderbook",
     title: "호가창 확인하기",
     description: "호가 탭을 눌러 매수/매도 대기 물량을 확인해보세요.",
@@ -18,7 +37,7 @@ const STOCK_DETAIL_TUTORIAL_STEPS = [
     action: "click",
   },
   {
-    title: "호가창이 안나와요?",
+    title: "호가가 안나오나요?",
     description:
       "호가는 국장이 열리는 오전 9시부터 오후 3시 30분 사이에만 볼 수 있어요.",
     position: "center",
@@ -149,42 +168,7 @@ export default function StockDetailTutorialOverlay({
                 className="fixed inset-0 z-[9999] pointer-events-auto font-handwriting text-white"
               >
                 {/* Swipe Back (Top Left) */}
-                <div className="absolute top-20 left-4 flex flex-col items-start">
-                  <svg
-                    width="50"
-                    height="50"
-                    viewBox="0 0 50 50"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M10 25 H40 M10 25 L20 15 M10 25 L20 35" />
-                  </svg>
-                  <p className="mt-2 font-bold font-sans text-lg">뒤로가기</p>
-                </div>
-
-                {/* Pinch Zoom (Center) */}
-                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 flex flex-col items-center">
-                  <svg
-                    width="80"
-                    height="80"
-                    viewBox="0 0 80 80"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M30 30 L20 20 M60 30 L70 20 M30 60 L20 70 M60 60 L70 70" />
-                    <circle cx="45" cy="45" r="5" fill="currentColor" />
-                  </svg>
-                  <p className="mt-2 font-bold font-sans text-lg">확대/축소</p>
-                </div>
-
-                {/* Chart Interaction (Center Bottom) */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-12 flex flex-col items-center">
+                <div className="absolute top-1/2 -left-[2px] flex flex-row items-center">
                   <svg
                     width="60"
                     height="60"
@@ -194,32 +178,42 @@ export default function StockDetailTutorialOverlay({
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    className="opacity-90"
                   >
-                    <path d="M30 10 V50 M10 30 H50" strokeDasharray="4 4" />
-                    <circle cx="30" cy="30" r="20" />
+                    {/* Hand-drawn arrow from left to right */}
+                    <path d="M5 30 C 15 28, 35 32, 45 30" />
+                    <path d="M35 20 C 38 22, 42 28, 45 30" />
+                    <path d="M35 40 C 38 38, 42 32, 45 30" />
                   </svg>
-                  <p className="mt-2 font-bold font-sans text-lg">
-                    터치하여 정보 확인
+                  <p className=" font-bold font-sans text-lg">
+                    당겨서 뒤로가기
                   </p>
                 </div>
 
-                {/* Favorite (Top Right) */}
-                <div className="absolute top-16 right-4 flex flex-col items-end">
+                {/* Pinch Zoom (Center) */}
+                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 flex flex-col items-center">
                   <svg
-                    width="50"
-                    height="50"
-                    viewBox="0 0 50 50"
+                    width="100"
+                    height="60"
+                    viewBox="0 0 100 60"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    className="opacity-90"
                   >
-                    <path d="M25 10 L30 20 L40 20 L32 28 L35 40 L25 32 L15 40 L18 28 L10 20 L20 20 Z" />
+                    {/* Left Arrow */}
+                    <path d="M40 30 C 35 28, 25 32, 15 30" />
+                    <path d="M25 20 C 22 22, 18 28, 15 30" />
+                    <path d="M25 40 C 22 38, 18 32, 15 30" />
+
+                    {/* Right Arrow */}
+                    <path d="M60 30 C 65 32, 75 28, 85 30" />
+                    <path d="M75 20 C 78 22, 82 28, 85 30" />
+                    <path d="M75 40 C 78 38, 82 32, 85 30" />
                   </svg>
-                  <p className="mt-2 font-bold font-sans text-lg">
-                    관심종목 추가
-                  </p>
+                  <p className="mt-2 font-bold font-sans text-lg">확대/축소</p>
                 </div>
 
                 {/* Next Button */}

@@ -27,7 +27,7 @@ export default function TutorialStep({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl max-w-xs w-full mx-auto relative z-[12000]"
+      className="bg-bg-third rounded-3xl p-6 shadow-2xl max-w-xs w-full mx-auto relative z-[12000]"
     >
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-1">
@@ -55,11 +55,17 @@ export default function TutorialStep({
       <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
         {title}
       </h3>
-      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6">
-        {description}
-      </p>
 
-      <div className="flex gap-3">
+      {description.split("\n").map((line, index) => (
+        <p
+          className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed"
+          key={index}
+        >
+          {line}
+        </p>
+      ))}
+
+      <div className="flex gap-3 mt-6">
         {currentStep > 0 && (
           <button
             onClick={onPrev}

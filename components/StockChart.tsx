@@ -419,7 +419,7 @@ const StockChart: React.FC<StockChartProps> = ({
   }, [totalLength]);
 
   return (
-    <div>
+    <div id="stock-chart">
       {/* 1. Main Chart Area */}
       <div className="relative w-full">
         <svg
@@ -670,7 +670,10 @@ const StockChart: React.FC<StockChartProps> = ({
       </div>
 
       {/* 3. Period & Mode Controls */}
-      <div className="flex w-full bg-bg-primary p-1 rounded-lg">
+      <div
+        id="stock-period-mode-controls"
+        className="flex w-full bg-bg-primary p-1 rounded-lg"
+      >
         <div className="relative flex flex-1 items-center">
           <div
             className="absolute h-full w-1/5 bg-bg-secondary rounded-md shadow-sm transition-transform duration-300 ease-in-out"
