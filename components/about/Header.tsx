@@ -18,7 +18,11 @@ export const Header: React.FC = () => {
   const pathname = usePathname();
   const [nowDirectory, setNowDirectory] = useState(pathname);
   useEffect(() => {
-    setNowDirectory(pathname);
+    if (pathname.startsWith("/about#install")) {
+      openInstallModal();
+    } else {
+      setNowDirectory(pathname);
+    }
   }, [pathname]);
 
   useEffect(() => {
