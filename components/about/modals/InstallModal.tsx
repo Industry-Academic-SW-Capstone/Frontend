@@ -9,6 +9,7 @@ import { QRCodeSVG } from "qrcode.react";
 export const InstallModal: React.FC = () => {
   const { isInstallModalOpen, closeInstallModal } = useInstallModal();
   const [activeTab, setActiveTab] = useState<"ios" | "android" | "pc">("ios");
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const ua = navigator.userAgent;
@@ -28,11 +29,14 @@ export const InstallModal: React.FC = () => {
 
     if (isIos) {
       setActiveTab("ios");
+      setIsMobile(true);
     } else if (isAndroid) {
       setActiveTab("android");
+      setIsMobile(true);
     } else {
       // Windows, Mac(순수 PC), 리눅스 등 나머지는 PC로 간주
       setActiveTab("pc");
+      setIsMobile(false);
     }
   }, []);
 
@@ -85,16 +89,18 @@ export const InstallModal: React.FC = () => {
           >
             Android
           </button>
-          <button
-            className={`flex-1 py-3 text-sm font-medium transition-colors ${
-              activeTab === "pc"
-                ? "text-red-600 border-b-2 border-red-600 bg-red-50/50"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => setActiveTab("pc")}
-          >
-            데스크탑
-          </button>
+          {isMobile && (
+            <button
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                activeTab === "pc"
+                  ? "text-red-600 border-b-2 border-red-600 bg-red-50/50"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => setActiveTab("pc")}
+            >
+              데스크탑
+            </button>
+          )}
         </div>
 
         {/* Instructions */}
