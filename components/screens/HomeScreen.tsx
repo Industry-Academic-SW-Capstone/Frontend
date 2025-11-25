@@ -13,7 +13,7 @@ import { useAccountAssets } from "@/lib/hooks/useAccount";
 import { useContests } from "@/lib/hooks/useContest";
 import { useMyRanking, useRanking } from "@/lib/hooks/useRanking";
 import { useFetchInfo } from "@/lib/hooks/me/useInfo";
-import { useFavoriteStocks } from "@/lib/hooks/stock/useFavoriteStock";
+import { useFavoriteStocks } from "@/lib/hooks/stocks/useFavoriteStock";
 import { usePendingOrders } from "@/lib/hooks/useOrders";
 import { generateLogo } from "@/lib/utils";
 import CountUp from "react-countup";

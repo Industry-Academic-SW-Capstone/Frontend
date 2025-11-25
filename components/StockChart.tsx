@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { ChartData, PeriodType } from "@/lib/types/stock";
-import { useStockChart } from "@/lib/hooks/stock/useStockChart";
+import { useStockChart } from "@/lib/hooks/stocks/useStockChart";
 import { FaChartLine, FaChartColumn } from "react-icons/fa6";
 import { useWebSocket } from "@/lib/providers/SocketProvider";
 import { useChartStore } from "@/lib/stores/useChartStore";

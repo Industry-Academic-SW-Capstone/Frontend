@@ -3,18 +3,18 @@ import React, { useEffect, useState } from "react";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
 import { ArrowLeftIcon, HeartIcon } from "@/components/icons/Icons";
-import { useStockDetail } from "@/lib/hooks/stock/useStockDetail";
+import { useStockDetail } from "@/lib/hooks/stocks/useStockDetail";
 import {
   useFavoriteStocks,
   useAddFavorite,
   useDeleteFavorite,
-} from "@/lib/hooks/stock/useFavoriteStock";
+} from "@/lib/hooks/stocks/useFavoriteStock";
 import { useAccountAssets } from "@/lib/hooks/useAccount";
 import Toast, { ToastType } from "@/components/ui/Toast";
 import OrderBook from "@/components/OrderBook";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 import { SlidingTabs } from "../ui/SlidingTabs";
-import { useStockAnalyze } from "@/lib/hooks/stock/useStockAnalyze";
+import { useStockAnalyze } from "@/lib/hooks/stocks/useStockAnalyze";
 import { ChevronDownIcon } from "lucide-react";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
 import StockDetailTutorialOverlay from "../tutorial/StockDetailTutorialOverlay";

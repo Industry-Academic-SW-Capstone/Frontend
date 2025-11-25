@@ -11,9 +11,9 @@ import {
   IndustriesTopStocks,
   StockSearchResult,
 } from "@/lib/types/stock";
-import { useTopStocks } from "@/lib/hooks/stock/useTopStocks";
-import { useIndustriesTopStocks } from "@/lib/hooks/stock/useIndustriesTopStocks";
-import { useFavoriteStocks } from "@/lib/hooks/stock/useFavoriteStock";
+import { useTopStocks } from "@/lib/hooks/stocks/useTopStocks";
+import { useIndustriesTopStocks } from "@/lib/hooks/stocks/useIndustriesTopStocks";
+import { useFavoriteStocks } from "@/lib/hooks/stocks/useFavoriteStock";
 import { useStockSearch } from "@/lib/hooks/useStockSearch";
 import { generateLogo } from "@/lib/utils";
 import { useStockStore } from "@/lib/stores/useStockStore";
