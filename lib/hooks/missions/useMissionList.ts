@@ -2,7 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import defaultClient from "@/lib/api/axiosClient";
 import { MissionListItem, MemberTitle } from "@/lib/types/mission";
 
-export const useMissionList = (track: string = "ALL") => {
+export const useMissionList = (
+  track: string = "ALL",
+  enabled: boolean = true
+) => {
   return useQuery({
     queryKey: ["missions", track],
     queryFn: async () => {
@@ -14,10 +17,11 @@ export const useMissionList = (track: string = "ALL") => {
       );
       return data;
     },
+    enabled,
   });
 };
 
-export const useMissionTitles = () => {
+export const useMissionTitles = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["missionTitles"],
     queryFn: async () => {
@@ -26,5 +30,6 @@ export const useMissionTitles = () => {
       );
       return data;
     },
+    enabled,
   });
 };

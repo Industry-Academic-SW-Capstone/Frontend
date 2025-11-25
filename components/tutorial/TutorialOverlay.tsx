@@ -124,7 +124,6 @@ export default function TutorialOverlay() {
   useEffect(() => {
     updateTargetRect();
 
-    // Use MutationObserver to detect when elements (like MissionPanel) appear
     const observer = new MutationObserver(updateTargetRect);
     observer.observe(document.body, { childList: true, subtree: true });
     observerRef.current = observer;
