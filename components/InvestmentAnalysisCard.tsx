@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { PortfolioAnalysisResponse } from "@/lib/hooks/me/usePortfolioAnalysis";
-import RadarChart from "./RadarChart";
 
 interface InvestmentAnalysisCardProps {
   analysis: PortfolioAnalysisResponse;
@@ -18,7 +17,7 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
       }))
     : [];
 
-  const topPersona = analysis.persona_match?.[0];
+  const topPersona = analysis.personaMatch?.[0];
 
   return (
     <div className="bg-bg-secondary p-8 rounded-3xl border border-border-color shadow-lg animate-fadeInUp space-y-10">
@@ -33,9 +32,9 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
         {/* Left Column: Radar Chart & Persona */}
         <div className="flex flex-col items-center space-y-6">
-          <div className="relative w-full max-w-[280px] aspect-square">
+          {/* <div className="relative w-full max-w-[280px] aspect-square">
             <RadarChart data={radarChartData} />
-          </div>
+          </div> */}
 
           {topPersona && (
             <div className="text-center p-6 bg-bg-primary rounded-2xl w-full border border-border-color/50 shadow-sm">
@@ -67,10 +66,10 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
               투자 스타일 구성
             </h4>
             <div className="space-y-4">
-              {analysis.style_breakdown?.map((style, index) => (
+              {analysis.styleBreakdown?.map((style, index) => (
                 <div key={index} className="space-y-1">
                   <div className="flex justify-between text-sm text-text-primary">
-                    <span>{style.style_tag}</span>
+                    <span>{style.styleTag}</span>
                     <span className="font-bold">
                       {Math.round(style.percentage * 100)}%
                     </span>
@@ -83,8 +82,8 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
                   </div>
                 </div>
               ))}
-              {(!analysis.style_breakdown ||
-                analysis.style_breakdown.length === 0) && (
+              {(!analysis.styleBreakdown ||
+                analysis.styleBreakdown.length === 0) && (
                 <p className="text-text-secondary text-sm">
                   분석된 투자 스타일이 없습니다.
                 </p>
@@ -99,7 +98,7 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
               주요 종목 분석
             </h4>
             <ul className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-              {analysis.stock_details?.map((stock, index) => (
+              {analysis.stockDetails?.map((stock, index) => (
                 <li
                   key={index}
                   className="p-4 bg-bg-primary rounded-xl border border-border-color/30 hover:border-secondary/30 transition-colors duration-300"
@@ -108,14 +107,14 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <span className="font-bold text-text-primary block">
-                        {stock.stock_name}
+                        {stock.stockName}
                       </span>
                       <span className="text-xs text-text-secondary">
-                        {stock.stock_code}
+                        {stock.stockCode}
                       </span>
                     </div>
                     <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-lg font-medium">
-                      {stock.style_tag}
+                      {stock.styleTag}
                     </span>
                   </div>
                   <p className="text-sm text-text-secondary leading-relaxed">
@@ -123,8 +122,8 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
                   </p>
                 </li>
               ))}
-              {(!analysis.stock_details ||
-                analysis.stock_details.length === 0) && (
+              {(!analysis.stockDetails ||
+                analysis.stockDetails.length === 0) && (
                 <li className="text-text-secondary text-sm p-4 bg-bg-primary rounded-xl border border-border-color/30 text-center">
                   분석할 종목이 충분하지 않습니다.
                 </li>

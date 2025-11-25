@@ -2,14 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import defaultClient from "@/lib/api/axiosClient";
 
 export interface StockDetail {
-  stock_code: string;
-  stock_name: string;
-  style_tag: string;
+  stockCode: string;
+  stockName: string;
+  styleTag: string;
   description: string;
 }
 
 export interface StyleBreakdown {
-  style_tag: string;
+  styleTag: string;
   percentage: number;
 }
 
@@ -19,11 +19,20 @@ export interface PersonaMatch {
   philosophy: string;
 }
 
+export interface Summary {
+  marketCap: number;
+  per: number;
+  pbr: number;
+  roe: number;
+  debtRatio: number;
+  dividendYield: number;
+}
+
 export interface PortfolioAnalysisResponse {
-  stock_details: StockDetail[];
+  stockDetails: StockDetail[];
   summary: Record<string, number>;
-  style_breakdown: StyleBreakdown[];
-  persona_match: PersonaMatch[];
+  styleBreakdown: StyleBreakdown[];
+  personaMatch: PersonaMatch[];
 }
 
 const fetchPortfolioAnalysis = async (accountId: string) => {
@@ -33,6 +42,7 @@ const fetchPortfolioAnalysis = async (accountId: string) => {
       params: { accountId },
     }
   );
+  console.log(response.data);
   return response.data;
 };
 
