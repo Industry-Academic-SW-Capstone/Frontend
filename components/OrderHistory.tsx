@@ -82,7 +82,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
               </h1>
               <button
                 onClick={() => setIsCalculatorOpen(true)}
-                className="bg-bg-third text-text-primary px-3 py-2 rounded-lg text-sm font-medium"
+                className="bg-bg-third active-transition text-text-primary px-3 py-2 rounded-lg text-sm font-medium"
               >
                 물타기 계산기
               </button>
@@ -191,11 +191,13 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
                       </div>
                       <div className="flex flex-col items-end">
                         <span className="text-text-primary font-medium">
-                          주당{" "}
                           {order.executionPrice
-                            ? Number(order.executionPrice).toLocaleString()
-                            : Number(order.orderPrice).toLocaleString()}
-                          원
+                            ? "주당 " +
+                              Number(order.executionPrice).toLocaleString() +
+                              "원"
+                            : order.orderPrice
+                            ? Number(order.orderPrice).toLocaleString() + "원"
+                            : "시장가"}
                         </span>
                         <span className="text-text-secondary text-xs mt-0.5">
                           {order.status === "FILLED" ? "체결완료" : "주문접수"}

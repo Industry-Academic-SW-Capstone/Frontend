@@ -18,7 +18,7 @@ export const SlidingTabs = ({
   tabs,
   activeTab,
   onTabChange,
-  isBlack = false,
+  isBlack = true,
 }: SlidingTabsProps) => {
   // 현재 활성화된 탭의 인덱스를 찾습니다 (0, 1, 2...)
   const activeTabIndex = useMemo(

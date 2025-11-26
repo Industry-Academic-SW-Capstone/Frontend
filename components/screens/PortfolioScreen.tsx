@@ -35,7 +35,7 @@ const StockRow: React.FC<{
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between py-4 px-2 hover:bg-gray-50 transition-colors rounded-2xl group"
+      className="w-full flex items-center justify-between py-4 px-2 active-transition transition-colors rounded-2xl group"
     >
       <div className="flex items-center gap-4">
         <div className="relative">
@@ -65,9 +65,9 @@ const StockRow: React.FC<{
         <div className="flex items-center justify-end gap-1 text-sm font-medium mt-0.5">
           <span className={isTodayPositive ? "text-positive" : "text-negative"}>
             {isTodayPositive ? "+" : ""}
-            {todayChangePercent.toFixed(1)}%
+            {todayChange.toLocaleString()}원 ({isTodayPositive ? "+" : ""}
+            {todayChangePercent.toFixed(1)}%)
           </span>
-          <span className="text-text-tertiary text-xs">오늘</span>
         </div>
       </div>
     </button>
@@ -319,7 +319,7 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
           </h3>
           <button
             onClick={() => setIsOrderHistoryOpen(true)}
-            className="text-sm text-text-secondary bg-bg-tertiary px-3 py-1.5 rounded-full font-medium hover:bg-bg-tertiary/80 transition-colors"
+            className="text-sm text-text-secondary active-transition bg-bg-tertiary px-3 py-1.5 rounded-full font-medium hover:bg-bg-tertiary/80 transition-colors"
           >
             전체 내역 보기
           </button>

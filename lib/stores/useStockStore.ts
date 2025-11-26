@@ -52,13 +52,24 @@ export const useStockStore = create<TickerState>((set, get) => ({
     set((state) => {
       const existingStock = state.tickers[stockCode] || { stockCode };
 
+      const updatedStock: StockDetailInfo = {
+        ...existingStock,
+      } as StockDetailInfo;
+
+      for (const key in transformedInfo) {
+        if (Object.prototype.hasOwnProperty.call(transformedInfo, key)) {
+          const value = transformedInfo[key as keyof Partial<StockInfo>];
+          // 빈 문자열이 아닌 경우에만 업데이트
+          if (value && value !== "") {
+            (updatedStock as any)[key] = value;
+          }
+        }
+      }
+
       return {
         tickers: {
           ...state.tickers,
-          [stockCode]: {
-            ...existingStock,
-            ...transformedInfo, // 소켓 데이터로 덮어쓰기
-          },
+          [stockCode]: updatedStock,
         },
       };
     });

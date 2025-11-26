@@ -54,8 +54,8 @@ const Toast: React.FC<ToastProps> = ({
         isShowing ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"
       } ${
         type === "success"
-          ? "bg-bg-secondary border-positive/20 text-positive"
-          : "bg-bg-secondary border-negative/20 text-negative"
+          ? "bg-bg-secondary border-success/20 text-success  "
+          : "bg-bg-secondary border-positive/20 text-positive"
       }`}
     >
       {type === "success" ? (

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
 import { ArrowLeftIcon, HeartIcon } from "@/components/icons/Icons";
@@ -21,6 +21,7 @@ import { ChevronDownIcon, Sparkles } from "lucide-react";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
 import StockDetailTutorialOverlay from "../tutorial/StockDetailTutorialOverlay";
 import OrderHistory from "@/components/OrderHistory";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -45,6 +46,16 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   const { mutate: updateInfo } = usePutInfo();
   const { data: userInfo } = useFetchInfo();
   const { startStockDetailTutorial } = useTutorialStore();
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  const { scrollY } = useScroll({
+    container: scrollRef,
+  });
+
+  const headerOpacity = useTransform(scrollY, [0, 20], [0, 1]);
+  const headerY = useTransform(scrollY, [0, 20], [10, 0]);
 
   const handleTutorialComplete = () => {
     updateInfo({ stockDetailTutorialCompleted: true });
@@ -186,7 +197,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
             </div>
           </header>
 
-          <div className="flex-1 overflow-y-auto px-4 pb-24">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-24">
             <div className="pt-4 pb-8">
               <div className="h-10 w-48 bg-bg-secondary rounded animate-pulse mb-2" />
               <div className="h-6 w-36 bg-bg-secondary rounded animate-pulse" />
@@ -245,16 +256,40 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   return (
     <>
       <div className="h-full flex flex-col bg-bg-primary">
-        <header className="sticky top-0 z-20 bg-bg-primary/95 backdrop-blur-sm p-4 pb-2 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <header className="sticky top-0 z-20 bg-bg-primary/95 backdrop-blur-sm p-4 pb-2 flex items-center justify-between border-b border-transparent transition-colors duration-200">
+          <div className="flex items-center gap-4 flex-1">
             <button onClick={onBack} className="p-1">
               <ArrowLeftIcon className="w-6 h-6 text-text-primary" />
             </button>
+
+            {/* Sticky Header Info */}
+            <motion.div
+              className="flex flex-col"
+              style={{ opacity: headerOpacity, y: headerY }}
+            >
+              <span className="text-sm text-text-secondary font-medium">
+                {stock.stockName}
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-text-primary">
+                  {stock.currentPrice.toLocaleString()}원
+                </span>
+                <span
+                  className={`text-xs font-medium ${
+                    isPositive ? "text-positive" : "text-negative"
+                  }`}
+                >
+                  {stock.changeRate > 0 ? "+" : ""}
+                  {stock.changeRate}%
+                </span>
+              </div>
+            </motion.div>
           </div>
+
           <button
             id="stock-favorite-button"
             onClick={handleToggleFavorite}
-            className="p-2 rounded-full hover:bg-bg-secondary transition-colors"
+            className="p-2 rounded-full active-transition transition-colors"
           >
             {isFavorite ? (
               <HeartIcon className="w-6 h-6 text-red-500 fill-current" />
@@ -264,7 +299,10 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           </button>
         </header>
 
-        <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden">
+        <motion.div
+          ref={scrollRef}
+          className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden"
+        >
           <div className="px-4 pb-2 shrink-0">
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-text-primary">
@@ -284,34 +322,47 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           </div>
 
           {/* Tab Navigation */}
-          <SlidingTabs
-            tabs={[
-              { id: "chart", label: "차트", elementId: "stock-tab-chart" },
-              {
-                id: "orderbook",
-                label: "호가",
-                elementId: "stock-tab-orderbook",
-              },
-              {
-                id: "my_stock",
-                label: "내 주식",
-                elementId: "stock-tab-mystock",
-              },
-            ]}
-            activeTab={activeTab}
-            onTabChange={(id) => {
-              setActiveTab(id as "chart" | "orderbook" | "my_stock");
-              const now = new Date();
-              const isMarketOpen = now.getHours() >= 9 && now.getHours() < 15;
-              if (id === "orderbook" && !isMarketOpen) {
-                showToast("호가는 내일 9시부터 다시 볼 수 있어요!");
-              }
-            }}
-            isBlack
-          />
+          <div ref={tabsRef}>
+            <SlidingTabs
+              tabs={[
+                { id: "chart", label: "차트", elementId: "stock-tab-chart" },
+                {
+                  id: "orderbook",
+                  label: "호가",
+                  elementId: "stock-tab-orderbook",
+                },
+                {
+                  id: "my_stock",
+                  label: "내 주식",
+                  elementId: "stock-tab-mystock",
+                },
+              ]}
+              activeTab={activeTab}
+              onTabChange={(id) => {
+                setActiveTab(id as "chart" | "orderbook" | "my_stock");
+                const now = new Date();
+                const isMarketOpen = now.getHours() >= 9 && now.getHours() < 15;
+                if (id === "orderbook" && !isMarketOpen) {
+                  showToast("호가는 내일 9시부터 다시 볼 수 있어요!");
+                }
+
+                // Scroll to tabs if not chart
+                if (id !== "chart" && tabsRef.current && scrollRef.current) {
+                  const headerHeight = 60;
+                  const tabsTop = tabsRef.current.offsetTop;
+
+                  scrollRef.current.scrollTo({
+                    top: tabsTop - headerHeight,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+              isBlack
+            />
+          </div>
 
           {/* Content Area */}
-          <div className="flex-1 relative bg-bg-secondary">
+          <div className="flex-1 relative bg-bg-secondary min-h-[500px]">
             {activeTab === "chart" ? (
               <div className="px-4 pb-24 mt-8">
                 <StockChart
@@ -450,7 +501,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Bottom Buttons - Only visible in Chart tab */}
         {activeTab === "chart" && (
@@ -459,14 +510,14 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               <button
                 id="stock-sell-button"
                 onClick={() => handleOpenOrderModal("sell")}
-                className="w-full py-3 bg-negative text-white font-bold rounded-xl"
+                className="w-full py-3 bg-negative active:scale-95 transition-transform duration-200 text-white font-bold rounded-xl"
               >
                 판매하기
               </button>
               <button
                 id="stock-buy-button"
                 onClick={() => handleOpenOrderModal("buy")}
-                className="w-full py-3 bg-positive text-white font-bold rounded-xl"
+                className="w-full py-3 bg-positive active:scale-95 transition-transform duration-200 text-white font-bold rounded-xl"
               >
                 구매하기
               </button>

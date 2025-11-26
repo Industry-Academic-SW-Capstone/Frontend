@@ -281,28 +281,28 @@ export default function Home() {
 
           {/* Permission Popup Modal */}
           {isPermissionPopupOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-              <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-scaleIn p-6 text-center">
-                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-5">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/60 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-bg-primary w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-scaleIn p-6 text-center">
+                <div className="w-16 h-16 bg-bg-secondary rounded-full flex items-center justify-center mx-auto mb-5">
                   <span className="text-3xl">🔔</span>
                 </div>
-                <h3 className="text-xl font-bold text-[#191f28] mb-2">
+                <h3 className="text-xl font-bold text-text-primary mb-2">
                   알림을 켜시겠어요?
                 </h3>
-                <p className="text-[#4e5968] mb-8 leading-relaxed">
+                <p className="text-text-secondary mb-8 leading-relaxed">
                   중요한 투자 정보와 체결 알림을 <br />
                   놓치지 않고 받아보세요.
                 </p>
                 <div className="flex gap-3">
                   <button
                     onClick={handlePermissionDeny}
-                    className="flex-1 py-3.5 rounded-xl bg-[#f2f4f6] text-[#6b7684] font-semibold hover:bg-[#e5e8eb] transition-colors active:scale-[0.98]"
+                    className="flex-1 py-3.5 rounded-xl bg-primary text-text-secondary font-semibold active-transition"
                   >
                     다음에
                   </button>
                   <button
                     onClick={handlePermissionConfirm}
-                    className="flex-1 py-3.5 rounded-xl bg-[#3182f6] text-white font-semibold hover:bg-[#1b64da] transition-colors shadow-lg shadow-blue-500/30 active:scale-[0.98]"
+                    className="flex-1 py-3.5 rounded-xl bg-bg-secondary text-text-secondary font-semibold active-transition"
                   >
                     좋아요
                   </button>

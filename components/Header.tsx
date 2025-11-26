@@ -30,13 +30,13 @@ const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ">
           {/* 알림 버튼 */}
           {onNotificationClick && (
             <button
               id="header-notification"
               onClick={onNotificationClick}
-              className="relative p-1 hover:bg-bg-secondary rounded-full transition-colors"
+              className="relative p-1 active-transition rounded-full transition-colors"
             >
               <BellIcon className="w-6 h-6 text-text-secondary" />
               {unreadCount > 0 && (

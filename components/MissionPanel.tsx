@@ -29,6 +29,8 @@ const difficultyColors: Record<string, string> = {
 const difficultyLabels: Record<string, string> = {
   DAILY: "일일",
   SHORT_TERM: "단기",
+  SWING: "스윙",
+  LONG_TERM: "장기",
   ACHIEVEMENT: "업적",
 };
 

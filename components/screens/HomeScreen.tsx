@@ -95,7 +95,7 @@ const MissionSummary: React.FC<{
     <div
       id="mission-card"
       onClick={onClick}
-      className="bg-bg-secondary p-5 pb-3 pt-3 rounded-2xl cursor-pointer group transition-colors hover:bg-bg-tertiary"
+      className="bg-bg-secondary p-5 pb-3 pt-3 rounded-2xl cursor-pointer group transition-colors active-transition"
     >
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-2">
@@ -456,7 +456,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-bold text-text-primary">관심 주식</h2>
               <button
-                className="text-xs text-text-secondary hover:text-primary transition-colors"
+                className="text-xs text-text-secondary hover:text-primary transition-colors active-transition"
                 onClick={handleNavigateToExplore}
               >
                 전체보기
@@ -564,7 +564,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 실시간 랭킹
               </h2>
               <button
-                className="text-xs text-text-secondary hover:text-primary transition-colors"
+                className="text-xs text-text-secondary hover:text-primary transition-colors active-transition"
                 onClick={() => onNavigate("rankings")}
               >
                 더보기

@@ -7,6 +7,9 @@ async function fetchStockChart(
   stockCode: string,
   periodType: PeriodType
 ): Promise<ChartData[]> {
+  if (stockCode === "") {
+    throw new Error("Invalid stock code");
+  }
   const res = await defaultClient.get(
     `/api/stocks/${stockCode}/chart?periodType=${periodType}`
   );

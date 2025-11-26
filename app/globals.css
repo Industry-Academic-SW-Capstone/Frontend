@@ -12,6 +12,7 @@
   --color-bg-third: var(--bg-third);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --color-text-third: var(--text-third);
   --color-error: var(--error);
   --color-border-color: var(--border-color);
   --color-positive: #ff4d4f;
@@ -30,6 +31,7 @@
   --bg-third: #eff2f5;
   --text-primary: #1e293b;
   --text-secondary: #64748b;
+  --text-third: #9ca3af;
   --border-color: #e8ecf3;
   --error: #ea4f4f;
 }
@@ -44,6 +46,7 @@
     --bg-third: #252525;
     --text-primary: #f8fafc;
     --text-secondary: #9ca3af;
+    --text-third: #9ca3af;
     --border-color: #2b2b2b;
     --error: #ea4f4f;
   }
@@ -126,6 +129,18 @@ textarea,
   display: flex;
   justify-content: center;
   align-items: flex-start;
+}
+
+.active-transition {
+  /* active:bg-bg-third active:scale-95 */
+  transition: all 0.3s ease-in-out;
+  transform: scale(1);
+  transform-origin: center;
+}
+
+.active-transition:active {
+  transform: scale(0.95);
+  background-color: var(--bg-third);
 }
 
 /* Legacy animation styles - keeping for backward compatibility */

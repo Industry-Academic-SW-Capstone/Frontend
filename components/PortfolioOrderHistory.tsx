@@ -80,17 +80,36 @@ const PortfolioOrderHistory: React.FC<PortfolioOrderHistoryProps> = ({
                         {group.orders.map((order) => (
                           <div
                             key={order.orderId}
-                            className="flex justify-between items-start"
+                            className="flex justify-between items-center"
                           >
                             <div className="flex flex-col">
-                              <span className="text-text-primary font-bold text-lg mb-0.5">
+                              <span className="text-text-primary font-semibold text-lg mb-0.5">
                                 {order.stockName}
                               </span>
-                              <span className="text-text-secondary text-sm">
-                                {formatPrice(
-                                  order.executionPrice || order.orderPrice
-                                )}
-                                원{" "}
+                              <span
+                                className={
+                                  "text-text-secondary font-medium text-md"
+                                }
+                              >
+                                {order.stockCode}
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <div className="flex flex-col items-end gap-1">
+                                <span className="text-text-secondary text-sm">
+                                  {order.executionPrice
+                                    ? "주당 " +
+                                      Number(
+                                        order.executionPrice
+                                      ).toLocaleString() +
+                                      "원"
+                                    : order.orderPrice
+                                    ? Number(
+                                        order.orderPrice
+                                      ).toLocaleString() + "원"
+                                    : "시장가"}
+                                </span>
+
                                 <span
                                   className={
                                     order.status === "CANCELLED"
@@ -105,14 +124,7 @@ const PortfolioOrderHistory: React.FC<PortfolioOrderHistoryProps> = ({
                                     : "판매"}{" "}
                                   {order.status === "FILLED" ? "완료" : "취소"}
                                 </span>
-                              </span>
-                            </div>
-                            <div className="flex flex-col items-end">
-                              {order.status === "FILLED" && (
-                                <span className="text-text-secondary text-sm">
-                                  주당 {formatPrice(order.executionPrice)}원
-                                </span>
-                              )}
+                              </div>
                             </div>
                           </div>
                         ))}

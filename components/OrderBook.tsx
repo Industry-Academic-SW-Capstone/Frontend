@@ -21,29 +21,23 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
 
   if (!orderBook) {
     return (
-      <div className="flex flex-col h-full overflow-y-auto bg-bg-primary animate-pulse">
+      <div className="flex flex-col h-full bg-bg-primary animate-pulse">
         {/* Asks Skeleton */}
         <div className="flex flex-col-reverse">
           {[...Array(10)].map((_, i) => (
             <div
               key={`ask-skeleton-${i}`}
-              className="flex h-12 border-b border-border-color relative bg-bg-third"
+              className="grid grid-cols-3 h-10 border-b border-border-color bg-bg-primary"
             >
-              <div className="flex w-full z-10 items-center px-4">
-                <div className="flex-1 text-right">
-                  <div className="h-4 bg-bg-secondary rounded w-20 ml-auto" />
-                </div>
-                <div className="flex-1 text-right">
-                  <div className="h-4 bg-bg-secondary rounded w-12 ml-auto" />
-                </div>
+              <div className="col-span-1" />
+              <div className="col-span-1 flex items-center justify-center bg-blue-50/50 dark:bg-blue-900/10">
+                <div className="h-4 w-16 bg-blue-100 dark:bg-blue-800 rounded" />
+              </div>
+              <div className="col-span-1 flex items-center justify-end px-2">
+                <div className="h-4 w-12 bg-gray-100 dark:bg-gray-800 rounded" />
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Summary Skeleton */}
-        <div className="py-2 text-center border-y border-border-color bg-bg-primary">
-          <div className="h-6 bg-bg-secondary rounded w-32 mx-auto" />
         </div>
 
         {/* Bids Skeleton */}
@@ -51,16 +45,15 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
           {[...Array(10)].map((_, i) => (
             <div
               key={`bid-skeleton-${i}`}
-              className="flex h-12 border-b border-border-color relative bg-bg-secondary"
+              className="grid grid-cols-3 h-10 border-b border-border-color bg-bg-primary"
             >
-              <div className="flex w-full z-10 items-center px-4">
-                <div className="flex-1 text-left">
-                  <div className="h-4 bg-bg-secondary rounded w-12" />
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="h-4 bg-bg-secondary rounded w-20" />
-                </div>
+              <div className="col-span-1 flex items-center justify-start px-2">
+                <div className="h-4 w-12 bg-gray-100 dark:bg-gray-800 rounded" />
               </div>
+              <div className="col-span-1 flex items-center justify-center bg-red-50/50 dark:bg-red-900/10">
+                <div className="h-4 w-16 bg-red-100 dark:bg-red-800 rounded" />
+              </div>
+              <div className="col-span-1" />
             </div>
           ))}
         </div>
@@ -73,90 +66,100 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
     ...(orderBook.bid_levels?.map((l) => l.quantity) || [])
   );
 
-  const renderRow = (
-    level: OrderBookLevel,
-    type: "ask" | "bid",
-    isBest: boolean = false
-  ) => {
+  // Sort Asks: Price Descending (Highest -> Lowest)
+  // The lowest ask is the "Best Ask", which should be at the bottom of the Asks list (closest to center).
+  // So we render Asks in normal order (if they come sorted Ascending, we reverse? No, usually API returns Best Ask first).
+  // Let's assume API returns levels. We want to display:
+  // Top: High Price
+  // Bottom: Low Price
+  const asks = [...(orderBook.ask_levels || [])].sort(
+    (a, b) => b.price - a.price
+  );
+
+  // Sort Bids: Price Descending (Highest -> Lowest)
+  // The highest bid is the "Best Bid", which should be at the top of the Bids list (closest to center).
+  // So we render Bids in normal order.
+  const bids = [...(orderBook.bid_levels || [])].sort(
+    (a, b) => b.price - a.price
+  );
+
+  const renderAskRow = (level: OrderBookLevel) => {
     const barWidth = `${(level.quantity / maxQuantity) * 100}%`;
-    const rowBg = type === "ask" ? "bg-positive" : "bg-negative";
-    const barColor = type === "ask" ? "bg-[#ffcdd2]" : "bg-[#bbdefb]";
-    const priceColor = type === "ask" ? "text-[#d32f2f]" : "text-[#1976d2]";
 
     return (
       <div
-        key={`${type}-${level.price}`}
-        className={`flex h-12 border-b border-border-color cursor-pointer relative bg-bg-secondary`}
-        onClick={() =>
-          onPriceClick(level.price, type === "ask" ? "buy" : "sell")
-        } // Clicking Ask means I want to Buy. Clicking Bid means I want to Sell.
+        key={`ask-${level.price}`}
+        className="grid grid-cols-3 h-11 border-b border-border-color cursor-pointer bg-bg-primary hover:brightness-95 transition-all"
+        onClick={() => onPriceClick(level.price, "buy")}
       >
-        {/* Quantity Bar Background */}
-        <div
-          className={`absolute top-0 ${
-            type === "ask" ? "right-0" : "left-0"
-          } h-full ${rowBg}`}
-          style={{ width: barWidth }}
-        />
+        {/* Left: Empty (or could show diff) */}
+        <div className="col-span-1 border-r border-border-color/50" />
 
-        {/* Content */}
-        <div className="flex w-full z-10 items-center px-4">
-          {type === "ask" ? (
-            <>
-              <div className={`flex-1 text-right font-bold ${priceColor}`}>
-                {level.price.toLocaleString()}
-              </div>
-              <div className="flex-1 text-right text-text-primary">
-                {level.quantity.toLocaleString()}
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex-1 text-left text-text-primary">
-                {level.quantity.toLocaleString()}
-              </div>
-              <div className={`flex-1 text-left font-bold ${priceColor}`}>
-                {level.price.toLocaleString()}
-              </div>
-            </>
-          )}
+        {/* Center: Price */}
+        <div className="col-span-1 flex items-center justify-center bg-blue-50/30 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold relative">
+          {level.price.toLocaleString()}
+        </div>
+
+        {/* Right: Volume */}
+        <div className="col-span-1 relative flex items-center justify-end px-2">
+          <div
+            className="absolute top-1 bottom-1 right-0 bg-blue-100 dark:bg-blue-500/20 transition-all duration-300"
+            style={{ width: barWidth }}
+          />
+          <span className="relative z-10 text-xs text-text-primary font-medium">
+            {level.quantity.toLocaleString()}
+          </span>
         </div>
       </div>
     );
   };
 
-  // Sort Asks descending (highest price on top? No, usually lowest ask is closest to center).
-  // Order Book Layout:
-  // Asks (Sell Orders) - High Price
-  // ...
-  // Asks (Sell Orders) - Low Price (Best Ask)
-  // -----------------------------
-  // Bids (Buy Orders) - High Price (Best Bid)
-  // ...
-  // Bids (Buy Orders) - Low Price
+  const renderBidRow = (level: OrderBookLevel) => {
+    const barWidth = `${(level.quantity / maxQuantity) * 100}%`;
 
-  const asks = [...(orderBook.ask_levels || [])].sort(
-    (a, b) => b.price - a.price
-  );
-  const bids = [...(orderBook.bid_levels || [])].sort(
-    (a, b) => b.price - a.price
-  );
+    return (
+      <div
+        key={`bid-${level.price}`}
+        className="grid grid-cols-3 h-11 border-b border-border-color cursor-pointer bg-bg-primary hover:brightness-95 transition-all"
+        onClick={() => onPriceClick(level.price, "sell")}
+      >
+        {/* Left: Volume */}
+        <div className="col-span-1 relative flex items-center justify-start px-2">
+          <div
+            className="absolute top-1 bottom-1 left-0 bg-red-100 dark:bg-red-500/20 transition-all duration-300"
+            style={{ width: barWidth }}
+          />
+          <span className="relative z-10 text-xs text-text-primary font-medium">
+            {level.quantity.toLocaleString()}
+          </span>
+        </div>
+
+        {/* Center: Price */}
+        <div className="col-span-1 flex items-center justify-center bg-red-50/30 dark:bg-red-500/10 text-red-600 dark:text-red-400 font-bold border-x border-border-color/50">
+          {level.price.toLocaleString()}
+        </div>
+
+        {/* Right: Empty */}
+        <div className="col-span-1" />
+      </div>
+    );
+  };
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-bg-primary">
-      {/* Asks */}
-      <div className="flex flex-col-reverse">
-        {asks.map((level) => renderRow(level, "ask"))}
+    <div className="flex flex-col w-full bg-bg-primary select-none">
+      {/* Asks List */}
+      <div className="flex flex-col w-full">
+        {asks.map((level) => renderAskRow(level))}
       </div>
 
-      {/* Summary / Current Price Indicator could go here */}
-      <div className="py-2 text-center font-bold text-lg border-y border-border-color bg-bg-primary">
+      {/* Current Price / Summary Bar (Optional, but nice to have) */}
+      {/* <div className="flex items-center justify-center py-2 bg-bg-secondary border-y border-border-color font-bold text-lg">
         {orderBook.expected_price?.toLocaleString() || "-"}
-      </div>
+      </div> */}
 
-      {/* Bids */}
-      <div className="flex flex-col">
-        {bids.map((level) => renderRow(level, "bid"))}
+      {/* Bids List */}
+      <div className="flex flex-col w-full">
+        {bids.map((level) => renderBidRow(level))}
       </div>
     </div>
   );

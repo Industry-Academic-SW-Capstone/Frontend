@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { StockDetailInfo } from "@/lib/types/stock";
-import { XMarkIcon } from "./icons/Icons";
 import { useMarketOrder, useLimitOrder } from "@/lib/hooks/useOrder";
 import Toast, { ToastType } from "@/components/ui/Toast";
 import { Drawer } from "vaul";
@@ -161,6 +160,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
       onOpenChange={(open) => {
         if (!open) onClose();
       }}
+      handleOnly
     >
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm" />
@@ -174,68 +174,67 @@ const OrderModal: React.FC<OrderModalProps> = ({
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
-              <Drawer.Title className={`text-2xl font-bold text-text-primary`}>
-                {orderType === "buy" ? "구매하기" : "판매하기"}
-              </Drawer.Title>
+              <div>
+                <Drawer.Title
+                  className={`text-2xl font-bold text-text-primary`}
+                >
+                  {orderType === "buy" ? "구매하기" : "판매하기"}
+                </Drawer.Title>
+              </div>
+
               <p className="text-sm text-text-secondary mt-1">
                 {stock.stockName}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-full hover:bg-bg-primary transition-colors"
-            >
-              <XMarkIcon className="w-6 h-6 text-text-secondary" />
-            </button>
-          </div>
 
-          {/* Tabs */}
-          <div className="flex bg-bg-primary p-1 rounded-xl mb-6">
-            <button
-              onClick={() => setSelectedOrderType("market")}
-              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
-                selectedOrderType === "market"
-                  ? "bg-bg-secondary shadow-md text-text-primary"
-                  : "text-text-tertiary hover:text-text-secondary"
-              }`}
-            >
-              시장가
-            </button>
-            <button
-              onClick={() => setSelectedOrderType("limit")}
-              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
-                selectedOrderType === "limit"
-                  ? "bg-bg-secondary shadow-md text-text-primary"
-                  : "text-text-tertiary hover:text-text-secondary"
-              }`}
-            >
-              지정가
-            </button>
+            {/* Tabs */}
+            <div className="flex bg-bg-primary p-1 rounded-xl mb-6">
+              <button
+                onClick={() => setSelectedOrderType("market")}
+                className={`flex-1 py-2.5 active:scale-95 duration-75 px-3 text-sm font-bold rounded-lg transition-all ${
+                  selectedOrderType === "market"
+                    ? "bg-bg-secondary shadow-md text-text-primary"
+                    : "text-text-tertiary hover:text-text-secondary"
+                }`}
+              >
+                시장가
+              </button>
+              <button
+                onClick={() => setSelectedOrderType("limit")}
+                className={`flex-1 py-2.5 active:scale-95 duration-75 px-3 text-sm font-bold rounded-lg transition-all ${
+                  selectedOrderType === "limit"
+                    ? "bg-bg-secondary shadow-md text-text-primary"
+                    : "text-text-tertiary hover:text-text-secondary"
+                }`}
+              >
+                지정가
+              </button>
+            </div>
           </div>
 
           {/* Inputs */}
           <div className="space-y-6">
-            {selectedOrderType === "limit" && (
-              <div className="relative">
-                <label className="block text-xs font-medium text-text-tertiary mb-1.5 ml-1">
-                  가격
-                </label>
-                <div
-                  className={`flex items-center bg-bg-primary rounded-xl border-2 focus-within:${themeBorder} transition-colors overflow-hidden`}
-                >
-                  <input
-                    type="text"
-                    value={Number(limitPrice).toLocaleString()}
-                    onChange={handleLimitPriceChange}
-                    className="w-full bg-transparent p-4 text-xl font-bold text-right outline-none"
-                    placeholder="0"
-                  />
-                  <span className="pr-4 text-text-secondary font-medium">
-                    원
-                  </span>
-                </div>
+            <div
+              className={`relative transition-all duration-400 ease-out overflow-hidden ${
+                selectedOrderType === "limit" ? "max-h-30" : "max-h-0 -mt-6"
+              }`}
+            >
+              <label className="block text-xs font-medium text-text-tertiary mb-1.5 ml-1">
+                가격
+              </label>
+              <div
+                className={`flex items-center bg-bg-primary rounded-xl border-2 focus-within:${themeBorder} transition-colors overflow-hidden`}
+              >
+                <input
+                  type="text"
+                  value={Number(limitPrice).toLocaleString()}
+                  onChange={handleLimitPriceChange}
+                  className="w-full bg-transparent p-4 text-xl font-bold text-right outline-none"
+                  placeholder="0"
+                />
+                <span className="pr-4 text-text-secondary font-medium">원</span>
               </div>
-            )}
+            </div>
 
             <div className="relative">
               <label className="block text-xs font-medium text-text-tertiary mb-1.5 ml-1">

@@ -683,7 +683,7 @@ const StockChart: React.FC<StockChartProps> = ({
             <button
               key={t}
               onClick={() => setPeriod(t)}
-              className={`relative z-10 w-1/5 py-2 text-sm font-semibold rounded-md transition-colors ${
+              className={`relative z-10 w-1/5 py-2 active:scale-95 transition-all duration-200 text-sm font-semibold rounded-md ${
                 period === t ? "text-text-primary" : "text-text-secondary"
               }`}
             >
@@ -700,7 +700,7 @@ const StockChart: React.FC<StockChartProps> = ({
           ))}
         </div>
         <button
-          className="h-9 w-9 ml-1 shrink-0 rounded-md bg-bg-secondary text-text-primary flex items-center justify-center"
+          className="h-9 w-9 ml-1 shrink-0 active:scale-95 transition-transform duration-200 ease-in-out rounded-md bg-bg-secondary text-text-primary flex items-center justify-center"
           onClick={() => setChartMode(chartMode === "line" ? "candle" : "line")}
         >
           {chartMode !== "line" ? <FaChartColumn /> : <FaChartLine />}

@@ -402,7 +402,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </div>
 
         {/* Achievements Section */}
-        <div>
+        {/* <div>
           <button
             className={`w-full flex items-center justify-between p-6 hover:bg-bg-third transition-colors`}
             onClick={() => handleAccordion("achievements")}
@@ -460,7 +460,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
               )}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Settings Section */}
         <div>

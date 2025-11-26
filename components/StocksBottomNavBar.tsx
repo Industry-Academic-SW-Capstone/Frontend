@@ -31,12 +31,11 @@ const StocksBottomNavBar: React.FC<StocksBottomNavBarProps> = ({
       <div className="bg-bg-secondary/80 backdrop-blur-lg border-t border-border-color px-2 pt-2 pb-4 flex justify-around rounded-t-2xl">
         <button
           onClick={onExit}
-          className="flex flex-col items-center justify-center w-16 h-16 transition-all duration-200 ease-in-out rounded-lg text-text-secondary hover:text-text-primary active:scale-95 group"
+          className="flex flex-col active-transition items-center justify-center w-16 h-16 transition-all duration-200 ease-in-out rounded-lg text-text-secondary group"
         >
           <div className="relative">
             <ArrowUturnLeftIcon className="w-7 h-7 mb-1 group-hover:-translate-x-1 transition-transform" />
             {/* 스와이프 힌트 아이콘 */}
-            <div className="absolute -right-1 -top-1 w-2 h-2 bg-primary rounded-full animate-pulse" />
           </div>
           <span className="text-xs font-medium">뒤로가기</span>
         </button>
@@ -45,7 +44,7 @@ const StocksBottomNavBar: React.FC<StocksBottomNavBarProps> = ({
             key={item.view}
             id={`stock-tab-${item.view}`}
             onClick={() => setCurrentView(item.view)}
-            className={`flex flex-col items-center justify-center w-16 h-16 transition-all duration-200 ease-in-out rounded-lg ${
+            className={`flex flex-col items-center justify-center w-16 h-16 transition-all duration-200 ease-in-out rounded-lg active-transition ${
               currentView === item.view
                 ? "text-primary scale-105"
                 : "text-text-secondary hover:text-text-primary"

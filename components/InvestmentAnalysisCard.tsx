@@ -51,7 +51,7 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
         {/* Persona Section */}
         {topPersona && (
           <div className="bg-bg-secondary p-6 rounded-3xl border border-border-color shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center justify-between gap-2 mb-4">
               <span className="text-text-secondary text-sm font-medium">
                 나의 투자 페르소나
               </span>
@@ -67,9 +67,9 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
                     </div>
                   )
                 }
-                className="text-text-secondary hover:text-primary transition-colors"
+                className="text-text-secondary bg-bg-third rounded-full px-2 hover:text-primary transition-colors"
               >
-                <Icons.InformationCircleIcon className="w-5 h-5" />
+                <span className="text-text-third text-sm">자세히 보기</span>
               </button>
             </div>
 
@@ -85,7 +85,7 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {/* Style Breakdown */}
           <div className="bg-bg-secondary p-6 rounded-3xl border border-border-color shadow-sm">
             <div className="flex items-center justify-between mb-6">
