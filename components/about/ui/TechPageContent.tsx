@@ -15,6 +15,13 @@ import {
   LucideIcon,
   ArrowRight,
   CheckCircle2,
+  Smartphone,
+  Cpu,
+  Zap,
+  Activity,
+  Github,
+  Building2,
+  Bell,
 } from "lucide-react";
 
 const NODE_DETAILS: Record<
