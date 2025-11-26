@@ -14,6 +14,9 @@ export default function PWARegistry() {
             .register("/sw.js")
             .then((registration) => {
               console.log("Service Worker registered: ", registration);
+              if (registration.active) {
+                registration.active.postMessage({ type: "CHECK_DEPLOYMENT" });
+              }
             })
             .catch((error) => {
               console.error("Service Worker registration failed: ", error);

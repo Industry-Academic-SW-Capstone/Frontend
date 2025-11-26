@@ -9,6 +9,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import ThemeManager from "@/components/ThemeManager";
 import { PostHogProvider } from "@/lib/providers/PosthogProvider";
+import CapacitorManager from "@/components/CapacitorManager";
 
 const pretendard = localFont({
   src: "../fonts/pretendard/PretendardVariable.woff2",
@@ -75,6 +76,7 @@ export default function RootLayout({
         <QueryProvider>
           <ThemeManager />
           <PWARegistry />
+          <CapacitorManager />
           <PostHogProvider>{children}</PostHogProvider>
         </QueryProvider>
       </body>

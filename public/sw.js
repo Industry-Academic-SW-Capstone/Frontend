@@ -76,3 +76,72 @@ self.addEventListener("notificationclick", function (event) {
       })
   );
 });
+
+// Deployment Check Logic
+const CACHE_VERSION_KEY = "deployment-timestamp";
+
+async function checkDeploymentTime() {
+  try {
+    const response = await fetch("/api/deployment");
+    if (!response.ok) return;
+
+    const data = await response.json();
+    const serverTimestamp = data.timestamp;
+
+    const cache = await caches.open("app-meta");
+    const cachedResponse = await cache.match(CACHE_VERSION_KEY);
+
+    let storedTimestamp = 0;
+    if (cachedResponse) {
+      const cachedData = await cachedResponse.json();
+      storedTimestamp = cachedData.timestamp;
+    }
+
+    console.log(`[SW] Server: ${serverTimestamp}, Stored: ${storedTimestamp}`);
+
+    if (serverTimestamp > storedTimestamp) {
+      console.log("[SW] New deployment detected. Clearing caches...");
+
+      // Clear all caches
+      const cacheKeys = await caches.keys();
+      await Promise.all(
+        cacheKeys.map((key) => {
+          if (key !== "app-meta") {
+            // Keep meta cache to store new timestamp
+            console.log(`[SW] Deleting cache: ${key}`);
+            return caches.delete(key);
+          }
+        })
+      );
+
+      // Update stored timestamp
+      await cache.put(
+        CACHE_VERSION_KEY,
+        new Response(JSON.stringify({ timestamp: serverTimestamp }))
+      );
+
+      console.log("[SW] Caches cleared and timestamp updated.");
+
+      // Notify clients to reload if needed (optional, but good for UX)
+      self.clients.matchAll().then((clients) => {
+        clients.forEach((client) =>
+          client.postMessage({ type: "CACHE_CLEARED" })
+        );
+      });
+    }
+  } catch (error) {
+    console.error("[SW] Failed to check deployment time:", error);
+  }
+}
+
+self.addEventListener("activate", (event) => {
+  console.log("[SW] Activate event");
+  event.waitUntil(checkDeploymentTime());
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "CHECK_DEPLOYMENT") {
+    console.log("[SW] Manual deployment check requested");
+    event.waitUntil(checkDeploymentTime());
+  }
+});

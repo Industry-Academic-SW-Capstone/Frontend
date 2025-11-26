@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@capacitor/core": "^7.4.4",
+    "@capacitor/local-notifications": "^7.0.3",
+    "@capacitor/push-notifications": "^7.0.3",
     "@google/genai": "^1.28.0",
     "@sentry/nextjs": "^10.27.0",
     "@simplewebauthn/browser": "^13.2.2",
