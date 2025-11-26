@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
 import { ArrowLeftIcon, HeartIcon } from "@/components/icons/Icons";
@@ -21,7 +21,11 @@ import { ChevronDownIcon, Sparkles } from "lucide-react";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
 import StockDetailTutorialOverlay from "../tutorial/StockDetailTutorialOverlay";
 import OrderHistory from "@/components/OrderHistory";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
+import { useWebSocket } from "@/lib/providers/SocketProvider";
+import { useChartStore } from "@/lib/stores/useChartStore";
+import { PeriodType } from "@/lib/types/stock";
+import { useStockChart } from "@/lib/hooks/stocks/useStockChart";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -57,13 +61,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
-  const nameRef = useRef<HTMLParagraphElement>(null);
-
-  // Detect if the price element is in view.
-  // margin "-60px" accounts for the sticky header height.
-  const isPriceInView = useInView(nameRef, {
-    margin: "-60px 0px 0px 0px",
-  });
+  const [isPriceVisible, setIsPriceVisible] = useState(true);
 
   const handleTutorialComplete = () => {
     updateInfo({ stockDetailTutorialCompleted: true });
@@ -164,6 +162,39 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     handleOpenOrderModal(type, price); // Open order modal
   };
 
+  // --- Data Fetching & Stores ---
+  const { setSubscribeSet } = useWebSocket();
+  const {
+    chartDatas: realTimeChartDatas,
+    setPeriodType,
+    initializeChartData,
+  } = useChartStore();
+  const [period, setPeriod] = useState<PeriodType>("1day");
+
+  useEffect(() => {
+    if (stock?.stockCode) setSubscribeSet([stock.stockCode]);
+  }, [stock?.stockCode, setSubscribeSet]);
+
+  const { data: chartDatas } = useStockChart(stock?.stockCode || "", period);
+  useEffect(() => {
+    if (chartDatas && chartDatas.length > 0) {
+      initializeChartData(chartDatas);
+    }
+  }, [chartDatas, initializeChartData]);
+
+  // --- Data Merging ---
+  const mergedChartDatas = useMemo(() => {
+    let historical = chartDatas || [];
+    let merged = historical;
+    if (realTimeChartDatas.length > 0) {
+      merged =
+        historical.length > 0
+          ? [...historical.slice(0, -1), ...realTimeChartDatas]
+          : realTimeChartDatas;
+    }
+    return merged;
+  }, [chartDatas, realTimeChartDatas]);
+
   useEffect(() => {
     if (chartStartPrice === null && stock) {
       setChartChangedAmount(stock.changeAmount);
@@ -180,7 +211,10 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         `${stock.changeRate >= 0 ? "+" : ""}${stock.changeRate}%`
       );
     } else if (chartStartPrice !== null && stock) {
-      const changedAmount = stock.currentPrice - chartStartPrice;
+      const currentPrice = mergedChartDatas[-1]?.closePrice
+        ? mergedChartDatas[-1].closePrice
+        : stock.currentPrice;
+      const changedAmount = currentPrice - chartStartPrice;
       const changedRate = (changedAmount / chartStartPrice) * 100;
 
       setChartChangedAmount(changedAmount);
@@ -195,7 +229,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         `${changedRate >= 0 ? "+" : ""}${changedRate.toFixed(2)}%`
       );
     }
-  }, [chartStartPrice, stock]);
+  }, [chartStartPrice, stock, mergedChartDatas]);
 
   // 스켈레톤 UI
   if (isStockLoading || !stock) {
@@ -220,9 +254,13 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
             {/* StockChart 스켈레톤 */}
             <StockChart
-              setChartStartPrice={setChartStartPrice}
               stockCode=""
               isPositive={true}
+              period={period}
+              setPeriod={setPeriod}
+              setPeriodType={setPeriodType}
+              mergedChartDatas={mergedChartDatas}
+              setChartStartPrice={setChartStartPrice}
             />
 
             <div className="mt-8">
@@ -282,8 +320,8 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               className="flex flex-col"
               initial={{ opacity: 0, y: 10 }}
               animate={{
-                opacity: !isPriceInView && isMounted ? 1 : 0,
-                y: !isPriceInView && isMounted ? 0 : 10,
+                opacity: !isPriceVisible ? 1 : 0,
+                y: !isPriceVisible ? 0 : 10,
               }}
               transition={{ duration: 0.2 }}
             >
@@ -292,7 +330,10 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-base font-bold text-text-primary">
-                  {stock.currentPrice.toLocaleString()}원
+                  {mergedChartDatas[-1]?.closePrice
+                    ? mergedChartDatas[-1].closePrice.toLocaleString()
+                    : stock.currentPrice.toLocaleString()}
+                  원
                 </span>
                 <span
                   className={`text-xs font-medium ${
@@ -324,16 +365,18 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         >
           <div className="px-4 pb-2 shrink-0">
             <div className="flex items-center gap-2">
-              <h1
-                ref={nameRef}
-                className="text-2xl font-bold text-text-primary"
-              >
+              <h1 className="text-2xl font-bold text-text-primary">
                 {stock.stockName}
               </h1>
             </div>
-            <p className="text-4xl font-bold text-text-primary">
+            <motion.p
+              onViewportEnter={() => setIsPriceVisible(true)}
+              onViewportLeave={() => setIsPriceVisible(false)}
+              viewport={{ margin: "-60px 0px 0px 0px" }}
+              className="text-4xl font-bold text-text-primary"
+            >
               {stock.currentPrice.toLocaleString()}원
-            </p>
+            </motion.p>
             <p
               className={`text-md font-semibold ${
                 isPositive ? "text-positive" : "text-negative"
@@ -388,9 +431,13 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
             {activeTab === "chart" ? (
               <div className="px-4 pb-24 mt-8">
                 <StockChart
-                  setChartStartPrice={setChartStartPrice}
                   stockCode={stock.stockCode}
                   isPositive={isPositive}
+                  period={period}
+                  setPeriod={setPeriod}
+                  setPeriodType={setPeriodType}
+                  mergedChartDatas={mergedChartDatas}
+                  setChartStartPrice={setChartStartPrice}
                 />
                 <div className="mt-8">
                   {(() => {

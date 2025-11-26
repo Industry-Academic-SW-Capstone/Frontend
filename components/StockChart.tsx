@@ -1,16 +1,18 @@
 "use client";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { ChartData, PeriodType } from "@/lib/types/stock";
-import { useStockChart } from "@/lib/hooks/stocks/useStockChart";
 import { FaChartLine, FaChartColumn } from "react-icons/fa6";
-import { useWebSocket } from "@/lib/providers/SocketProvider";
-import { useChartStore } from "@/lib/stores/useChartStore";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 import { useAccountAssets } from "@/lib/hooks/useAccount";
 
 interface StockChartProps {
   stockCode: string;
   isPositive: boolean;
+  period: PeriodType;
+
+  setPeriod: (period: PeriodType) => void;
+  setPeriodType: (periodType: PeriodType) => void;
+  mergedChartDatas: ChartData[];
   setChartStartPrice: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
@@ -18,19 +20,13 @@ const StockChart: React.FC<StockChartProps> = ({
   stockCode,
   isPositive,
   setChartStartPrice,
+  period,
+  setPeriod,
+  setPeriodType,
+  mergedChartDatas,
 }) => {
-  const [period, setPeriod] = useState<PeriodType>("1day");
   const [chartMode, setChartMode] = useState<"line" | "candle">("line");
 
-  // --- Data Fetching & Stores ---
-  const { setSubscribeSet } = useWebSocket();
-  const {
-    chartDatas: realTimeChartDatas,
-    setPeriodType,
-    initializeChartData,
-  } = useChartStore();
-
-  const { data: chartDatas } = useStockChart(stockCode || "", period);
   const { selectedAccount } = useAccountStore();
   const { data: assets } = useAccountAssets(selectedAccount?.id);
 
@@ -63,11 +59,6 @@ const StockChart: React.FC<StockChartProps> = ({
     startX: 0,
   });
 
-  // --- Initialization ---
-  useEffect(() => {
-    if (stockCode) setSubscribeSet([stockCode]);
-  }, [stockCode, setSubscribeSet]);
-
   useEffect(() => {
     setPeriodType(period);
   }, [period, setPeriodType]);
@@ -75,53 +66,27 @@ const StockChart: React.FC<StockChartProps> = ({
   const periods: PeriodType[] = ["1day", "1week", "3month", "1year", "5year"];
   const activeIndex = periods.indexOf(period);
 
-  useEffect(() => {
-    if (chartDatas && chartDatas.length > 0) {
-      initializeChartData(chartDatas);
-    }
-  }, [chartDatas, initializeChartData]);
-
-  // --- Data Merging ---
-  const sortedChartDatas = useMemo(() => {
-    let historical = chartDatas || [];
-    if (
-      historical.length > 1 &&
-      new Date(historical[0].date) >
-        new Date(historical[historical.length - 1].date)
-    ) {
-      historical = [...historical].reverse();
-    }
-    let merged = historical;
-    if (realTimeChartDatas.length > 0) {
-      merged =
-        historical.length > 0
-          ? [...historical.slice(0, -1), ...realTimeChartDatas]
-          : realTimeChartDatas;
-    }
-    return merged;
-  }, [chartDatas, realTimeChartDatas]);
-
   // 데이터 로드 시 초기 Zoom 상태 설정 (전체 보기)
   useEffect(() => {
-    if (sortedChartDatas.length > 0) {
+    if (mergedChartDatas.length > 0) {
       // 기간이 바뀌거나 데이터가 처음 로드되면 전체를 보여줌
       setViewStartIndex(0);
-      setVisibleCount(sortedChartDatas.length);
-      setChartStartPrice(sortedChartDatas[0].closePrice);
+      setVisibleCount(mergedChartDatas.length);
+      setChartStartPrice(mergedChartDatas[0].closePrice);
     }
-  }, [sortedChartDatas, period, setChartStartPrice]);
+  }, [mergedChartDatas, period, setChartStartPrice]);
 
   // --- Derived Visible Data ---
   const visibleDatas = useMemo(() => {
-    if (!sortedChartDatas || sortedChartDatas.length === 0) return [];
+    if (!mergedChartDatas || mergedChartDatas.length === 0) return [];
 
     // Safety checks
-    const total = sortedChartDatas.length;
+    const total = mergedChartDatas.length;
     const count = Math.max(5, Math.min(total, visibleCount || total)); // 최소 5개
     const start = Math.max(0, Math.min(total - count, viewStartIndex));
 
-    return sortedChartDatas.slice(start, start + count);
-  }, [sortedChartDatas, viewStartIndex, visibleCount]);
+    return mergedChartDatas.slice(start, start + count);
+  }, [mergedChartDatas, viewStartIndex, visibleCount]);
 
   // --- Constants ---
   const width = 300;
@@ -140,6 +105,7 @@ const StockChart: React.FC<StockChartProps> = ({
     minPrice,
     maxPrice,
     holdPriceY,
+    currentHoldPrice,
     candlesticks,
     yAxisLabels,
   } = useMemo(() => {
@@ -149,6 +115,7 @@ const StockChart: React.FC<StockChartProps> = ({
         volumeBars: [],
         minPrice: 0,
         maxPrice: 0,
+        currentHoldPrice: 0,
         holdPriceY: null,
         candlesticks: [],
         yAxisLabels: ["0", "0", "0"],
@@ -237,6 +204,7 @@ const StockChart: React.FC<StockChartProps> = ({
       minPrice: paddedMin,
       maxPrice: paddedMax,
       holdPriceY,
+      currentHoldPrice,
       candlesticks: candles,
       yAxisLabels: [
         paddedMax.toLocaleString(),
@@ -301,7 +269,7 @@ const StockChart: React.FC<StockChartProps> = ({
       const scaleFactor = touchRef.current.dist / (dist || 1); // 거리가 멀어지면(분모 커짐) scaleFactor < 1 (Zoom In)
 
       // 2. Calculate New Visible Count (Zoom Level)
-      const total = sortedChartDatas.length;
+      const total = mergedChartDatas.length;
       // 기존 visibleCount에 비율을 곱함
       let newVisibleCount = touchRef.current.visibleCount * scaleFactor;
       newVisibleCount = Math.max(5, Math.min(total, newVisibleCount)); // Clamp
@@ -336,7 +304,7 @@ const StockChart: React.FC<StockChartProps> = ({
 
   // --- Scrollbar / MiniMap Logic ---
   // 전체 데이터 대비 현재 뷰포트의 비율 계산
-  const totalLength = sortedChartDatas.length || 1;
+  const totalLength = mergedChartDatas.length || 1;
   const viewportLeftPct = (viewStartIndex / totalLength) * 100;
   const viewportWidthPct = (visibleCount / totalLength) * 100;
 
@@ -487,6 +455,31 @@ const StockChart: React.FC<StockChartProps> = ({
               />
             )}
 
+            {/* Grid Line Description */}
+            <g transform={`translate(3, -3)`}>
+              {/* 최고가 */}
+
+              <text x="0" y="0" fontSize="10" fill="#9ea6b0">
+                최고가
+              </text>
+            </g>
+
+            {/* 최저가 */}
+            <g transform={`translate(3, ${mainHeight - 3})`}>
+              <text x="0" y="0" fontSize="10" fill="#9ea6b0">
+                최저가
+              </text>
+            </g>
+
+            {/* 평단가 */}
+            {holdPriceY && (
+              <g transform={`translate(3, ${holdPriceY - 3})`}>
+                <text x="0" y="0" fontSize="10" fill="#9ea6b0">
+                  평단가
+                </text>
+              </g>
+            )}
+
             {chartMode === "line" ? (
               <>
                 <path
@@ -585,6 +578,11 @@ const StockChart: React.FC<StockChartProps> = ({
             >
               {yAxisLabels[1]}
             </text>
+            {holdPriceY && (
+              <text y={holdPriceY} fill="var(--text-secondary)" fontSize="10">
+                {currentHoldPrice?.toLocaleString()}
+              </text>
+            )}
             <text y={mainHeight} fill="var(--text-secondary)" fontSize="10">
               {yAxisLabels[2]}
             </text>

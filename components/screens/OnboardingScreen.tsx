@@ -117,7 +117,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   useEffect(() => {
     const code = searchParams.get("code");
     const state = searchParams.get("state");
-    console.log("으악", code, state);
 
     if (code && (state === "kakaoOauthLogin" || state === "kakaoOauthSignIn")) {
       if (processedCode.current === code) return;

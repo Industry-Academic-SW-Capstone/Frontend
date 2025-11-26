@@ -559,14 +559,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* Rankings Preview */}
         {mainRanking && mainRanking.rankings && (
           <div className="bg-bg-secondary rounded-2xl p-5 pb-3 pt-3">
-            <div className="flex justify-between items-center mb-2">
+            <div
+              className="flex justify-between items-center mb-2"
+              onClick={() => onNavigate("rankings")}
+            >
               <h2 className="text-lg font-bold text-text-primary">
                 실시간 랭킹
               </h2>
-              <button
-                className="text-xs text-text-secondary hover:text-primary transition-colors active-transition"
-                onClick={() => onNavigate("rankings")}
-              >
+              <button className="text-xs text-text-secondary hover:text-primary transition-colors active-transition">
                 더보기
               </button>
             </div>
