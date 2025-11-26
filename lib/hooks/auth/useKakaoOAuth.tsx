@@ -42,11 +42,13 @@ export default function useKakaoOAuth() {
   // @param code - 카카오 로그인 콜백으로 전달된 code
   // */
   const fetchKakaoCallback = async (code: string, state?: string) => {
-    const res = await defaultClient.get(
-      `/api/auth/kakao/callback?code=${code}&redirect_uri=${
-        window.location.origin + "/pwa"
-      }&state=${state}`
-    );
+    const res = await defaultClient.get(`/api/auth/kakao/callback`, {
+      params: {
+        code,
+        redirect_uri: window.location.origin + "/pwa",
+        state,
+      },
+    });
     return res.data;
   };
 
