@@ -79,7 +79,7 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
               </p>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
                 <Icons.SparklesIcon className="w-4 h-4" />
-                <span>일치율 {Math.round(topPersona.percentage * 100)}%</span>
+                <span>일치율 {Math.round(topPersona.percentage)}%</span>
               </div>
             </div>
           </div>
@@ -112,13 +112,13 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
                   <div className="flex justify-between text-sm text-text-primary font-medium">
                     <span>{cleanText(style.styleTag)}</span>
                     <span className="text-secondary font-bold">
-                      {Math.round(style.percentage * 100)}%
+                      {Math.round(style.percentage)}%
                     </span>
                   </div>
                   <div className="h-2.5 bg-bg-primary rounded-full overflow-hidden">
                     <div
                       className="h-full bg-secondary rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${style.percentage * 100}%` }}
+                      style={{ width: `${style.percentage}%` }}
                     />
                   </div>
                 </div>
