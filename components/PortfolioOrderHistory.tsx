@@ -15,9 +15,14 @@ const PortfolioOrderHistory: React.FC<PortfolioOrderHistoryProps> = ({
   const [includeCancelled, setIncludeCancelled] = useState(true);
   const { data, isLoading } = usePortfolioOrders(includeCancelled);
 
-  // Helper to format date (e.g., "11.25")
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const safeDateString = dateString.replace(/-/g, "/");
+    const date = new Date(safeDateString);
+
+    if (isNaN(date.getTime())) {
+      return "N/A";
+    }
+
     return `${date.getMonth() + 1}.${date.getDate()}`;
   };
 

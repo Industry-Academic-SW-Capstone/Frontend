@@ -21,7 +21,7 @@ import { ChevronDownIcon, Sparkles } from "lucide-react";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
 import StockDetailTutorialOverlay from "../tutorial/StockDetailTutorialOverlay";
 import OrderHistory from "@/components/OrderHistory";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 interface StockDetailScreenProps {
   ticker: string;
@@ -49,13 +49,13 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLParagraphElement>(null);
 
-  const { scrollY } = useScroll({
-    container: scrollRef,
+  // Detect if the price element is in view.
+  // margin "-60px" accounts for the sticky header height.
+  const isPriceInView = useInView(nameRef, {
+    margin: "-60px 0px 0px 0px",
   });
-
-  const headerOpacity = useTransform(scrollY, [0, 20], [0, 1]);
-  const headerY = useTransform(scrollY, [0, 20], [10, 0]);
 
   const handleTutorialComplete = () => {
     updateInfo({ stockDetailTutorialCompleted: true });
@@ -82,6 +82,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   const [isCompanyDescOpen, setIsCompanyDescOpen] = useState<boolean>(true);
   const [isPositive, setIsPositive] = useState<boolean>(true);
   const [changeString, setChangeString] = useState<string>("");
+  const [simpleChangeString, setSimpleChangeString] = useState<string>("");
   const [toastState, setToastState] = useState<{
     isVisible: boolean;
     message: string;
@@ -167,6 +168,9 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           stock.changeRate >= 0 ? "+" : ""
         }${stock.changeRate}%)`
       );
+      setSimpleChangeString(
+        `${stock.changeRate >= 0 ? "+" : ""}${stock.changeRate}%`
+      );
     } else if (chartStartPrice !== null && stock) {
       const changedAmount = stock.currentPrice - chartStartPrice;
       const changedRate = (changedAmount / chartStartPrice) * 100;
@@ -178,6 +182,9 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         `${changedAmount >= 0 ? "+" : ""}${changedAmount.toLocaleString()}원 (${
           changedAmount >= 0 ? "+" : ""
         }${changedRate.toFixed(2)}%)`
+      );
+      setSimpleChangeString(
+        `${changedRate >= 0 ? "+" : ""}${changedRate.toFixed(2)}%`
       );
     }
   }, [chartStartPrice, stock]);
@@ -265,7 +272,12 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
             {/* Sticky Header Info */}
             <motion.div
               className="flex flex-col"
-              style={{ opacity: headerOpacity, y: headerY }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{
+                opacity: !isPriceInView ? 1 : 0,
+                y: !isPriceInView ? 0 : 10,
+              }}
+              transition={{ duration: 0.2 }}
             >
               <span className="text-sm text-text-secondary font-medium">
                 {stock.stockName}
@@ -279,8 +291,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
                     isPositive ? "text-positive" : "text-negative"
                   }`}
                 >
-                  {stock.changeRate > 0 ? "+" : ""}
-                  {stock.changeRate}%
+                  {simpleChangeString}
                 </span>
               </div>
             </motion.div>
@@ -305,7 +316,10 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         >
           <div className="px-4 pb-2 shrink-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-text-primary">
+              <h1
+                ref={nameRef}
+                className="text-2xl font-bold text-text-primary"
+              >
                 {stock.stockName}
               </h1>
             </div>

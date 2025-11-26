@@ -100,7 +100,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-1">
                 <span className="text-text-secondary">총 금액</span>
-                {/* <HelpCircle className="w-4 h-4 text-text-tertiary" /> */}
               </div>
               <div className="flex flex-col items-end">
                 <span className="text-text-primary font-medium text-lg">
@@ -115,7 +114,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
                 >
                   {data.holding.profitLoss > 0 ? "+" : ""}
                   {data.holding.profitLoss.toLocaleString()} (
-                  {(data.holding.profitRate * 100).toFixed(1)}%)
+                  {data.holding.profitRate.toFixed(2)}%)
                 </span>
               </div>
             </div>
