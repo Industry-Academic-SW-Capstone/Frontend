@@ -347,7 +347,7 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
                     "정말로 파산 신청을 하시겠습니까? 모든 자산이 초기화됩니다."
                   )
                 }
-                className="w-full p-4 mb-24 bg-red-50 rounded-2xl text-left hover:bg-red-100 transition-colors flex items-center justify-between"
+                className="w-full p-4 mb-24 bg-red-50 dark:bg-red-200 rounded-2xl text-left hover:bg-red-100 transition-colors flex items-center justify-between"
               >
                 <div>
                   <span className="font-bold text-red-900 text-sm block">
