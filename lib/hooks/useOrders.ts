@@ -33,6 +33,8 @@ export interface OrderDetail {
   updatedAt: string;
 }
 
+import { PortfolioOrderHistoryResponse } from "@/lib/types/stock";
+
 const fetchPendingOrders = async (
   accountId: number
 ): Promise<PendingOrdersResponse> => {
@@ -52,6 +54,19 @@ const fetchOrderDetail = async (orderId: number): Promise<OrderDetail> => {
 const cancelOrder = async (orderId: number): Promise<OrderDetail> => {
   const response = await defaultClient.post<OrderDetail>(
     `/api/orders/${orderId}/cancel`
+  );
+  return response.data;
+};
+
+const fetchPortfolioOrders = async (
+  accountId: number,
+  includeCancelled: boolean
+): Promise<PortfolioOrderHistoryResponse> => {
+  const response = await defaultClient.get<PortfolioOrderHistoryResponse>(
+    `/api/accounts/${accountId}/orders`,
+    {
+      params: { includeCancelled },
+    }
   );
   return response.data;
 };
@@ -92,5 +107,19 @@ export const useCancelOrder = () => {
         queryKey: ["orderDetail", data.orderId],
       });
     },
+  });
+};
+
+export const usePortfolioOrders = (includeCancelled: boolean = false) => {
+  const { selectedAccount } = useAccountStore();
+  const accountId = selectedAccount?.id;
+
+  return useQuery({
+    queryKey: ["portfolioOrders", accountId, includeCancelled],
+    queryFn: () => {
+      if (!accountId) throw new Error("No account selected");
+      return fetchPortfolioOrders(accountId, includeCancelled);
+    },
+    enabled: !!accountId,
   });
 };

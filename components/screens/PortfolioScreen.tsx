@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ArrowPathIcon } from "@/components/icons/Icons";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 import CountUp from "react-countup";
+import PortfolioOrderHistory from "@/components/PortfolioOrderHistory";
 
 interface PortfolioScreenProps {
   onSelectStock: (ticker: string) => void;
@@ -120,6 +121,7 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
   const { data: pendingOrdersData } = usePendingOrders();
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isChartOpen, setIsChartOpen] = useState(false);
+  const [isOrderHistoryOpen, setIsOrderHistoryOpen] = useState(false);
 
   // Pull to Refresh State
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -203,7 +205,9 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       {/* Header Section */}
       <div className="px-6 -mx-4 bg-bg-secondary pt-4 pb-4 space-y-0">
         <div>
-          <h2 className="text-text-secondary font-medium text-lg">총 자산</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-text-secondary font-medium text-lg">총 자산</h2>
+          </div>
           <div
             className={`text-4xl font-extrabold text-text-primary transition-all duration-500 ease-in-out origin-left
             ${
@@ -307,11 +311,20 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       </div>
 
       {/* Pending Orders Section */}
-      {pendingOrders.length > 0 && (
-        <div className="space-y-3 pt-4 px-6 pb-6 -mx-4 bg-bg-secondary">
+
+      <div className="space-y-3 pt-4 px-6 pb-6 -mx-4 bg-bg-secondary">
+        <div className="flex justify-between items-center">
           <h3 className="text-xl font-bold text-text-primary px-2">
-            주문 내역
+            대기중인 주문
           </h3>
+          <button
+            onClick={() => setIsOrderHistoryOpen(true)}
+            className="text-sm text-text-secondary bg-bg-tertiary px-3 py-1.5 rounded-full font-medium hover:bg-bg-tertiary/80 transition-colors"
+          >
+            전체 내역 보기
+          </button>
+        </div>
+        {pendingOrders.length > 0 ? (
           <div className="space-y-2">
             {pendingOrders.map((order) => (
               <PendingOrderRow
@@ -321,8 +334,12 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
               />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="text-center py-3 rounded-3xl">
+            <p className="text-text-secondary mb-4">대기중인 주문이 없어요</p>
+          </div>
+        )}
+      </div>
 
       {selectedOrderId && (
         <OrderDetailModal
@@ -330,6 +347,11 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
           onClose={() => setSelectedOrderId(null)}
         />
       )}
+
+      <PortfolioOrderHistory
+        isOpen={isOrderHistoryOpen}
+        onClose={() => setIsOrderHistoryOpen(false)}
+      />
     </div>
   );
 };

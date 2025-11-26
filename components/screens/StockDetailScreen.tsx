@@ -16,7 +16,8 @@ import OrderBook from "@/components/OrderBook";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 import { SlidingTabs } from "../ui/SlidingTabs";
 import { useStockAnalyze } from "@/lib/hooks/stocks/useStockAnalyze";
-import { ChevronDownIcon } from "lucide-react";
+import { useCompanyDescribe } from "@/lib/hooks/stocks/useCompanyDescribe";
+import { ChevronDownIcon, Sparkles } from "lucide-react";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
 import StockDetailTutorialOverlay from "../tutorial/StockDetailTutorialOverlay";
 import OrderHistory from "@/components/OrderHistory";
@@ -67,6 +68,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     null
   );
   const [isDetailInfoOpen, setIsDetailInfoOpen] = useState<boolean>(false);
+  const [isCompanyDescOpen, setIsCompanyDescOpen] = useState<boolean>(true);
   const [isPositive, setIsPositive] = useState<boolean>(true);
   const [changeString, setChangeString] = useState<string>("");
   const [toastState, setToastState] = useState<{
@@ -93,6 +95,8 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   } = useStockDetail(ticker);
 
   const { data: stockAnalyze } = useStockAnalyze(ticker);
+  const { data: companyDesc, isLoading: isCompanyDescLoading } =
+    useCompanyDescribe(stock?.stockName || "");
 
   const { data: favoriteStocks } = useFavoriteStocks();
   const addFavoriteMutation = useAddFavorite();
@@ -371,6 +375,53 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
                       </>
                     );
                   })()}
+                </div>
+
+                <div className="mt-8">
+                  <div
+                    className="flex justify-between items-center mb-3 cursor-pointer"
+                    onClick={() => setIsCompanyDescOpen(!isCompanyDescOpen)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-text-primary">
+                        기업 개요
+                      </h3>
+                      {isCompanyDescLoading && (
+                        <div className="flex items-center gap-1 text-xs text-blue-500 animate-pulse">
+                          <Sparkles className="w-3 h-3" />
+                          <span>AI가 개요를 작성중이에요...</span>
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      className={`p-1 rounded-full bg-bg-secondary text-text-secondary transition-transform duration-300 ${
+                        isCompanyDescOpen ? "rotate-180" : ""
+                      }`}
+                    >
+                      <ChevronDownIcon className="w-5 h-5" />
+                    </div>
+                  </div>
+
+                  <div
+                    className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                      isCompanyDescOpen
+                        ? "max-h-[500px] opacity-100"
+                        : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    {isCompanyDescLoading ? (
+                      <div className="space-y-2">
+                        <div className="h-4 w-full bg-border-color rounded animate-pulse" />
+                        <div className="h-4 w-3/4 bg-border-color rounded animate-pulse" />
+                        <div className="h-4 w-1/2 bg-border-color rounded animate-pulse" />
+                      </div>
+                    ) : (
+                      <p className="text-text-secondary text-base leading-relaxed">
+                        {companyDesc?.description ||
+                          "기업 설명을 불러올 수 없습니다."}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="mt-4 p-4 bg-bg-secondary rounded-2xl border border-border-color">

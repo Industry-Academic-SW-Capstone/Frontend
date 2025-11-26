@@ -31,7 +31,16 @@ export interface TechStackItem {
   name: string;
   description: string;
   icon: LucideIcon;
-  category: "Frontend" | "Backend" | "Infrastructure" | "Other";
+  category:
+    | "Frontend"
+    | "Backend"
+    | "Infrastructure"
+    | "DevOps"
+    | "Analytics"
+    | "Security"
+    | "Other";
+  reason?: string;
+  usage?: string;
 }
 
 export interface BlogPost {

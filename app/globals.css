@@ -16,6 +16,7 @@
   --color-border-color: var(--border-color);
   --color-positive: #ff4d4f;
   --color-negative: #228be6;
+  --color-success: #22c55e;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

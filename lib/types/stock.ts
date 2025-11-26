@@ -156,6 +156,31 @@ export interface UpdateCompetitionRequest {
   sellCooldownMinutes: number;
 }
 
+export interface PortfolioOrderHistoryItem {
+  orderId: number;
+  stockCode: string;
+  stockName: string;
+  orderType: "MARKET" | "LIMIT";
+  orderMethod: "BUY" | "SELL";
+  quantity: number;
+  orderPrice: number;
+  executionPrice: number;
+  executedQuantity: number;
+  totalAmount: number;
+  status: OrderStatus;
+  createdAt: string;
+}
+
+export interface PortfolioOrderHistoryGroup {
+  year: number;
+  date: string;
+  orders: PortfolioOrderHistoryItem[];
+}
+
+export interface PortfolioOrderHistoryResponse {
+  ordersByDate: PortfolioOrderHistoryGroup[];
+}
+
 export interface CompetitionParticipant {
   id: string;
   username: string;
@@ -299,6 +324,19 @@ export interface StockHolding {
   profitRate: number;
 }
 
+// OrderStatus {
+//     PENDING, // 미체결
+//     PARTIALLY_FILLED, // 일부 체결
+//     FILLED, // 체결
+//     CANCELLED // 취소
+// }
+
+export type OrderStatus =
+  | "PENDING"
+  | "PARTIALLY_FILLED"
+  | "FILLED"
+  | "CANCELLED";
+
 export interface StockOrderHistory {
   year: number;
   date: string;
@@ -309,7 +347,7 @@ export interface StockOrderHistory {
   executionPrice: number;
   executedQuantity: number;
   totalAmount: number;
-  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  status: OrderStatus;
   createdAt: string;
 }
 
@@ -455,4 +493,10 @@ export interface StockSearchResult {
   stockCode: string;
   stockName: string;
   similarity: number;
+}
+
+export interface CompanyDescription {
+  company_name: string;
+  description: string;
+  cached: boolean;
 }

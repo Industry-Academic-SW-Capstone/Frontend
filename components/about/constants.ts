@@ -190,30 +190,60 @@ export const TECH_STACK: import("./types").TechStackItem[] = [
     description: "App Router 기반의 서버 사이드 렌더링 및 SEO 최적화",
     icon: Smartphone,
     category: "Frontend",
+    reason:
+      "초기 로딩 속도(LCP)를 개선하고, 검색 엔진 최적화(SEO)를 위해 선택했습니다. Vercel과의 완벽한 호환성으로 배포 파이프라인을 간소화할 수 있었습니다.",
+    usage:
+      "App Router를 사용하여 페이지별 라우팅을 처리하고, 서버 컴포넌트와 클라이언트 컴포넌트를 분리하여 렌더링 성능을 최적화했습니다.",
   },
   {
     name: "TypeScript",
     description: "정적 타입 시스템을 통한 안정적인 개발 경험 제공",
     icon: ShieldCheck,
     category: "Frontend",
+    reason:
+      "금융 데이터의 복잡한 타입을 안전하게 처리하고, 런타임 에러를 사전에 방지하기 위해 도입했습니다.",
+    usage:
+      "API 응답 타입(DTO)을 정의하여 프론트엔드와 백엔드 간의 데이터 계약을 명확히 하고, 컴포넌트 Props 검증에 활용하고 있습니다.",
   },
   {
     name: "React Query",
     description: "서버 상태 관리 및 데이터 캐싱/동기화 최적화",
     icon: BarChart3,
     category: "Frontend",
+    reason:
+      "실시간으로 변하는 주식 데이터를 효율적으로 관리하고, 불필요한 네트워크 요청을 줄이기 위해 사용했습니다.",
+    usage:
+      "주식 차트 데이터, 사용자 자산 정보 등 서버에서 가져오는 모든 비동기 데이터를 관리하며, staleTime 설정을 통해 캐싱 전략을 구현했습니다.",
   },
   {
     name: "Zustand",
     description: "가볍고 직관적인 전역 상태 관리 라이브러리",
     icon: Users,
     category: "Frontend",
+    reason:
+      "Redux의 복잡한 보일러플레이트 없이 간단하게 클라이언트 전역 상태를 관리하기 위해 선택했습니다.",
+    usage:
+      "다크 모드 설정, 사용자 인증 토큰, 모달 상태 등 UI와 관련된 전역 상태를 관리하는 데 사용하고 있습니다.",
   },
   {
     name: "Tailwind CSS",
     description: "Utility-first 접근 방식의 신속한 UI 스타일링",
     icon: TrendingUp,
     category: "Frontend",
+    reason:
+      "일관된 디자인 시스템을 빠르게 적용하고, 클래스명 고민 없이 생산성을 높이기 위해 도입했습니다.",
+    usage:
+      "반응형 디자인, 다크 모드 스타일링, 그리고 커스텀 디자인 토큰을 정의하여 프로젝트 전반의 스타일을 관리합니다.",
+  },
+  {
+    name: "Framer Motion",
+    description: "선언적이고 강력한 애니메이션 라이브러리",
+    icon: Zap,
+    category: "Frontend",
+    reason:
+      "복잡한 CSS 애니메이션을 직관적인 코드로 구현하고, 자연스러운 제스처 인터랙션을 제공하기 위해 사용했습니다.",
+    usage:
+      "페이지 전환 효과, 스크롤 애니메이션, 그리고 시스템 아키텍처 다이어그램의 데이터 흐름 시각화에 활용되었습니다.",
   },
   // Backend
   {
@@ -240,23 +270,48 @@ export const TECH_STACK: import("./types").TechStackItem[] = [
     icon: TrendingUp,
     category: "Backend",
   },
-  // Infrastructure
+  // DevOps & Analytics
+  {
+    name: "Vercel",
+    description: "Frontend 배포 자동화 및 Edge Network 호스팅",
+    icon: Box,
+    category: "DevOps",
+  },
   {
     name: "Docker",
     description: "컨테이너 기반의 일관된 개발 및 배포 환경 구축",
     icon: Box,
-    category: "Infrastructure",
+    category: "DevOps",
   },
   {
-    name: "Traefik",
-    description: "마이크로서비스를 위한 모던 리버스 프록시 및 로드 밸런서",
-    icon: ShieldCheck,
-    category: "Infrastructure",
-  },
-  {
-    name: "Grafana & Prometheus",
-    description: "서버 상태 및 성능 지표 실시간 모니터링",
+    name: "PostHog",
+    description: "사용자 행동 분석 및 제품 데이터 인사이트 도출",
     icon: BarChart3,
+    category: "Analytics",
+  },
+  {
+    name: "Sentry",
+    description: "실시간 에러 트래킹 및 성능 모니터링",
+    icon: ShieldCheck,
+    category: "Analytics",
+  },
+  // Security
+  {
+    name: "Iron Session",
+    description: "암호화된 쿠키 기반의 안전한 세션 관리",
+    icon: ShieldCheck,
+    category: "Security",
+  },
+  {
+    name: "SimpleWebAuthn",
+    description: "Passkey 기반의 생체 인증 시스템 구현",
+    icon: ShieldCheck,
+    category: "Security",
+  },
+  {
+    name: "Firebase FCM",
+    description: "크로스 플랫폼 푸시 알림 서비스",
+    icon: Smartphone,
     category: "Infrastructure",
   },
 ];

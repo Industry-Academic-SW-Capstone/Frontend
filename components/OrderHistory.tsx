@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useStockHistory } from "@/lib/hooks/stocks/useStockHistory";
 import { StockOrderHistory } from "@/lib/types/stock";
 import { FaQuestion } from "react-icons/fa6";
+import WateringCalculator from "./WateringCalculator";
 
 interface OrderHistoryProps {
   stockCode: string;
@@ -13,6 +14,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
   accountId,
 }) => {
   const { data, isLoading } = useStockHistory(accountId, stockCode);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -69,6 +71,65 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
 
   return (
     <div className="pb-24 px-2 pt-2">
+      {/* Holdings Section */}
+      {data?.holding && data.holding.quantity > 0 && (
+        <div className="px-4 py-4 mb-2">
+          <div className="mb-6">
+            <p className="text-text-secondary text-sm mb-1">1주 평균금액</p>
+            <div className="flex items-center justify-between gap-2">
+              <h1 className="text-3xl font-bold text-text-primary">
+                {data.holding.averagePricePerShare.toLocaleString()}원
+              </h1>
+              <button
+                onClick={() => setIsCalculatorOpen(true)}
+                className="bg-bg-third text-text-primary px-3 py-2 rounded-lg text-sm font-medium"
+              >
+                물타기 계산기
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-4 mb-2 border-b border-border-color pb-4">
+            <div className="flex justify-between items-center">
+              <span className="text-text-secondary">보유 수량</span>
+              <span className="text-text-primary font-medium text-lg">
+                {data.holding.quantity}주
+              </span>
+            </div>
+
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-1">
+                <span className="text-text-secondary">총 금액</span>
+                {/* <HelpCircle className="w-4 h-4 text-text-tertiary" /> */}
+              </div>
+              <div className="flex flex-col items-end">
+                <span className="text-text-primary font-medium text-lg">
+                  {data.holding.totalValue.toLocaleString()}원
+                </span>
+                <span
+                  className={`text-sm font-medium ${
+                    data.holding.profitRate >= 0
+                      ? "text-[#ea4f4f]"
+                      : "text-[#335eea]"
+                  }`}
+                >
+                  {data.holding.profitLoss > 0 ? "+" : ""}
+                  {data.holding.profitLoss.toLocaleString()} (
+                  {(data.holding.profitRate * 100).toFixed(1)}%)
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className="text-text-secondary">투자 원금</span>
+              <span className="text-text-primary font-medium text-lg">
+                {data.holding.investmentPrincipal.toLocaleString()}원
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Summary Section - Optional, based on screenshot "보유 수량", "총 금액" etc could go here but might be redundant if already shown in "My Stock" tab header or similar. 
           For now, we just list the history as requested. 
       */}
@@ -132,14 +193,12 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
                         <span className="text-text-primary font-medium">
                           주당{" "}
                           {order.executionPrice
-                            ? order.executionPrice
-                            : order.orderPrice}
+                            ? Number(order.executionPrice).toLocaleString()
+                            : Number(order.orderPrice).toLocaleString()}
                           원
                         </span>
                         <span className="text-text-secondary text-xs mt-0.5">
-                          {order.status === "COMPLETED"
-                            ? "체결완료"
-                            : "주문접수"}
+                          {order.status === "FILLED" ? "체결완료" : "주문접수"}
                         </span>
                       </div>
                     </div>
@@ -153,6 +212,17 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
           모든 주문 내역을 불러왔어요
         </div>
       </div>
+
+      {data && data.holding && (
+        <WateringCalculator
+          isOpen={isCalculatorOpen}
+          onClose={() => setIsCalculatorOpen(false)}
+          currentPrice={data.currentPrice}
+          averagePrice={data.holding.averagePricePerShare}
+          currentQuantity={data.holding.quantity}
+          stockName={data.stockName}
+        />
+      )}
     </div>
   );
 };
