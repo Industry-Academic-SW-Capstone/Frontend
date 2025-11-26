@@ -46,6 +46,14 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   const { mutate: updateInfo } = usePutInfo();
   const { data: userInfo } = useFetchInfo();
   const { startStockDetailTutorial } = useTutorialStore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(false);
+    setTimeout(() => {
+      setIsMounted(true);
+    }, 300);
+  }, []);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -274,8 +282,8 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               className="flex flex-col"
               initial={{ opacity: 0, y: 10 }}
               animate={{
-                opacity: !isPriceInView ? 1 : 0,
-                y: !isPriceInView ? 0 : 10,
+                opacity: !isPriceInView && isMounted ? 1 : 0,
+                y: !isPriceInView && isMounted ? 0 : 10,
               }}
               transition={{ duration: 0.2 }}
             >
