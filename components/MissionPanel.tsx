@@ -49,20 +49,20 @@ const MissionItem: React.FC<{ mission: MissionListItem }> = ({ mission }) => {
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex w-fit items-center gap-2 mb-1">
             {badgeLabel !== "일일" && (
               <span
-                className={`text-xs px-2 py-0.5 rounded-full text-white font-medium ${badgeColor}`}
+                className={`text-xs w-fit px-2 py-0.5 rounded-full text-white font-medium ${badgeColor}`}
               >
                 {badgeLabel}
               </span>
             )}
             {isCompleted && (
-              <span className="text-xs text-green-600 font-semibold">
+              <span className="text-xs w-fit text-green-600 font-semibold">
                 ✓ 완료
               </span>
             )}
-            <h4 className="font-bold text-text-primary text-sm">
+            <h4 className="font-bold w-fit text-text-primary text-sm">
               {mission.title}
             </h4>
           </div>
@@ -73,7 +73,7 @@ const MissionItem: React.FC<{ mission: MissionListItem }> = ({ mission }) => {
             </p>
           )}
         </div>
-        <div className="text-right ml-3 min-w-[60px]">
+        <div className="text-right ml-3 min-w-[60px] w-fit">
           <p className="text-xs text-text-secondary">보상</p>
           <p className="font-bold text-primary text-sm">
             {mission.rewardMoney > 0

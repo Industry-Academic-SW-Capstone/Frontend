@@ -79,14 +79,14 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
     isBest: boolean = false
   ) => {
     const barWidth = `${(level.quantity / maxQuantity) * 100}%`;
-    const rowBg = type === "ask" ? "bg-[#ffebee]" : "bg-[#e3f2fd]";
+    const rowBg = type === "ask" ? "bg-positive" : "bg-negative";
     const barColor = type === "ask" ? "bg-[#ffcdd2]" : "bg-[#bbdefb]";
     const priceColor = type === "ask" ? "text-[#d32f2f]" : "text-[#1976d2]";
 
     return (
       <div
         key={`${type}-${level.price}`}
-        className={`flex h-12 border-b border-border-color cursor-pointer relative ${rowBg}`}
+        className={`flex h-12 border-b border-border-color cursor-pointer relative bg-bg-secondary`}
         onClick={() =>
           onPriceClick(level.price, type === "ask" ? "buy" : "sell")
         } // Clicking Ask means I want to Buy. Clicking Bid means I want to Sell.
@@ -95,7 +95,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
         <div
           className={`absolute top-0 ${
             type === "ask" ? "right-0" : "left-0"
-          } h-full ${barColor} opacity-50`}
+          } h-full ${rowBg}`}
           style={{ width: barWidth }}
         />
 

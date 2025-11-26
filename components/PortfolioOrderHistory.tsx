@@ -61,62 +61,64 @@ const PortfolioOrderHistory: React.FC<PortfolioOrderHistoryProps> = ({
               </div>
             ) : (
               <div className="space-y-8">
-                {data?.ordersByDate.map((group) => (
-                  <div key={group.date} className="flex gap-4">
-                    {/* Date Column */}
-                    <div className="w-12 pt-1">
-                      <span className="text-text-secondary font-medium sticky top-4">
-                        {formatDate(group.date)}
-                      </span>
-                    </div>
-
-                    {/* Orders Column */}
-                    <div className="flex-1 space-y-6">
-                      {group.orders.map((order) => (
-                        <div
-                          key={order.orderId}
-                          className="flex justify-between items-start"
-                        >
-                          <div className="flex flex-col">
-                            <span className="text-text-primary font-bold text-lg mb-0.5">
-                              {order.stockName}
-                            </span>
-                            <span className="text-text-secondary text-sm">
-                              {formatPrice(
-                                order.executionPrice || order.orderPrice
-                              )}
-                              원{" "}
-                              <span
-                                className={
-                                  order.status === "CANCELLED"
-                                    ? "text-text-secondary"
-                                    : order.orderMethod === "BUY"
-                                    ? "text-[#ea4f4f]"
-                                    : "text-[#335eea]"
-                                }
-                              >
-                                {order.orderMethod === "BUY" ? "구매" : "판매"}{" "}
-                                {order.status === "FILLED" ? "완료" : "취소"}
-                              </span>
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            {order.status === "FILLED" && (
-                              <span className="text-text-secondary text-sm">
-                                주당 {formatPrice(order.executionPrice)}원
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-
-                {(!data?.ordersByDate || data.ordersByDate.length === 0) && (
+                {!data?.ordersByDate || data.ordersByDate.length === 0 ? (
                   <div className="text-center py-20 text-text-secondary">
                     주문 내역이 없습니다.
                   </div>
+                ) : (
+                  data?.ordersByDate.map((group) => (
+                    <div key={group.date} className="flex gap-4">
+                      {/* Date Column */}
+                      <div className="w-12 pt-1">
+                        <span className="text-text-secondary font-medium sticky top-4">
+                          {formatDate(group.date)}
+                        </span>
+                      </div>
+
+                      {/* Orders Column */}
+                      <div className="flex-1 space-y-6">
+                        {group.orders.map((order) => (
+                          <div
+                            key={order.orderId}
+                            className="flex justify-between items-start"
+                          >
+                            <div className="flex flex-col">
+                              <span className="text-text-primary font-bold text-lg mb-0.5">
+                                {order.stockName}
+                              </span>
+                              <span className="text-text-secondary text-sm">
+                                {formatPrice(
+                                  order.executionPrice || order.orderPrice
+                                )}
+                                원{" "}
+                                <span
+                                  className={
+                                    order.status === "CANCELLED"
+                                      ? "text-text-secondary"
+                                      : order.orderMethod === "BUY"
+                                      ? "text-[#ea4f4f]"
+                                      : "text-[#335eea]"
+                                  }
+                                >
+                                  {order.orderMethod === "BUY"
+                                    ? "구매"
+                                    : "판매"}{" "}
+                                  {order.status === "FILLED" ? "완료" : "취소"}
+                                </span>
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              {order.status === "FILLED" && (
+                                <span className="text-text-secondary text-sm">
+                                  주당 {formatPrice(order.executionPrice)}원
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))
                 )}
               </div>
             )}
