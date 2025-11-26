@@ -3,6 +3,7 @@ import { TrendingUp, Award, Zap } from "lucide-react";
 import { HeroActions } from "./HeroActions";
 import { FadeIn } from "@/components/about/ui/Motion";
 import { ScrollDown } from "../scrollDown";
+import Image from "next/image";
 
 export const Hero: React.FC = () => {
   return (
@@ -111,8 +112,13 @@ export const Hero: React.FC = () => {
 
                   {/* App Header */}
                   <div className="px-6 pb-6">
-                    <div className="w-10 h-10 bg-blue-500 rounded-2xl mb-4 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                      <TrendingUp className="text-white" size={20} />
+                    <div className="w-10 h-10 bg-blue-500 rounded-xl mb-4 flex items-center justify-center shadow-lg shadow-blue-500/30 overflow-hidden">
+                      <Image
+                        src="/icon-192.png"
+                        width={40}
+                        height={40}
+                        alt="StockIt Logo"
+                      />
                     </div>
                     <div className="w-32 h-8 bg-white/10 rounded-lg mb-2"></div>
                     <div className="w-20 h-4 bg-white/5 rounded-lg"></div>
