@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { TrendingUp, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { LegalModal } from "./modals/LegalModal";
 import { PrivacyPolicyContent } from "./modals/PrivacyPolicy";
 import { TermsOfServiceContent } from "./modals/TermsOfService";
+import Image from "next/image";
 
 export const Footer: React.FC = () => {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -18,7 +19,12 @@ export const Footer: React.FC = () => {
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                  <TrendingUp size={18} strokeWidth={3} />
+                  <Image
+                    src="/icon-192.png"
+                    width={32}
+                    height={32}
+                    alt="StockIt Logo"
+                  />
                 </div>
                 <span className="text-xl font-extrabold text-slate-900 tracking-tight">
                   StockIt!

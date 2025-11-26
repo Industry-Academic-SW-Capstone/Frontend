@@ -25,7 +25,7 @@ def generate_icons():
             print(f"Generated {filename} ({size}x{size})")
 
         # Generate favicon.ico specifically
-        img.resize((48, 48), Image.Resampling.LANCZOS).save("public/favicon.ico")
+        img.r.save("public/favicon.ico")
         print("Generated public/favicon.ico (48x48)")
 
     except Exception as e:

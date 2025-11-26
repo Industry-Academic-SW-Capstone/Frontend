@@ -78,7 +78,7 @@ export const Header: React.FC = () => {
               handleNavClick(e, "/about#home");
             }}
           >
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden shadow-lg shadow-blue-500/20 transition-transform group-hover:scale-105 duration-300">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden shadow-lg transition-transform group-hover:scale-105 duration-300">
               <img
                 src="/icon-192.png"
                 alt="StockIt Logo"
@@ -130,8 +130,8 @@ export const Header: React.FC = () => {
                 }}
                 className={`gap-2 ${
                   !isScrolled && nowDirectory === "/about"
-                    ? "text-white hover:bg-white/10 border-white/20"
-                    : ""
+                    ? "text-white! hover:bg-white/10! border-white/20!"
+                    : "text-blue-600! border-blue-600!"
                 }`}
               >
                 <Github size={18} /> Github

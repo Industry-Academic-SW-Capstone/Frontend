@@ -469,14 +469,14 @@ export function TechPageContent() {
             <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,rgba(59,130,246,0.1)_0%,transparent_100%)]" />
             <div className="relative z-10">
               <h2 className="text-3xl font-bold text-white mb-6">
-                함께 성장하고 싶으신가요?
+                스톡잇의 기술이 보고싶으신가요?
               </h2>
               <p className="text-gray-400 mb-8 max-w-xl mx-auto">
-                스톡잇팀은 언제나 열정적인 개발자분들을 기다리고 있습니다.
-                우리의 기술 블로그에서 더 많은 이야기를 확인해보세요.
+                스톡잇은 현재 오픈소스의 형태로 서비스를 운영하고있어요. <br />{" "}
+                자세한 구현과정은 스톡잇의 GitHub에서 확인해보세요.
               </p>
               <a
-                href="https://github.com/urous3814/stock-it"
+                href="https://github.com/Industry-Academic-SW-Capstone"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-white text-gray-900 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-colors"
