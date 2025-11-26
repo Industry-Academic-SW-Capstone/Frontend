@@ -500,3 +500,21 @@ export interface CompanyDescription {
   description: string;
   cached: boolean;
 }
+
+export type Tier = "Bronze" | "Silver" | "Gold" | "Platinum" | "Legend";
+
+export interface TierInfo {
+  currentTier: Tier;
+  score: number; // Total score (Activity + Skill)
+  activityScore: number;
+  skillScore: number;
+  nextTierScore: number;
+  promotionStatus: "none" | "ready" | "in_progress" | "completed";
+  promotionMission?: string; // Description of the mission
+  promotionProgress?: number; // e.g., 3/5 trades
+  promotionTarget?: number; // e.g., 5 trades
+}
+
+export interface UserWithTier extends User {
+  tierInfo?: TierInfo;
+}

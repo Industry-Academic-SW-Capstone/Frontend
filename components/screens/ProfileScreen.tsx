@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MOCK_ACHIEVEMENTS } from "@/lib/constants";
-import { Achievement, Screen, User } from "@/lib/types/stock";
+import { Achievement, Screen, User, TierInfo } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import TwoFactorSettings from "@/components/settings/TwoFactorSettings";
 import { useLogout } from "@/lib/hooks/auth/useLogout";
@@ -14,6 +14,8 @@ import {
   deleteFCMToken,
 } from "@/lib/services/notificationService";
 import { useAvatar } from "@/lib/utils/useAvatar";
+import TierBadge from "@/components/ui/TierBadge";
+import PromotionStatusCard from "@/components/ranking/PromotionStatusCard";
 
 interface ProfileScreenProps {
   user: User;
@@ -30,6 +32,19 @@ const iconMap: { [key: string]: React.FC<any> } = {
 };
 
 const avatarPresets = useAvatar();
+
+// Mock Tier Data (Replace with API data later)
+const MOCK_TIER_INFO: TierInfo = {
+  currentTier: "Gold",
+  score: 1250,
+  activityScore: 450,
+  skillScore: 800,
+  nextTierScore: 1500,
+  promotionStatus: "in_progress",
+  promotionMission: "최근 5회 매매 중 3회 이상 수익 실현",
+  promotionProgress: 2,
+  promotionTarget: 3,
+};
 
 const AchievementItem: React.FC<{ achievement: Achievement }> = ({
   achievement,
@@ -99,6 +114,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         // Map other fields if necessary, or use initialUser as fallback for missing fields in API response
       }
     : initialUser;
+
+  // Use mock tier info for now
+  const tierInfo = MOCK_TIER_INFO;
 
   // Accordion states
   const [openSection, setOpenSection] = useState<string | null>(null);
@@ -324,15 +342,34 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </h2>
 
         <div className="flex items-center justify-center gap-3 mt-2 flex-wrap">
+          <TierBadge tier={tierInfo.currentTier} />
           <div className="px-4 py-1.5 bg-accent/10 text-accent text-sm font-bold rounded-full">
             {user.title}
           </div>
-          <div className="flex items-center gap-1.5 px-4 py-1.5 bg-bg-primary border border-border-color rounded-full text-sm font-medium text-text-secondary">
-            <Icons.BuildingOffice2Icon className="w-4 h-4" />
-            <span>{user.group.name}</span>
+        </div>
+
+        {/* Tier Progress Bar */}
+        <div className="w-full mt-6 px-4">
+          <div className="flex justify-between text-xs font-bold text-text-secondary mb-2">
+            <span>{tierInfo.score} RP</span>
+            <span>Next: {tierInfo.nextTierScore} RP</span>
           </div>
+          <div className="w-full h-3 bg-bg-third rounded-full overflow-hidden relative">
+            <div
+              className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+              style={{
+                width: `${(tierInfo.score / tierInfo.nextTierScore) * 100}%`,
+              }}
+            />
+          </div>
+          <p className="text-xs text-text-secondary mt-2">
+            활동 점수 {tierInfo.activityScore} + 실력 점수 {tierInfo.skillScore}
+          </p>
         </div>
       </div>
+
+      {/* Promotion Status Card */}
+      <PromotionStatusCard tierInfo={tierInfo} />
 
       {/* Grouped Sections */}
       <div className=" bg-bg-secondary rounded-3xl shadow-sm border border-border-color overflow-hidden divide-y divide-border-color">
@@ -397,67 +434,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
         </div>
 
-        {/* Achievements Section */}
-        {/* <div>
-          <button
-            className={`w-full flex items-center justify-between p-6 hover:bg-bg-third transition-colors`}
-            onClick={() => handleAccordion("achievements")}
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-bg-third rounded-xl text-text-secondary">
-                <Icons.TrophyIcon className="w-6 h-6" />
-              </div>
-              <h3 className="font-bold text-lg text-text-primary">업적</h3>
-            </div>
-            <Icons.ChevronRightIcon
-              className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
-                openSection === "achievements" ? "rotate-90" : ""
-              }`}
-            />
-          </button>
-
-          <div
-            className={`transition-all duration-300 ease-in-out overflow-hidden ${
-              openSection === "achievements"
-                ? "max-h-[1000px] opacity-100"
-                : "max-h-0 opacity-0"
-            }`}
-          >
-            <div className="p-4 space-y-3 bg-bg-third/50">
-              <div className="grid grid-cols-1 gap-3">
-                {visibleAchievements.map((ach, index) => (
-                  <div
-                    key={ach.id}
-                    className="animate-fadeInUp"
-                    style={{ animationDelay: `${index * 50}ms` }}
-                  >
-                    <AchievementItem achievement={ach} />
-                  </div>
-                ))}
-              </div>
-
-              {MOCK_ACHIEVEMENTS.length > 3 && (
-                <button
-                  onClick={() => setShowAllAchievements(!showAllAchievements)}
-                  className="w-full py-3 mt-2 text-sm font-bold text-primary hover:bg-primary/5 rounded-xl transition-colors flex items-center justify-center gap-2"
-                >
-                  {showAllAchievements ? (
-                    <>
-                      <span>접기</span>
-                      <Icons.ChevronUpIcon className="w-4 h-4" />
-                    </>
-                  ) : (
-                    <>
-                      <span>전체 보기 ({MOCK_ACHIEVEMENTS.length})</span>
-                      <Icons.ChevronDownIcon className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-          </div>
-        </div> */}
-
         {/* Settings Section */}
         <div>
           <button
@@ -485,36 +461,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
             }`}
           >
             <div className="p-2 space-y-1 bg-bg-third/50">
-              {/* Dark Mode */}
-              {/* <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">
-                <div className="flex items-center gap-4">
-                  <div className="p-2 bg-bg-secondary rounded-lg text-text-secondary shadow-sm">
-                    {isDarkMode ? (
-                      <Icons.MoonIcon className="w-5 h-5" />
-                    ) : (
-                      <Icons.SunIcon className="w-5 h-5" />
-                    )}
-                  </div>
-                  <span className="text-text-primary font-semibold">
-                    다크 모드
-                  </span>
-                </div>
-                <button
-                  onClick={() => setIsDarkMode(!isDarkMode)}
-                  className={`relative inline-flex items-center h-7 rounded-full w-12 transition-all duration-300 focus:outline-none ${
-                    isDarkMode
-                      ? "bg-primary"
-                      : "bg-border-color dark:bg-bg-third"
-                  }`}
-                >
-                  <span
-                    className={`inline-block w-5 h-5 transform bg-white rounded-full transition-all duration-300 shadow-md ${
-                      isDarkMode ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div> */}
-
               {/* Notifications */}
               <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">
                 <div className="flex items-center gap-4">
@@ -561,6 +507,35 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
               <div className="mx-2">
                 <TwoFactorSettings />
+              </div>
+
+              {/* Bankruptcy Button */}
+              <div className="p-4 flex justify-between items-center hover:bg-bg-third rounded-xl transition-colors mx-2">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-bg-secondary rounded-lg text-text-secondary shadow-sm">
+                    <Icons.ExclamationTriangleIcon className="w-5 h-5 text-error" />
+                  </div>
+                  <span className="text-text-primary font-semibold">
+                    파산 신청
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    if (
+                      confirm(
+                        "정말 파산 신청을 하시겠습니까? 모든 자산과 티어가 초기화됩니다."
+                      )
+                    ) {
+                      showToast(
+                        "파산 신청이 완료되었습니다. (Mock)",
+                        "success"
+                      );
+                    }
+                  }}
+                  className="px-4 py-2 bg-error/10 text-error text-sm font-bold rounded-lg hover:bg-error/20 transition-colors"
+                >
+                  신청하기
+                </button>
               </div>
 
               <div className="my-2 border-t border-border-color/50 mx-4" />

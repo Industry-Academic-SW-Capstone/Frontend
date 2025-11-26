@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Account, User, RankingEntry } from "@/lib/types/stock";
+import { Account, User, RankingEntry, Tier } from "@/lib/types/stock";
 import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
@@ -8,6 +8,7 @@ import {
 } from "@/components/icons/Icons";
 import { useRanking, useMyRanking } from "@/lib/hooks/useRanking";
 import { useQueryClient } from "@tanstack/react-query";
+import TierBadge from "@/components/ui/TierBadge";
 
 const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
   change,
@@ -17,6 +18,15 @@ const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
   if (change === "down")
     return <ArrowTrendingDownIcon className="w-4 h-4 text-negative" />;
   return <span className="text-text-secondary">-</span>;
+};
+
+// Mock function to get tier based on rank (for demo)
+const getMockTier = (rank: number): Tier => {
+  if (rank <= 1) return "Legend";
+  if (rank <= 3) return "Platinum";
+  if (rank <= 10) return "Gold";
+  if (rank <= 30) return "Silver";
+  return "Bronze";
 };
 
 interface LeaderboardRowProps {
@@ -32,6 +42,8 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
   onClick,
   showReturnRate,
 }) => {
+  const tier = getMockTier(entry.rank);
+
   return (
     <button
       onClick={onClick}
@@ -63,6 +75,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
 
         <div className="flex-1">
           <div className="flex items-center gap-2">
+            <TierBadge tier={tier} size="sm" showLabel={false} />
             <p
               className={`font-bold text-base ${
                 isMe ? "text-primary" : "text-text-primary"

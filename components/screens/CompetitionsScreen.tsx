@@ -180,7 +180,7 @@ const CompetitionsScreen: React.FC = () => {
         ) : (
           <div className="min-h-[300px]">
             {/* Event Banner */}
-            <div className="bg-gradient-to-r from-event-start via-event-middle to-event-end rounded-2xl p-5 mb-4 text-white shadow-lg relative overflow-hidden">
+            <div className="bg-gradient-to-r from-event-start via-event-middle to-event-end rounded-2xl p-5 mb-4 active:scale-95 transition-all duration-300 ease-out text-white shadow-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
               <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-20 h-20 bg-white opacity-10 rounded-full blur-xl"></div>
 
