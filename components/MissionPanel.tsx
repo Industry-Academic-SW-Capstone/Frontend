@@ -192,13 +192,24 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
                       <span className="text-2xl">🔥</span>
                     </p>
                   </div>
-                  <button
-                    id="mission-attendance-button"
-                    onClick={handleAttendance}
-                    className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors active:scale-95"
-                  >
-                    출석하기
-                  </button>
+                  {dailyMissions?.find(
+                    (mission) => mission.title === "출석체크하기"
+                  )?.completed ? (
+                    <button
+                      id="mission-attendance-button"
+                      className="bg-success/80 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors active:scale-95"
+                    >
+                      출석 완료!
+                    </button>
+                  ) : (
+                    <button
+                      id="mission-attendance-button"
+                      onClick={handleAttendance}
+                      className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors active:scale-95"
+                    >
+                      출석하기
+                    </button>
+                  )}
                 </div>
                 <p className="text-xs text-text-secondary">
                   매일 출석하고 보상을 받아보세요!
