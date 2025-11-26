@@ -12,25 +12,27 @@ export const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="bg-gray-50 border-t border-gray-200 pt-16 pb-8">
+      <footer className="bg-white border-t border-slate-100 pt-20 pb-12">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
+          <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="text-blue-600 w-6 h-6" />
-                <span className="text-xl font-bold text-gray-900">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                  <TrendingUp size={18} strokeWidth={3} />
+                </div>
+                <span className="text-xl font-extrabold text-slate-900 tracking-tight">
                   StockIt!
                 </span>
               </div>
-              <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
+              <p className="text-slate-500 text-sm leading-relaxed max-w-xs font-medium">
                 초보자를 위한 최고의 주식 모의투자 플랫폼. <br />
                 실전 감각을 익히고 더 나은 투자자가 되어보세요.
               </p>
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">바로가기</h4>
-              <ul className="space-y-2 flex flex-row space-x-4 text-sm text-gray-600">
+              <h4 className="font-bold text-slate-900 mb-6">바로가기</h4>
+              <ul className="space-y-3 text-sm text-slate-500 font-medium">
                 <li>
                   <a
                     href="/about"
@@ -67,8 +69,8 @@ export const Footer: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">문의하기</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <h4 className="font-bold text-slate-900 mb-6">문의하기</h4>
+              <ul className="space-y-3 text-sm text-slate-500 font-medium">
                 <li className="flex items-center gap-2">
                   <Mail size={16} /> urous3814@gmail.com
                 </li>
@@ -76,20 +78,20 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-8 flex flex-col justify-between items-center gap-4">
-            <p className="text-xs text-gray-400">
+          <div className="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-slate-400 font-medium">
               © 2025 StockIt Team. All rights reserved.
             </p>
-            <div className="flex gap-6 text-xs text-gray-400">
+            <div className="flex gap-6 text-xs text-slate-400 font-medium">
               <button
                 onClick={() => setShowPrivacyModal(true)}
-                className="hover:text-gray-600 transition-colors cursor-pointer"
+                className="hover:text-slate-600 transition-colors cursor-pointer"
               >
                 개인정보처리방침
               </button>
               <button
                 onClick={() => setShowTermsModal(true)}
-                className="hover:text-gray-600 transition-colors cursor-pointer"
+                className="hover:text-slate-600 transition-colors cursor-pointer"
               >
                 이용약관
               </button>

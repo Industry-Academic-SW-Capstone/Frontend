@@ -3,7 +3,6 @@ import React from "react";
 import { DemoHeader } from "./components/DemoHeader";
 import { DemoGreeting } from "./components/DemoGreeting";
 import { DemoAssetSummary } from "./components/DemoAssetSummary";
-import { DemoFeaturedCompetition } from "./components/DemoFeaturedCompetition";
 import { DemoMissionSummary } from "./components/DemoMissionSummary";
 import { DemoFavorites } from "./components/DemoFavorites";
 import { DemoPendingOrders } from "./components/DemoPendingOrders";
@@ -33,11 +32,11 @@ export const DemoHomeScreen: React.FC<DemoHomeScreenProps> = ({
         </div>
 
         {/* Featured Competition */}
-        <div className="transition-opacity duration-500">
+        {/* <div className="transition-opacity duration-500">
           <div onClick={() => onNavigate("competitions")}>
             <DemoFeaturedCompetition />
           </div>
-        </div>
+        </div> */}
 
         {/* Mission Summary */}
         <div className="transition-opacity duration-500">

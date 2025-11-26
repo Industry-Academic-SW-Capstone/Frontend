@@ -17,38 +17,38 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
   memberName,
 }) => {
   return (
-    <div className="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+    <div className="flex justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 delay-100">
       {github && (
         <button
-          className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-md"
           aria-label={`${memberName}의 Github`}
           onClick={() => {
             window.open(github, "_blank");
           }}
         >
-          <Github size={18} />
+          <Github size={20} />
         </button>
       )}
       {linkedIn && (
         <button
-          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-md"
           aria-label={`${memberName}의 Linkedin`}
           onClick={() => {
             window.open(linkedIn, "_blank");
           }}
         >
-          <Linkedin size={18} />
+          <Linkedin size={20} />
         </button>
       )}
       {email && (
         <button
-          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-md"
           aria-label={`${memberName}에게 이메일 보내기`}
           onClick={() => {
-            window.open(email, "_blank");
+            window.open(`mailto:${email}`, "_blank");
           }}
         >
-          <Mail size={18} />
+          <Mail size={20} />
         </button>
       )}
     </div>
