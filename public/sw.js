@@ -34,6 +34,18 @@ messaging.onBackgroundMessage((payload) => {
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
+
+  // Broadcast to all clients
+  self.clients
+    .matchAll({ type: "window", includeUncontrolled: true })
+    .then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({
+          type: "NOTIFICATION_RECEIVED",
+          payload: payload.data,
+        });
+      });
+    });
 });
 
 self.addEventListener("notificationclick", function (event) {

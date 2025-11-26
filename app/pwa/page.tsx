@@ -109,20 +109,7 @@ export default function Home() {
     if (savedTheme === "dark") {
       setIsDarkMode(true);
     }
-
-    // 알림 업데이트 이벤트 리스너
-    const handleNotificationUpdate = () => {
-      refetchUnreadCount();
-    };
-
-    window.addEventListener("notificationUpdate", handleNotificationUpdate);
-    return () => {
-      window.removeEventListener(
-        "notificationUpdate",
-        handleNotificationUpdate
-      );
-    };
-  }, [refetchUnreadCount]);
+  }, []);
 
   useEffect(() => {
     if (isDarkMode) {

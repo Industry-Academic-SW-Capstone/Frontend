@@ -1,8 +1,49 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import defaultClient from "@/lib/api/axiosClient";
 import { UnreadCountResponse } from "@/lib/types/notification";
+import { useEffect } from "react";
 
 export const useUnreadCount = (options?: { enabled?: boolean }) => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const handleNotificationUpdate = () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notifications", "unread-count"],
+      });
+    };
+
+    window.addEventListener("notificationUpdate", handleNotificationUpdate);
+
+    const handleServiceWorkerMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === "NOTIFICATION_RECEIVED") {
+        queryClient.invalidateQueries({
+          queryKey: ["notifications", "unread-count"],
+        });
+      }
+    };
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.addEventListener(
+        "message",
+        handleServiceWorkerMessage
+      );
+    }
+
+    return () => {
+      window.removeEventListener(
+        "notificationUpdate",
+        handleNotificationUpdate
+      );
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.removeEventListener(
+          "message",
+          handleServiceWorkerMessage
+        );
+      }
+    };
+  }, [queryClient]);
+
   return useQuery<UnreadCountResponse>({
     queryKey: ["notifications", "unread-count"],
     queryFn: async () => {
@@ -11,8 +52,7 @@ export const useUnreadCount = (options?: { enabled?: boolean }) => {
       );
       return data;
     },
-    // Refetch periodically or rely on invalidation
-    refetchInterval: 60000, // Check every minute as a fallback
     enabled: options?.enabled,
+    staleTime: Infinity, // Rely on invalidation
   });
 };

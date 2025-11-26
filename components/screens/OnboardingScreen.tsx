@@ -112,11 +112,16 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const searchParams = useSearchParams();
   const { loginWithKakao, isLoading, fetchKakaoCallback } = useKakaoOAuth();
 
+  const processedCode = React.useRef<string | null>(null);
+
   useEffect(() => {
     const code = searchParams.get("code");
     const state = searchParams.get("state");
     console.log("으악", code, state);
+
     if (code && (state === "kakaoOauthLogin" || state === "kakaoOauthSignIn")) {
+      if (processedCode.current === code) return;
+      processedCode.current = code;
       handleKakaoCallback(code, state);
     }
   }, [searchParams]);

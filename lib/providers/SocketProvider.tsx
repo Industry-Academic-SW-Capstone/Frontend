@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Client, IMessage, Stomp } from "@stomp/stompjs";
+import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { useStockStore } from "../stores/useStockStore"; // 1. Zustand 스토어 import
 import { useChartStore } from "../stores/useChartStore";
@@ -30,115 +30,91 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const stompClientRef = useRef<Client | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  // 구독 상태를 관리하기 위한 ref (HTML의 'subscriptions' 객체 역할)
+
+  // 실제 구독 객체 (unsubscribe를 위해 필요)
   const stockSubscriptionsRef = useRef<Record<string, any>>({});
   const orderBookSubscriptionsRef = useRef<Record<string, any>>({});
-  const { updateTickerFromSocket } = useStockStore.getState(); // 2. Zustand 스토어에서 업데이트 함수 가져오기
+
+  // 사용자가 구독을 원했던 주식 목록 (재연결 시 자동 구독 복구를 위해 필요)
+  const desiredStockSubscriptionsRef = useRef<Set<string>>(new Set());
+  const desiredOrderBookSubscriptionsRef = useRef<Set<string>>(new Set());
+
+  const { updateTickerFromSocket } = useStockStore.getState();
 
   useEffect(() => {
-    // 컴포넌트 마운트 시 소켓 연결
-    const socket = new SockJS("https://www.stockit.live/ws");
-    const client = Stomp.over(socket);
-
-    // 디버그 메시지 끄기 (프로덕션)
-    // client.debug = () => {};
-
-    client.connect(
-      {},
-      (frame: any) => {
+    const client = new Client({
+      webSocketFactory: () => new SockJS("https://www.stockit.live/ws"),
+      reconnectDelay: 5000, // 5초 후 재연결 시도
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      onConnect: (frame) => {
         console.log("STOMP 연결 성공: " + frame);
         setIsConnected(true);
+        resubscribeAll();
       },
-      (error: any) => {
-        console.error("STOMP 연결 실패:", error);
+      onStompError: (frame) => {
+        console.error("Broker reported error: " + frame.headers["message"]);
+        console.error("Additional details: " + frame.body);
+      },
+      onWebSocketClose: () => {
+        console.log("WebSocket 연결 끊김");
         setIsConnected(false);
-      }
-    );
+        // 연결이 끊어지면 실제 구독 객체는 무효화되므로 초기화
+        stockSubscriptionsRef.current = {};
+        orderBookSubscriptionsRef.current = {};
+      },
+      // debug: (str) => {
+      //   console.log(str);
+      // },
+    });
 
+    client.activate();
     stompClientRef.current = client;
 
     return () => {
-      // 컴포넌트 언마운트 시 연결 해제
-      if (client.connected) {
-        client.disconnect();
-      }
+      client.deactivate();
     };
   }, []);
 
-  useEffect(() => {
-    console.log("구독중인 주식: ", stockSubscriptionsRef.current);
-  }, [stockSubscriptionsRef]);
+  // 재연결 시 모든 구독 복구
+  const resubscribeAll = () => {
+    const client = stompClientRef.current;
+    if (!client || !client.connected) return;
 
-  const setSubscribeStockSet = (stockCodes: string[]) => {
-    const stockCodesToAdd = stockCodes.filter(
-      (stockCode) => !stockSubscriptionsRef.current[stockCode]
-    );
-    const stockCodesToRemove = Object.keys(
-      stockSubscriptionsRef.current
-    ).filter((stockCode) => !stockCodes.includes(stockCode));
-
-    stockCodesToAdd.forEach((stockCode) => {
-      subscribeStock(stockCode);
+    // 주식 구독 복구
+    desiredStockSubscriptionsRef.current.forEach((stockCode) => {
+      if (!stockSubscriptionsRef.current[stockCode]) {
+        doSubscribeStock(client, stockCode);
+      }
     });
-    stockCodesToRemove.forEach((stockCode) => {
-      unsubscribeStock(stockCode);
+
+    // 호가 구독 복구
+    desiredOrderBookSubscriptionsRef.current.forEach((stockCode) => {
+      if (!orderBookSubscriptionsRef.current[stockCode]) {
+        doSubscribeOrderBook(client, stockCode);
+      }
     });
   };
 
-  const subscribeStock = (stockCode: string) => {
-    const client = stompClientRef.current;
-    if (
-      !client ||
-      !client.connected ||
-      stockSubscriptionsRef.current[stockCode]
-    ) {
-      // 연결 안 됨 || 이미 구독 중
-      return;
-    }
-
+  const doSubscribeStock = (client: Client, stockCode: string) => {
     console.log(`구독 시작: /topic/stock/${stockCode}`);
-
     const sub = client.subscribe(
       `/topic/stock/${stockCode}`,
       (message: IMessage) => {
         try {
           const data = JSON.parse(message.body);
-
-          // 3. (핵심) 소켓 데이터를 받으면 Zustand 스토어를 업데이트!
           updateTickerFromSocket(stockCode, data);
-
-          // 4. 차트 스토어 업데이트
           useChartStore.getState().updateTickerFromSocket(stockCode, data);
         } catch (e) {
           console.error("소켓 메시지 파싱 오류:", e);
         }
       }
     );
-
     stockSubscriptionsRef.current[stockCode] = sub;
   };
 
-  const unsubscribeStock = (stockCode: string) => {
-    const sub = stockSubscriptionsRef.current[stockCode];
-    if (sub) {
-      sub.unsubscribe();
-      delete stockSubscriptionsRef.current[stockCode];
-      console.log(`구독 해제: ${stockCode}`);
-    }
-  };
-
-  const subscribeOrderBook = (stockCode: string) => {
-    const client = stompClientRef.current;
-    if (
-      !client ||
-      !client.connected ||
-      orderBookSubscriptionsRef.current[stockCode]
-    ) {
-      return;
-    }
-
+  const doSubscribeOrderBook = (client: Client, stockCode: string) => {
     console.log(`호가 구독 시작: /topic/stock/${stockCode}/orderbook`);
-
     const sub = client.subscribe(
       `/topic/stock/${stockCode}/orderbook`,
       (message: IMessage) => {
@@ -150,11 +126,70 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
     );
-
     orderBookSubscriptionsRef.current[stockCode] = sub;
   };
 
+  const setSubscribeStockSet = (stockCodes: string[]) => {
+    // 현재 원하는 목록 업데이트
+    const newSet = new Set(stockCodes);
+
+    // 제거해야 할 것들
+    desiredStockSubscriptionsRef.current.forEach((code) => {
+      if (!newSet.has(code)) {
+        unsubscribeStock(code);
+      }
+    });
+
+    // 추가해야 할 것들
+    stockCodes.forEach((code) => {
+      if (!desiredStockSubscriptionsRef.current.has(code)) {
+        subscribeStock(code);
+      }
+    });
+  };
+
+  const subscribeStock = (stockCode: string) => {
+    // 원하는 목록에 추가
+    desiredStockSubscriptionsRef.current.add(stockCode);
+
+    const client = stompClientRef.current;
+    if (
+      client &&
+      client.connected &&
+      !stockSubscriptionsRef.current[stockCode]
+    ) {
+      doSubscribeStock(client, stockCode);
+    }
+  };
+
+  const unsubscribeStock = (stockCode: string) => {
+    // 원하는 목록에서 제거
+    desiredStockSubscriptionsRef.current.delete(stockCode);
+
+    const sub = stockSubscriptionsRef.current[stockCode];
+    if (sub) {
+      sub.unsubscribe();
+      delete stockSubscriptionsRef.current[stockCode];
+      console.log(`구독 해제: ${stockCode}`);
+    }
+  };
+
+  const subscribeOrderBook = (stockCode: string) => {
+    desiredOrderBookSubscriptionsRef.current.add(stockCode);
+
+    const client = stompClientRef.current;
+    if (
+      client &&
+      client.connected &&
+      !orderBookSubscriptionsRef.current[stockCode]
+    ) {
+      doSubscribeOrderBook(client, stockCode);
+    }
+  };
+
   const unsubscribeOrderBook = (stockCode: string) => {
+    desiredOrderBookSubscriptionsRef.current.delete(stockCode);
+
     const sub = orderBookSubscriptionsRef.current[stockCode];
     if (sub) {
       sub.unsubscribe();
