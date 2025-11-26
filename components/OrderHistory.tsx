@@ -176,16 +176,6 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
                               : order.quantity}
                             주
                           </span>
-                          {order.status === "PENDING" && (
-                            <span className="text-xs text-text-secondary bg-bg-third px-1.5 py-0.5 rounded w-fit">
-                              체결 대기
-                            </span>
-                          )}
-                          {order.status === "CANCELLED" && (
-                            <span className="text-xs text-text-secondary line-through">
-                              취소됨
-                            </span>
-                          )}
                         </div>
                       </div>
                       <div className="flex flex-col items-end">
@@ -198,8 +188,18 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
                             ? Number(order.orderPrice).toLocaleString() + "원"
                             : "시장가"}
                         </span>
-                        <span className="text-text-secondary text-xs mt-0.5">
-                          {order.status === "FILLED" ? "체결완료" : "주문접수"}
+                        <span
+                          className={`text-text-secondary text-xs mt-0.5 ${
+                            order.status === "CANCELLED" ? "line-through" : ""
+                          }`}
+                        >
+                          {order.status === "FILLED"
+                            ? "체결완료"
+                            : order.status === "PENDING"
+                            ? "체결 대기"
+                            : order.status === "CANCELLED"
+                            ? "취소됨"
+                            : "주문접수"}
                         </span>
                       </div>
                     </div>
