@@ -168,7 +168,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const [selectedStockTicker, setSelectedStockTicker] = useState<string | null>(
     null
   );
+  const [visibleStage, setVisibleStage] = useState("hello");
   const [helloVisible, setHelloVisible] = useState(false);
+  const [eventVisible, setEventVisible] = useState(false);
+  const [advertiseVisible, setAdvertiseVisible] = useState(false);
   useEffect(() => {
     setTimeout(() => {
       setHelloVisible(true);
@@ -235,7 +238,28 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         refetchMainRanking();
         refetchContests();
         refetchMissionDashboard();
-        setHelloVisible(false);
+        switch (visibleStage) {
+          case "hello":
+            setHelloVisible(false);
+            setTimeout(() => {
+              setVisibleStage("event");
+              setEventVisible(true);
+            }, 800);
+            break;
+          case "event":
+            setEventVisible(false);
+            setTimeout(() => {
+              setVisibleStage("advertise");
+              setAdvertiseVisible(true);
+            }, 800);
+            break;
+          case "advertise":
+            setAdvertiseVisible(false);
+            setTimeout(() => {
+              setVisibleStage("hello");
+            }, 800);
+            break;
+        }
         // Optional: Show toast? ProfileScreen does.
       } catch (error) {
         console.error("Refresh failed", error);
@@ -328,6 +352,36 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const showMyRankingSeparately =
     myRankEntry && !topRankings.some((r) => r.rank === myRankEntry.rank);
 
+  const DemoAdvertise = () => {
+    return (
+      <div className=" mt-4 p-4 bg-bg-third rounded-xl flex items-center justify-between shadow-sm">
+        <div className="w-full">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="bg-bg-secondary text-text-secondary text-[10px] px-1.5 py-0.5 rounded font-bold">
+              AD
+            </span>
+            <span className="text-xs font-semibold text-text-secondary">
+              스톡잇 제휴광고
+            </span>
+          </div>
+          <div className="flex items-center w-full justify-between">
+            <div>
+              <h3 className="font-bold text-text-primary text-sm">
+                투자 고수들의 포트폴리오가 궁금하다면?
+              </h3>
+              <p className="text-xs text-text-secondary mt-1">
+                지금 바로 프리미엄 구독하고 수익률 UP!
+              </p>
+            </div>
+            <div className="bg-bg-primary text-text-primary text-xs font-bold px-3 py-2 rounded-lg shadow-sm">
+              보러가기
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <div
@@ -376,6 +430,40 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </h1>
           <p className="text-text-secondary text-sm">
             오늘도 스톡잇과 함께 배워봐요!
+          </p>
+        </div>
+
+        {/* Event Section */}
+        <div
+          className={`bg-bg-secondary p-5 rounded-2xl flex flex-col cursor-pointer overflow-hidden relative transition-all duration-700 ease-in-out ${
+            eventVisible
+              ? "max-h-[100px] opacity-100 py-3"
+              : "max-h-0 opacity-0 py-0 -mt-2"
+          }`}
+          onClick={() => onNavigate("competitions")}
+        >
+          <h1 className="text-xl font-bold text-text-primary">
+            이벤트가 진행중이에요 🎉
+          </h1>
+          <p className="text-text-secondary text-sm">
+            대회 탭에서 자세히 알아보세요!
+          </p>
+        </div>
+
+        {/* advertise Section */}
+        <div
+          className={`bg-bg-secondary p-5 rounded-2xl flex flex-col cursor-pointer overflow-hidden relative transition-all duration-700 ease-in-out ${
+            advertiseVisible
+              ? "max-h-[100px] opacity-100 py-3"
+              : "max-h-0 opacity-0 py-0 -mt-2"
+          }`}
+          onClick={() => onNavigate("competitions")}
+        >
+          <h1 className="text-xl font-bold text-text-primary">
+            투자는 스톡잇과 함께 🔥
+          </h1>
+          <p className="text-text-secondary text-sm">
+            이곳에 배너광고가 나옵니다.
           </p>
         </div>
 
@@ -626,6 +714,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
           </div>
         )}
+
+        {/* 제휴광고패널 위치 */}
+        <DemoAdvertise />
       </div>
 
       {/* Mission Panel */}

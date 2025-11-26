@@ -354,7 +354,12 @@ const TutorialOverlay: React.FC<TutorialOverlayProps> = ({ onComplete }) => {
                     totalSteps={TUTORIAL_STEPS.length}
                     onNext={handleNext}
                     onPrev={prevStep}
-                    onSkip={endTutorial}
+                    onSkip={() => {
+                      endTutorial();
+                      if (onComplete) {
+                        onComplete();
+                      }
+                    }}
                     isLastStep={isLastStep}
                   />
                 </div>

@@ -38,16 +38,6 @@ const InvestmentAnalysisCard: React.FC<InvestmentAnalysisCardProps> = ({
   return (
     <>
       <div className="space-y-6 animate-fadeInUp">
-        {/* Header Section */}
-        <div className="text-center space-y-2 mb-8">
-          <h3 className="font-bold text-2xl text-text-primary">
-            투자 분석 결과
-          </h3>
-          <p className="text-text-secondary text-sm">
-            최근 거래 내역을 기반으로 분석했습니다.
-          </p>
-        </div>
-
         {/* Persona Section */}
         {topPersona && (
           <div className="bg-bg-secondary p-6 rounded-3xl border border-border-color shadow-sm">

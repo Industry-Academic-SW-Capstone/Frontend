@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { usePutInfo } from "@/lib/hooks/me/useInfo";
 import defaultClient from "@/lib/api/axiosClient";
 import { useAuthStore } from "@/lib/stores/useAuthStore";
+import { useAvatar } from "@/lib/utils/useAvatar";
 
 type AuthStep =
   | "welcome"
@@ -88,7 +89,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const [step, setStep] = useState<AuthStep>("welcome");
   const [newUser, setNewUser] = useState<Partial<User>>({
     username: "",
-    avatar: "https://picsum.photos/seed/avatar1/100",
+    avatar: "/image/avatar/small/avatar_bear.png",
     group: undefined,
   });
   const [loginRequest, setLoginRequest] = useState<LoginRequest>({
@@ -451,10 +452,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   }, [step, newUser, onLoginSuccess]);
 
   const renderContent = () => {
-    const avatars = Array.from(
-      { length: isKakaoSignup ? 5 : 6 },
-      (_, i) => `https://picsum.photos/seed/avatar${i + 1}/100`
-    );
+    const avatars = useAvatar();
     const groups: UserGroup[] = [
       { id: "hsu", name: "한성대학교", averageReturn: 18.5 },
       { id: "snu", name: "서울대학교", averageReturn: 22.1 },
@@ -941,7 +939,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
               <br />
               선택하세요.
             </h2>
-            <div className="grid grid-cols-3 gap-4 mb-auto">
+            <div className="grid grid-cols-3 gap-2 mb-auto h-full overflow-y-auto pb-4">
               {isKakaoSignup && kakaoImage && (
                 <button
                   key={kakaoImage}
@@ -964,23 +962,23 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                   />
                 </button>
               )}
-              {avatars.map((avatarUrl) => (
+              {avatars.map((avatar) => (
                 <button
-                  key={avatarUrl}
+                  key={avatar.name}
                   onClick={() =>
                     setSignupRequest({
                       ...signupRequest,
-                      profileImage: avatarUrl,
+                      profileImage: avatar.src,
                     })
                   }
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    signupRequest.profileImage === avatarUrl
+                    signupRequest.profileImage === avatar.src
                       ? "ring-4 ring-primary"
                       : ""
                   }`}
                 >
                   <img
-                    src={avatarUrl}
+                    src={avatar.src}
                     alt="avatar"
                     className="w-full h-full rounded-full object-cover"
                   />
@@ -1111,7 +1109,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
       case "complete":
         return (
           <div className="flex flex-col items-center justify-center h-full text-center p-8 animate-fadeInUp">
-            <Icons.CheckCircleIcon className="w-24 h-24 text-positive mb-6" />
+            <Icons.CheckCircleIcon className="w-24 h-24 text-success mb-6" />
             <h1 className="text-3xl font-bold">
               환영합니다, {newUser.username}님!
             </h1>

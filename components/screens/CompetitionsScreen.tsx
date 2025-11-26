@@ -179,6 +179,28 @@ const CompetitionsScreen: React.FC = () => {
           </div>
         ) : (
           <div className="min-h-[300px]">
+            {/* Event Banner */}
+            <div className="bg-gradient-to-r from-event-start via-event-middle to-event-end rounded-2xl p-5 mb-4 text-white shadow-lg relative overflow-hidden">
+              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+              <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-20 h-20 bg-white opacity-10 rounded-full blur-xl"></div>
+
+              <div className="relative z-10 flex items-start gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="bg-white/20 text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm uppercase tracking-wider">
+                      Event
+                    </span>
+                    <h3 className="font-bold text-lg leading-tight">
+                      이벤트 대회 진행중!
+                    </h3>
+                  </div>
+
+                  <p className="text-sm text-white/90 font-medium opacity-90">
+                    소정의 상품이 걸린 스톡잇 공식 대회가 진행중이에요.
+                  </p>
+                </div>
+              </div>
+            </div>
             {filteredCompetitions?.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="w-20 h-20 bg-bg-secondary rounded-full flex items-center justify-center mb-6">

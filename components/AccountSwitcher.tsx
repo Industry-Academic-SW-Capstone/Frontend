@@ -42,38 +42,40 @@ const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
             </Drawer.Close>
           </div>
           <div className="space-y-2">
-            {accounts.map((account) => (
-              <button
-                key={account.id}
-                onClick={() => {
-                  setSelectedAccount(account);
-                  onClose();
-                }}
-                className={`w-full flex items-center justify-between p-4 rounded-xl text-left transition-colors ${
-                  selectedAccount.id === account.id
-                    ? "bg-primary/10 border border-primary"
-                    : "hover:bg-border-color"
-                }`}
-              >
-                <div>
-                  <p
-                    className={`font-semibold ${
-                      selectedAccount.id === account.id
-                        ? "text-primary"
-                        : "text-text-primary"
-                    }`}
-                  >
-                    {account.name}
-                  </p>
-                  <p className="text-sm text-text-secondary">
-                    {account.totalValue.toLocaleString()}원
-                  </p>
-                </div>
-                {selectedAccount.id === account.id && (
-                  <CheckCircleIcon className="w-6 h-6 text-primary" />
-                )}
-              </button>
-            ))}
+            {[...accounts]
+              .sort((a, b) => (a.isDefault ? -1 : b.isDefault ? 1 : 0))
+              .map((account) => (
+                <button
+                  key={account.id}
+                  onClick={() => {
+                    setSelectedAccount(account);
+                    onClose();
+                  }}
+                  className={`w-full flex items-center justify-between p-4 rounded-xl text-left transition-colors ${
+                    selectedAccount.id === account.id
+                      ? "bg-primary/10 border border-primary"
+                      : "hover:bg-border-color"
+                  }`}
+                >
+                  <div>
+                    <p
+                      className={`font-semibold ${
+                        selectedAccount.id === account.id
+                          ? "text-primary"
+                          : "text-text-primary"
+                      }`}
+                    >
+                      {account.name}
+                    </p>
+                    <p className="text-sm text-text-secondary">
+                      {account.totalValue.toLocaleString()}원
+                    </p>
+                  </div>
+                  {selectedAccount.id === account.id && (
+                    <CheckCircleIcon className="w-6 h-6 text-primary" />
+                  )}
+                </button>
+              ))}
           </div>
         </Drawer.Content>
       </Drawer.Portal>

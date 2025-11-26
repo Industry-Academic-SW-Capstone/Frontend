@@ -13,6 +13,7 @@ import {
   requestNotificationPermission,
   deleteFCMToken,
 } from "@/lib/services/notificationService";
+import { useAvatar } from "@/lib/utils/useAvatar";
 
 interface ProfileScreenProps {
   user: User;
@@ -28,10 +29,7 @@ const iconMap: { [key: string]: React.FC<any> } = {
   UsersIcon: Icons.UsersIcon,
 };
 
-const AVATAR_PRESETS = Array.from(
-  { length: 6 },
-  (_, i) => `https://picsum.photos/seed/avatar${i + 1}/100`
-);
+const avatarPresets = useAvatar();
 
 const AchievementItem: React.FC<{ achievement: Achievement }> = ({
   achievement,
@@ -308,9 +306,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         <div className="relative inline-block mb-5">
           <img
             src={
-              user.avatar
-                ? user.avatar
-                : "https://picsum.photos/seed/avatar1/100"
+              user.avatar ? user.avatar : "/image/avatar/small/avatar_bear.png"
             }
             alt="User Avatar"
             className="w-32 h-32 rounded-full border-4 border-bg-primary shadow-sm object-cover"
@@ -677,32 +673,29 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 ">
               {/* Presets */}
               <div>
-                <p className="text-sm font-bold text-text-secondary mb-3">
-                  기본 이미지
-                </p>
-                <div className="grid grid-cols-3 gap-4">
-                  {AVATAR_PRESETS.map((url, index) => (
+                <div className="grid grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+                  {avatarPresets.map((avatar) => (
                     <button
-                      key={index}
+                      key={avatar.name}
                       onClick={() => {
-                        setEditAvatar(url);
+                        setEditAvatar(avatar.src);
                         setIsAvatarModalOpen(false);
                       }}
                       className={`relative rounded-full overflow-hidden aspect-square border-2 transition-all ${
-                        editAvatar === url
+                        editAvatar === avatar.src
                           ? "border-accent scale-105"
                           : "border-transparent hover:border-accent/50"
                       }`}
                     >
                       <img
-                        src={url}
-                        alt={`Avatar ${index + 1}`}
+                        src={avatar.src}
+                        alt={avatar.name}
                         className="w-full h-full object-cover"
                       />
-                      {editAvatar === url && (
+                      {editAvatar === avatar.src && (
                         <div className="absolute inset-0 bg-accent/20 flex items-center justify-center">
                           <Icons.CheckCircleIcon className="w-8 h-8 text-white drop-shadow-md" />
                         </div>

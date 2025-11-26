@@ -285,6 +285,14 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       </div>
 
       {/* Holdings Section */}
+      <div className="px-6 -mx-4 pt-4 pb-4 bg-bg-secondary flex justify-between items-center">
+        <h3 className="text-xl font-bold text-text-primary">보유 현금</h3>
+        <p className="text-xl font-bold text-text-primary">
+          {assets?.cash.toLocaleString()}원
+        </p>
+      </div>
+
+      {/* Holdings Section */}
       <div className="px-6 -mx-4 pt-4 pb-2 bg-bg-secondary space-y-2">
         <h3 className="text-xl font-bold text-text-primary mb-4">보유 주식</h3>
         {assets?.holdings && assets?.holdings.length > 0 ? (

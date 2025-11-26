@@ -208,7 +208,12 @@ export default function StocksTutorialOverlay({
                   totalSteps={STOCKS_TUTORIAL_STEPS.length}
                   onNext={handleNext}
                   onPrev={() => {}} // No prev for now
-                  onSkip={endTutorial}
+                  onSkip={() => {
+                    endTutorial();
+                    if (onComplete) {
+                      onComplete();
+                    }
+                  }}
                   isLastStep={isLastStep}
                 />
               </div>

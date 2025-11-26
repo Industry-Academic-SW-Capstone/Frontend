@@ -6,7 +6,7 @@ export const DemoRankings: React.FC = () => {
     { rank: 2, nickname: "찰리멍거", balance: 12000000 },
     { rank: 3, nickname: "피터린치", balance: 10000000 },
   ];
-  const myRankEntry = { rank: 15, nickname: "김토스", balance: 1250000 };
+  const myRankEntry = { rank: 15, nickname: "투자자", balance: 1250000 };
 
   return (
     <div className="bg-bg-secondary rounded-2xl p-5">
