@@ -1,4 +1,5 @@
 import posthog from "posthog-js";
+import * as Sentry from "@sentry/nextjs";
 if (typeof window !== "undefined" && process.env.NODE_ENV === "production") {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     api_host: "/ingest",
@@ -7,3 +8,4 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "production") {
     capture_exceptions: true, // This enables capturing exceptions using Error Tracking, set to false if you don't want this
   });
 }
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
