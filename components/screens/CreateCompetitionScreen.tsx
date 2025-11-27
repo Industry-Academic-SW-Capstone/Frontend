@@ -458,7 +458,7 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
   return (
     <div className="h-full z-30 bg-bg-primary flex flex-col">
       {step < 5 && (
-        <header className="flex items-center justify-between p-4 border-b border-border-color">
+        <header className="flex pt-safe items-center justify-between p-4 border-b border-border-color">
           {step > 1 ? (
             <button
               onClick={handlePrev}
@@ -488,7 +488,7 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
       <div className="flex-1 overflow-y-auto px-6 pb-6">{renderStep()}</div>
 
       {step < 5 && (
-        <div className="p-4 border-t border-border-color bg-bg-primary safe-area-bottom">
+        <div className="p-4 border-t border-border-color bg-bg-primary pb-safe">
           <button
             onClick={step === 4 ? handleCreate : handleNext}
             disabled={isPending || (step === 1 && !formData.contestName)}
