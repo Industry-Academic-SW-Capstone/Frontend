@@ -380,7 +380,7 @@ export default function Home() {
   return (
     <>
       <WebSocketProvider>
-        <div className="max-w-md mx-auto bg-bg-primary text-text-primary h-screen-safe pt-safe font-sans relative overflow-hidden">
+        <div className="max-w-md mx-auto bg-bg-primary text-text-primary h-screen pt-safe font-sans relative overflow-hidden">
           <Header
             selectedAccount={currentAccount}
             user={user}
@@ -389,7 +389,7 @@ export default function Home() {
             unreadCount={unreadNotifications}
           />
 
-          <main className="h-screen-safe pt-safe mt-16">
+          <main className="h-screen-safe pb-safe mt-16">
             <MainSwiper
               selectedAccount={currentAccount}
               user={user}
