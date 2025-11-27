@@ -13,6 +13,7 @@ import {
   NotificationResponse,
   NotificationType,
 } from "@/lib/types/notification";
+import { useQueryClient } from "@tanstack/react-query";
 
 const NotificationsScreen: React.FC<{ onClose: () => void }> = ({
   onClose,
@@ -28,6 +29,8 @@ const NotificationsScreen: React.FC<{ onClose: () => void }> = ({
 
   const { markAsRead, markAllAsRead, deleteNotification } =
     useNotificationMutations();
+
+  const queryClient = useQueryClient();
 
   const { ref, inView } = useInView();
 
@@ -47,6 +50,21 @@ const NotificationsScreen: React.FC<{ onClose: () => void }> = ({
   // Listen for real-time updates
   useEffect(() => {
     const handleNotificationUpdate = () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notifications"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["unreadCount"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["accountAssets"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["pendingOrders"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["stockHistory"],
+      });
       refetch();
     };
     window.addEventListener("notificationUpdate", handleNotificationUpdate);

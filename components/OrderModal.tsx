@@ -123,6 +123,12 @@ const OrderModal: React.FC<OrderModalProps> = ({
         queryClient.invalidateQueries({
           queryKey: ["accountAssets", accountId],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingOrders", accountId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["stockHistory", accountId, stock.stockCode],
+        });
         setToast({
           visible: true,
           message: "주문이 접수되었습니다.",
