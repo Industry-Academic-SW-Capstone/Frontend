@@ -204,6 +204,9 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           ? [...historical.slice(0, -1), ...realTimeChartDatas]
           : realTimeChartDatas;
     }
+    if (chartDatas) {
+      setChartStartPrice(chartDatas[0].openPrice || 0);
+    }
     return merged;
   }, [chartDatas, realTimeChartDatas]);
 
@@ -272,7 +275,6 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               setPeriod={setPeriod}
               setPeriodType={setPeriodType}
               mergedChartDatas={mergedChartDatas}
-              setChartStartPrice={setChartStartPrice}
             />
 
             <div className="mt-8">
@@ -456,7 +458,6 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
                   setPeriod={setPeriod}
                   setPeriodType={setPeriodType}
                   mergedChartDatas={mergedChartDatas}
-                  setChartStartPrice={setChartStartPrice}
                 />
                 <div className="mt-8">
                   {(() => {

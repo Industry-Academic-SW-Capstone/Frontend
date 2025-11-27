@@ -13,13 +13,11 @@ interface StockChartProps {
   setPeriod: (period: PeriodType) => void;
   setPeriodType: (periodType: PeriodType) => void;
   mergedChartDatas: ChartData[];
-  setChartStartPrice: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const StockChart: React.FC<StockChartProps> = ({
   stockCode,
   isPositive,
-  setChartStartPrice,
   period,
   setPeriod,
   setPeriodType,
@@ -80,9 +78,6 @@ const StockChart: React.FC<StockChartProps> = ({
     if (period !== prevPeriod || (prevLength === 0 && currentLength > 0)) {
       setViewStartIndex(0);
       setVisibleCount(currentLength);
-      if (currentLength > 0) {
-        setChartStartPrice(mergedChartDatas[0].closePrice);
-      }
     }
     // 2. 데이터가 추가된 경우 (Real-time Update)
     else if (currentLength > prevLength) {
@@ -118,13 +113,7 @@ const StockChart: React.FC<StockChartProps> = ({
     // Refs 업데이트
     prevPeriodRef.current = period;
     prevDataLengthRef.current = currentLength;
-  }, [
-    mergedChartDatas,
-    period,
-    setChartStartPrice,
-    viewStartIndex,
-    visibleCount,
-  ]);
+  }, [mergedChartDatas, period, viewStartIndex, visibleCount]);
 
   // --- Derived Visible Data ---
   const visibleDatas = useMemo(() => {
