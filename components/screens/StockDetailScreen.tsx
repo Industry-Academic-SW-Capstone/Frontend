@@ -211,9 +211,9 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         `${stock.changeRate >= 0 ? "+" : ""}${stock.changeRate}%`
       );
     } else if (chartStartPrice !== null && stock) {
-      const currentPrice = mergedChartDatas[-1]?.closePrice
-        ? mergedChartDatas[-1].closePrice
-        : stock.currentPrice;
+      const currentPrice =
+        mergedChartDatas[mergedChartDatas.length - 1]?.closePrice ||
+        stock.currentPrice;
       const changedAmount = currentPrice - chartStartPrice;
       const changedRate = (changedAmount / chartStartPrice) * 100;
 

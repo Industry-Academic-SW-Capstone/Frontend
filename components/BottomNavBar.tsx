@@ -79,9 +79,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
                   }`}
                 >
                   <item.icon
-                    className={`w-7 h-7 mb-1 transition-all duration-300 ${
-                      isActive ? "drop-shadow-lg" : ""
-                    }`}
+                    className={`w-7 h-7 mb-1 transition-all duration-300`}
                   />
                 </div>
 
@@ -92,11 +90,6 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 >
                   {item.label}
                 </span>
-
-                {/* Active indicator dot */}
-                {isActive && (
-                  <div className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full animate-pulse" />
-                )}
               </button>
             );
           })}
