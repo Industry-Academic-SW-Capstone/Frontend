@@ -16,6 +16,7 @@ import { ArrowPathIcon } from "@/components/icons/Icons";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 import CountUp from "react-countup";
 import PortfolioOrderHistory from "@/components/PortfolioOrderHistory";
+import SlidingScreen from "../navigation/SlidingScreen";
 
 interface PortfolioScreenProps {
   onSelectStock: (ticker: string) => void;
@@ -356,10 +357,16 @@ const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
         />
       )}
 
-      <PortfolioOrderHistory
+      <SlidingScreen
         isOpen={isOrderHistoryOpen}
         onClose={() => setIsOrderHistoryOpen(false)}
-      />
+        depthId={"portfolio-order-history"}
+      >
+        <PortfolioOrderHistory
+          isOpen={isOrderHistoryOpen}
+          onClose={() => setIsOrderHistoryOpen(false)}
+        />
+      </SlidingScreen>
     </div>
   );
 };

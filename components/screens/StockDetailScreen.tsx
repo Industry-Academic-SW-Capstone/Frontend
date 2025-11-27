@@ -332,7 +332,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
             {/* Sticky Header Info */}
             <motion.div
-              className="flex flex-col pt-safe"
+              className="flex flex-col"
               initial={{ opacity: 0, y: 10 }}
               animate={{
                 opacity: !isPriceVisible ? 1 : 0,

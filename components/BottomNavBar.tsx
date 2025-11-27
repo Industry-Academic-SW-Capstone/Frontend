@@ -54,7 +54,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto">
-        <div className="bg-bg-secondary/95 backdrop-blur-xl border-t border-border-color px-4 pt-3 flex justify-around rounded-t-3xl shadow-2xl">
+        <div className="pb-safe bg-bg-secondary/95 backdrop-blur-xl border-t border-border-color px-4 pt-3 flex justify-around rounded-t-3xl shadow-2xl">
           {navItems.map((item, index) => {
             const isActive =
               item.screen === "stocks"

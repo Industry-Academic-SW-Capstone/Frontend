@@ -161,8 +161,8 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
       />
 
       {/* Panel */}
-      <div className="fixed  inset-0 z-70 flex items-center justify-center pointer-events-none">
-        <div className="w-full pt-safe pb-safe max-w-md h-full bg-bg-primary shadow-2xl pointer-events-auto transition-transform duration-300 ease-out overflow-y-auto translate-x-0">
+      <div className="fixed inset-0 z-70 flex items-center justify-center pointer-events-none">
+        <div className="w-full pb-safe max-w-md h-full bg-bg-primary shadow-2xl pointer-events-auto transition-transform duration-300 ease-out overflow-y-auto translate-x-0">
           {/* Header */}
           <div className="sticky pt-safe top-0 bg-bg-primary border-b border-border-color z-10 px-5 py-4">
             <div className="flex items-center justify-between">

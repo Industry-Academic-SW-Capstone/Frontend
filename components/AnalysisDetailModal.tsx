@@ -27,7 +27,7 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({
           <div className="w-12 h-1.5 bg-gray-300/50 rounded-full mx-auto mb-8" />
 
           {/* Header */}
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex justify-between items-start mb-4">
             <Drawer.Title className="text-2xl font-bold text-text-primary leading-tight">
               {title}
             </Drawer.Title>
@@ -40,7 +40,7 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({
           </div>
 
           {/* Content */}
-          <div className="text-text-secondary text-lg leading-relaxed whitespace-pre-wrap pb-8">
+          <div className="text-text-secondary text-lg leading-relaxed whitespace-pre-wrap">
             {description}
           </div>
 

@@ -16,6 +16,11 @@ const PortfolioOrderHistory: React.FC<PortfolioOrderHistoryProps> = ({
   const { data, isLoading } = usePortfolioOrders(includeCancelled);
 
   const formatDate = (dateString: string) => {
+    // 만약 dateString이 그냥 mm.dd 형식이면 그대로 리턴, regex로 검사
+    if (dateString.match(/^[0-9]{1,2}\.[0-9]{1,2}$/)) {
+      return dateString;
+    }
+
     const safeDateString = dateString.replace(/-/g, "/");
     const date = new Date(safeDateString);
 
@@ -39,7 +44,7 @@ const PortfolioOrderHistory: React.FC<PortfolioOrderHistoryProps> = ({
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed inset-0 pb-safe pt-safe z-50 bg-bg-primary flex flex-col"
+          className="fixed inset-0 pb-safe z-50 bg-bg-primary flex flex-col"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-4 border-b border-border-color">
