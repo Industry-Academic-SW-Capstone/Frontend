@@ -380,7 +380,7 @@ export default function Home() {
   return (
     <>
       <WebSocketProvider>
-        <div className="max-w-md mx-auto bg-bg-primary text-text-primary h-screen-safe font-sans relative overflow-hidden">
+        <div className="max-w-md mx-auto bg-bg-primary text-text-primary h-screen-safe pt-safe font-sans relative overflow-hidden">
           <Header
             selectedAccount={currentAccount}
             user={user}
