@@ -23,6 +23,7 @@ import { SlidingTabs } from "../ui/SlidingTabs";
 interface ExploreScreenProps {
   onSelectStock: (ticker: string) => void;
   isActive: boolean;
+  selectedTicker: string;
 }
 
 const StockRow: React.FC<{
@@ -176,6 +177,7 @@ const SearchResultRow: React.FC<{
 const ExploreScreen: React.FC<ExploreScreenProps> = ({
   onSelectStock,
   isActive,
+  selectedTicker,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchModal, setSearchModal] = useState(false);
@@ -232,24 +234,32 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({
 
   useEffect(() => {
     if (!isActive) return;
-    const tickers = new Set<string>();
-    popularStocks?.forEach((stock) => tickers.add(stock.stockCode));
-    if (activeContentTab === "sectors") {
-      industriesTopStocks?.forEach((sector) =>
-        sector.stocks.forEach((stock) => tickers.add(stock.stockCode))
+    if (selectedTicker === "") {
+      const tickers = new Set<string>();
+      popularStocks?.forEach((stock) => tickers.add(stock.stockCode));
+      if (activeContentTab === "sectors") {
+        industriesTopStocks?.forEach((sector) =>
+          sector.stocks.forEach((stock) => tickers.add(stock.stockCode))
+        );
+      }
+      if (activeContentTab === "favorites") {
+        favoriteStocks?.forEach((stock) => tickers.add(stock.stockCode));
+      }
+      console.log(
+        "구독 항목",
+        "인기종목",
+        activeContentTab,
+        Array.from(tickers)
       );
+      setSubscribeSet(Array.from(tickers));
     }
-    if (activeContentTab === "favorites") {
-      favoriteStocks?.forEach((stock) => tickers.add(stock.stockCode));
-    }
-    console.log("구독 항목", "인기종목", activeContentTab, Array.from(tickers));
-    setSubscribeSet(Array.from(tickers));
   }, [
     popularStocks,
     industriesTopStocks,
     favoriteStocks,
     isActive,
     activeContentTab,
+    selectedTicker,
   ]);
 
   // Search Hook

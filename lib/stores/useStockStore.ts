@@ -45,9 +45,7 @@ export const useStockStore = create<TickerState>((set, get) => ({
   },
 
   updateTickerFromSocket: (stockCode, socketData) => {
-    console.log("소켓 데이터: ", socketData);
     const transformedInfo = transformSocketData(socketData);
-    console.log("구독한 주식 정보: ", stockCode, transformedInfo);
 
     set((state) => {
       const existingStock = state.tickers[stockCode] || { stockCode };

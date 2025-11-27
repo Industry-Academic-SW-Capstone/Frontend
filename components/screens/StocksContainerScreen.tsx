@@ -75,6 +75,7 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
           currentView={currentView}
           onSlideChange={setCurrentView}
           onSelectStock={handleSelectStock}
+          selectedTicker={selectedTicker || ""}
         />
       </div>
 

@@ -39,7 +39,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const desiredStockSubscriptionsRef = useRef<Set<string>>(new Set());
   const desiredOrderBookSubscriptionsRef = useRef<Set<string>>(new Set());
 
-  const { updateTickerFromSocket } = useStockStore.getState();
+  const { updateTickerFromSocket: socketUpdateTicker } =
+    useStockStore.getState();
+  const { updateTickerFromSocket: chartUpdateTicker } =
+    useChartStore.getState();
 
   useEffect(() => {
     const client = new Client({
@@ -96,15 +99,21 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const doSubscribeStock = (client: Client, stockCode: string) => {
+  const doSubscribeStock = (
+    client: Client,
+    stockCode: string,
+    chartAvailable: boolean
+  ) => {
     console.log(`구독 시작: /topic/stock/${stockCode}`);
     const sub = client.subscribe(
       `/topic/stock/${stockCode}`,
       (message: IMessage) => {
         try {
           const data = JSON.parse(message.body);
-          updateTickerFromSocket(stockCode, data);
-          useChartStore.getState().updateTickerFromSocket(stockCode, data);
+          socketUpdateTicker(stockCode, data);
+          if (chartAvailable) {
+            chartUpdateTicker(stockCode, data);
+          }
         } catch (e) {
           console.error("소켓 메시지 파싱 오류:", e);
         }
@@ -133,22 +142,29 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     // 현재 원하는 목록 업데이트
     const newSet = new Set(stockCodes);
 
-    // 제거해야 할 것들
-    desiredStockSubscriptionsRef.current.forEach((code) => {
-      if (!newSet.has(code)) {
+    const manySockets = stockCodes.length > 1;
+
+    if (manySockets) {
+      desiredStockSubscriptionsRef.current.forEach((code) => {
+        if (!newSet.has(code)) {
+          unsubscribeStock(code);
+        }
+      });
+    } else {
+      desiredStockSubscriptionsRef.current.forEach((code) => {
         unsubscribeStock(code);
-      }
-    });
+      });
+    }
 
     // 추가해야 할 것들
     stockCodes.forEach((code) => {
       if (!desiredStockSubscriptionsRef.current.has(code)) {
-        subscribeStock(code);
+        subscribeStock(manySockets, code);
       }
     });
   };
 
-  const subscribeStock = (stockCode: string) => {
+  const subscribeStock = (chartAvailable: boolean, stockCode: string) => {
     // 원하는 목록에 추가
     desiredStockSubscriptionsRef.current.add(stockCode);
 
@@ -158,7 +174,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       client.connected &&
       !stockSubscriptionsRef.current[stockCode]
     ) {
-      doSubscribeStock(client, stockCode);
+      doSubscribeStock(client, stockCode, chartAvailable);
     }
   };
 

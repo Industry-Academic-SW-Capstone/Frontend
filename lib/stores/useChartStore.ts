@@ -28,6 +28,7 @@ export const useChartStore = create<ChartState>((set, get) => ({
     // User said: "additionally useChartStore... merge existing data... first data is the last item of useStockChart"
     // So we likely want to start with the last known candle.
     const lastData = data[data.length - 1];
+    console.log("이닛", data, "RMx", lastData);
     set({
       chartDatas: [lastData],
       startFrom: lastData.date + (lastData.time ? " " + lastData.time : ""),
@@ -40,13 +41,14 @@ export const useChartStore = create<ChartState>((set, get) => ({
 
   updateTickerFromSocket: (stockCode, socketData) => {
     const { periodType, chartDatas } = get();
-
+    console.log("updateTickerFromSocket", stockCode, socketData);
     // Parse socket data
     // Assuming socketData structure based on user description and typical stock socket
     // User said: "timestamp value to date/time", "currentPrice"
-    const currentPrice = Number(socketData.currentPrice);
-    const volume = Number(socketData.volume || 0);
-    const amount = Number(socketData.amount || 0);
+    console.log(socketData.current_price, typeof socketData.current_price);
+    const currentPrice = Number(socketData.current_price);
+    const volume = Number(0);
+    const amount = Number(0);
     const timestamp = socketData.timestamp
       ? new Date(socketData.timestamp)
       : new Date();

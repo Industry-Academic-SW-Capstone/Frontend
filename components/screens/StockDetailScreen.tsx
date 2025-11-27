@@ -173,7 +173,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
   useEffect(() => {
     if (stock?.stockCode) setSubscribeSet([stock.stockCode]);
-  }, [stock?.stockCode, setSubscribeSet]);
+  }, [stock, setSubscribeSet]);
 
   const { data: chartDatas } = useStockChart(stock?.stockCode || "", period);
   useEffect(() => {
@@ -577,18 +577,18 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
           <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto p-4 bg-bg-primary border-t border-border-color">
             <div className="flex gap-3">
               <button
-                id="stock-sell-button"
-                onClick={() => handleOpenOrderModal("sell")}
-                className="w-full py-3 bg-negative active:scale-95 transition-transform duration-200 text-white font-bold rounded-xl"
-              >
-                판매하기
-              </button>
-              <button
                 id="stock-buy-button"
                 onClick={() => handleOpenOrderModal("buy")}
                 className="w-full py-3 bg-positive active:scale-95 transition-transform duration-200 text-white font-bold rounded-xl"
               >
                 구매하기
+              </button>
+              <button
+                id="stock-sell-button"
+                onClick={() => handleOpenOrderModal("sell")}
+                className="w-full py-3 bg-negative active:scale-95 transition-transform duration-200 text-white font-bold rounded-xl"
+              >
+                판매하기
               </button>
             </div>
           </div>

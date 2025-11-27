@@ -19,6 +19,7 @@ interface StocksSwiperProps {
   currentView: StocksView;
   onSlideChange: (view: StocksView) => void;
   onSelectStock: (ticker: string) => void;
+  selectedTicker: string;
 }
 
 // StocksView 순서 정의
@@ -28,6 +29,7 @@ const StocksSwiper: React.FC<StocksSwiperProps> = ({
   currentView,
   onSlideChange,
   onSelectStock,
+  selectedTicker,
 }) => {
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -90,6 +92,7 @@ const StocksSwiper: React.FC<StocksSwiperProps> = ({
             <ExploreScreen
               isActive={currentView === "explore"}
               onSelectStock={onSelectStock}
+              selectedTicker={selectedTicker}
             />
           ) : null}
         </div>
