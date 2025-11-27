@@ -36,8 +36,8 @@ export function use2FA() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const storedConfig = sessionStorage.getItem(STORAGE_KEY_CONFIG);
-    const storedAuth = sessionStorage.getItem(STORAGE_KEY_AUTH);
+    const storedConfig = localStorage.getItem(STORAGE_KEY_CONFIG);
+    const storedAuth = localStorage.getItem(STORAGE_KEY_AUTH);
 
     if (storedConfig) {
       try {
@@ -59,7 +59,7 @@ export function use2FA() {
           setAuthState(auth);
         } else {
           // 만료됨
-          sessionStorage.removeItem(STORAGE_KEY_AUTH);
+          localStorage.removeItem(STORAGE_KEY_AUTH);
         }
       } catch (error) {
         console.error("Failed to parse auth state:", error);
@@ -78,7 +78,7 @@ export function use2FA() {
       putInfo(twoFactor);
 
       const updated = { ...prev, ...newConfig };
-      sessionStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(updated));
       return updated;
     });
   }, []);
@@ -119,7 +119,7 @@ export function use2FA() {
           method: "pin",
         };
         setAuthState(newAuthState);
-        sessionStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newAuthState));
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newAuthState));
       }
 
       return isValid;
@@ -135,7 +135,7 @@ export function use2FA() {
       method: "biometric",
     };
     setAuthState(newAuthState);
-    sessionStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newAuthState));
+    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newAuthState));
   }, []);
 
   // 인증 상태 확인 (타임아웃 체크 포함)
@@ -150,7 +150,7 @@ export function use2FA() {
     if (isExpired) {
       // 세션 만료
       setAuthState({ isAuthenticated: false });
-      sessionStorage.removeItem(STORAGE_KEY_AUTH);
+      localStorage.removeItem(STORAGE_KEY_AUTH);
       return false;
     }
 
@@ -160,7 +160,7 @@ export function use2FA() {
   // 로그아웃
   const clearAuth = useCallback(() => {
     setAuthState({ isAuthenticated: false });
-    sessionStorage.removeItem(STORAGE_KEY_AUTH);
+    localStorage.removeItem(STORAGE_KEY_AUTH);
   }, []);
 
   // 2차 인증 완전 초기화
@@ -171,8 +171,8 @@ export function use2FA() {
       sessionTimeout: DEFAULT_SESSION_TIMEOUT,
     });
     setAuthState({ isAuthenticated: false });
-    sessionStorage.removeItem(STORAGE_KEY_CONFIG);
-    sessionStorage.removeItem(STORAGE_KEY_AUTH);
+    localStorage.removeItem(STORAGE_KEY_CONFIG);
+    localStorage.removeItem(STORAGE_KEY_AUTH);
   }, []);
 
   return {

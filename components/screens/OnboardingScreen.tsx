@@ -446,10 +446,14 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   useEffect(() => {
     if (step === "complete") {
       setTimeout(() => {
-        handleLogin();
+        if (!isKakaoSignup) {
+          handleLogin();
+        } else {
+          onLoginSuccess(newUser.username ? newUser : {}); // 로그인 성공 콜백 호출
+        }
       }, 1000);
     }
-  }, [step, newUser, onLoginSuccess]);
+  }, [step, newUser, onLoginSuccess, isKakaoSignup]);
 
   const renderContent = () => {
     const avatars = useAvatar();
