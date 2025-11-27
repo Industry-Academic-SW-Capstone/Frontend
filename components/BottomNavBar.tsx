@@ -35,6 +35,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
 
   const handleNavClick = (screen: Screen) => {
     // 증권 탭 클릭 시 2FA 체크
+    console.log(config, isAuthValid(), screen);
     if (screen === "stocks" && (config.pinEnabled || config.biometricEnabled)) {
       if (!isAuthValid()) {
         setShowAuthPrompt(true);
