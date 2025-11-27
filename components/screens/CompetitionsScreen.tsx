@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Competition } from "@/lib/types/stock";
 import CompetitionCard from "@/components/CompetitionCard";
 import CreateCompetitionScreen from "./CreateCompetitionScreen";
@@ -14,6 +14,8 @@ import {
 import { useContests } from "@/lib/hooks/useContest";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useCompetitionEntryStore } from "@/lib/stores/useCompetitionEntryStore";
+
 const CompetitionsScreen: React.FC = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
@@ -21,6 +23,9 @@ const CompetitionsScreen: React.FC = () => {
   const [showEventDetail, setShowEventDetail] = useState(false);
   const [selectedCompetition, setSelectedCompetition] =
     useState<Competition | null>(null);
+  const [initialJoinPassword, setInitialJoinPassword] = useState<
+    string | undefined
+  >(undefined);
   const [view, setView] = useState<"ongoing" | "finished">("ongoing");
 
   // Pull to Refresh State
@@ -31,14 +36,32 @@ const CompetitionsScreen: React.FC = () => {
   const queryClient = useQueryClient();
 
   const { data: competitions, isFetching, error, refetch } = useContests();
+  const { pendingCompetitionId, pendingPassword, clearPendingEntry } =
+    useCompetitionEntryStore();
+
+  useEffect(() => {
+    if (pendingCompetitionId && competitions) {
+      const targetCompetition = competitions.find(
+        (c) => c.contestId === pendingCompetitionId
+      );
+      if (targetCompetition) {
+        setSelectedCompetition(targetCompetition);
+        setInitialJoinPassword(pendingPassword);
+        setShowDetail(true);
+        clearPendingEntry();
+      }
+    }
+  }, [pendingCompetitionId, pendingPassword, competitions, clearPendingEntry]);
 
   const handleAdminClick = (competition: Competition) => {
     setSelectedCompetition(competition);
+    setInitialJoinPassword(undefined);
     setShowAdmin(true);
   };
 
   const handleDetailClick = (competition: Competition) => {
     setSelectedCompetition(competition);
+    setInitialJoinPassword(undefined);
     setShowDetail(true);
   };
 
@@ -201,7 +224,7 @@ const CompetitionsScreen: React.FC = () => {
                   </div>
 
                   <p className="text-sm text-white/90 font-medium opacity-90">
-                    소정의 상품이 걸린 스톡잇 공식 대회가 진행중이에요.
+                    여기를 눌러서 자세히 알아보세요.
                   </p>
                 </div>
               </div>
@@ -269,6 +292,7 @@ const CompetitionsScreen: React.FC = () => {
                 setSelectedCompetition(null);
               }}
               onJoin={handleJoinCompetition}
+              initialPassword={initialJoinPassword}
             />
           )}
         </SlidingScreen>

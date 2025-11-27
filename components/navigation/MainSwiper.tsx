@@ -22,6 +22,7 @@ interface MainSwiperProps {
   user: User;
   currentScreen: Screen;
   onSlideChange: (screen: Screen) => void;
+  isStockContainerActive: boolean;
 }
 
 // Screen 순서 정의
@@ -32,6 +33,7 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
   user,
   currentScreen,
   onSlideChange,
+  isStockContainerActive,
 }) => {
   const swiperRef = useRef<SwiperType | null>(null);
   const { pushDepth, pushStep, getCurrentDepth } = useHistoryStore();
@@ -94,6 +96,7 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
         <div className="h-full px-4 pb-28 overflow-y-auto">
           <HomeScreen
             selectedAccount={selectedAccount}
+            isActive={currentScreen === "home" && !isStockContainerActive}
             onNavigate={onSlideChange}
           />
         </div>

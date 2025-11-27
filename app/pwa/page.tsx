@@ -29,6 +29,9 @@ import {
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
 
+import { Base64 } from "js-base64";
+import { useCompetitionEntryStore } from "@/lib/stores/useCompetitionEntryStore";
+
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<Screen>("home");
@@ -37,6 +40,7 @@ export default function Home() {
   // Use global store for accounts
   const token = useAuthStore((state) => state.token);
   const { selectedAccount, setSelectedAccount, accounts } = useAccountStore();
+  const { setPendingEntry } = useCompetitionEntryStore();
   const { isLoading: isAccountsLoading } = useAccounts({ enabled: !!token });
 
   // Use hook for user info
@@ -149,12 +153,66 @@ export default function Home() {
   useEffect(() => {
     tokenRef.current = token;
   }, [token]);
+
+  // Handle URL Hash for Competition Entry
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.startsWith("#entry-")) {
+      try {
+        const encodedData = hash.replace("#entry-", "");
+        const decodedData = Base64.decode(encodedData);
+        const [contestId, password, contestName] = decodedData.split("-@-");
+
+        if (contestId) {
+          // Store in sessionStorage for persistence across reloads/login
+          sessionStorage.setItem(
+            "pendingCompetitionEntry",
+            JSON.stringify({
+              contestId: Number(contestId),
+              password: password === "undefined" ? undefined : password,
+              contestName:
+                contestName === "undefined" ? undefined : contestName,
+            })
+          );
+
+          // Clear hash
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+      } catch (e) {
+        console.error("Failed to parse competition entry hash", e);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     setTimeout(() => {
       if (!tokenRef.current) {
         setIsLoggedIn(false);
+        // Check if there is a pending entry to show a message
+        const pendingEntry = sessionStorage.getItem("pendingCompetitionEntry");
+        if (pendingEntry) {
+          // Optional: You could show a toast here saying "Please login to join the competition"
+          // For now, the OnboardingScreen will just show up
+        }
       } else {
         setIsLoggedIn(true);
+        // Check for pending competition entry
+        const pendingEntry = sessionStorage.getItem("pendingCompetitionEntry");
+        if (pendingEntry) {
+          try {
+            const { contestId, password, contestName } =
+              JSON.parse(pendingEntry);
+
+            setPendingEntry(contestId, password, contestName);
+            setCurrentScreen("competitions");
+
+            // Clear storage so it doesn't trigger again
+            sessionStorage.removeItem("pendingCompetitionEntry");
+          } catch (e) {
+            console.error("Failed to parse pending entry from storage", e);
+            sessionStorage.removeItem("pendingCompetitionEntry");
+          }
+        }
       }
     }, 400);
   }, []);
@@ -335,6 +393,7 @@ export default function Home() {
             <MainSwiper
               selectedAccount={currentAccount}
               user={user}
+              isStockContainerActive={isStocksViewActive}
               currentScreen={currentScreen}
               onSlideChange={handleSetCurrentScreen}
             />

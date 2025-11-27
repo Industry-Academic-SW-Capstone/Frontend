@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Competition } from "@/lib/types/stock";
 import { useHaptic } from "@/lib/hooks/useHaptic"; // Import useHaptic
 
@@ -159,11 +159,13 @@ import { ArrowPathIcon } from "@/components/icons/Icons";
 interface HomeScreenProps {
   selectedAccount: Account | null;
   onNavigate: (screen: Screen) => void;
+  isActive: boolean;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({
   selectedAccount,
   onNavigate,
+  isActive,
 }) => {
   const { hapticSuccess } = useHaptic();
   const [isMissionPanelOpen, setIsMissionPanelOpen] = useState(false);
@@ -172,14 +174,49 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     null
   );
   const [visibleStage, setVisibleStage] = useState("hello");
+  const visibleStageRef = useRef(visibleStage);
+  useEffect(() => {
+    visibleStageRef.current = visibleStage;
+  }, [visibleStage]);
   const [helloVisible, setHelloVisible] = useState(false);
   const [eventVisible, setEventVisible] = useState(false);
   const [advertiseVisible, setAdvertiseVisible] = useState(false);
+  const [needNextBanner, setNeedNextBanner] = useState(false);
   useEffect(() => {
     setTimeout(() => {
       setHelloVisible(true);
     }, 300);
   }, []);
+
+  useEffect(() => {
+    if (needNextBanner && isActive) {
+      switch (visibleStageRef.current) {
+        case "hello":
+          setHelloVisible(false);
+          setTimeout(() => {
+            setVisibleStage("event");
+            setEventVisible(true);
+          }, 800);
+          break;
+        case "event":
+          setEventVisible(false);
+          setTimeout(() => {
+            setVisibleStage("advertise");
+            setAdvertiseVisible(true);
+          }, 800);
+          break;
+        case "advertise":
+          setAdvertiseVisible(false);
+          setTimeout(() => {
+            setVisibleStage("hello");
+          }, 800);
+          break;
+      }
+      setNeedNextBanner(false);
+    } else if (!needNextBanner && !isActive) {
+      setNeedNextBanner(true);
+    }
+  }, [needNextBanner, isActive]);
 
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 

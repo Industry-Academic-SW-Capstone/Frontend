@@ -33,17 +33,19 @@ interface CompetitionDetailScreenProps {
   competition: Competition;
   onClose: () => void;
   onJoin: () => void;
+  initialPassword?: string;
 }
 
 const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
   competition,
   onClose,
   onJoin,
+  initialPassword,
 }) => {
   const { selectedAccount } = useAccountStore();
   const [joinInfo, setJoinInfo] = useState<JoinCompetitionRequest>({
     accountName: "",
-    password: "",
+    password: initialPassword || "",
   });
   const [isJoinDrawerOpen, setIsJoinDrawerOpen] = useState(false);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
