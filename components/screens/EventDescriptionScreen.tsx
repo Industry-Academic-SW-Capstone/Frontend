@@ -9,27 +9,27 @@ const EventDescriptionScreen: React.FC<EventDescriptionScreenProps> = ({
   onClose,
 }) => {
   return (
-    <div className="relative w-full h-full bg-white dark:bg-black overflow-x-hidden overflow-y-auto">
+    <div className="relative w-full h-full bg-[#F9FAFB] dark:bg-black overflow-x-hidden overflow-y-auto">
       {/* Header Section with Gradient Fade */}
-      <div className="w-full bg-gradient-to-b from-[#3182F6] to-[#2B76E5] dark:from-[#1E2B45] dark:to-black pt-16 pb-12 px-6 flex flex-col items-center text-center relative">
+      <div className="w-full bg-gradient-to-b from-[#3182F6] via-[#82aded] via-70% to-[#F9FAFB] dark:from-[#1E2B45] dark:via-[#0a0a0a] dark:via-70% dark:to-black pt-16 pb-12 px-6 flex flex-col items-center text-center relative">
         <div className="relative z-10 flex flex-col items-center">
-          <span className="inline-block bg-white/10 text-white text-[13px] font-semibold px-3 py-1.5 rounded-full mb-5 backdrop-blur-md border border-white/10">
+          <span className="inline-block bg-white/10 text-white text-[13px] font-semibold px-3 py-1.5 rounded-full mb-5 backdrop-blur-md border border-white/10 shadow-sm">
             기간 한정 이벤트
           </span>
-          <h1 className="text-[30px] font-bold leading-[1.3] mb-3 text-white tracking-tight drop-shadow-sm">
+          <h1 className="text-[30px] font-bold leading-[1.3] mb-3 text-white tracking-tight drop-shadow-md">
             스톡잇 런칭기념
             <br />
-            투자대회
+            <span className="font-extrabold text-[33px]">모의투자대회</span>
           </h1>
-          <p className="text-blue-100/90 text-[17px] font-medium leading-relaxed mb-6">
+          <p className="text-blue-50/90 text-[17px] font-medium leading-relaxed mb-6">
             총 자본금 1억으로 시작하는
             <br />
-            실전 모의투자
+            스톡잇 공식 모의투자대회
           </p>
         </div>
 
         {/* Decorative Elements - Subtle Gradient Orbs */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.15)_0%,_transparent_60%)] pointer-events-none blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.2)_0%,_transparent_60%)] pointer-events-none blur-3xl" />
       </div>
 
       <div className="relative z-10 px-6 -mt-6 pb-32 space-y-12">
