@@ -80,8 +80,22 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "StockIt", // 검색 결과 윗줄에 표시될 이름
+    applicationCategory: "FinanceApplication",
     alternateName: "스톡잇", // 대체 이름
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "KRW",
+    },
     url: "https://www.stockit.live/",
+    description:
+      "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션 플랫폼.",
+    image: "https://www.stockit.live/new_logo.png",
+    author: {
+      "@type": "Organization",
+      name: "Team GRIT",
+      url: "https://www.stockit.live",
+    },
   };
   return (
     <html lang="ko" className={`${pretendard.variable}`}>

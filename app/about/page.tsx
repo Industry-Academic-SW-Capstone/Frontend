@@ -29,50 +29,52 @@ const Team = dynamic(
 );
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.stockit.live"),
   title: "스톡잇!",
+  applicationName: "StockIt",
   description:
-    "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션으로 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
-  keywords: [
-    "주식",
-    "모의투자",
-    "주식대회",
-    "투자연습",
-    "StockIt",
-    "스톡잇",
-    "스톡잇!",
-    "금융교육",
-    "Stock It",
-    "StockIt!",
-  ],
-  alternates: {
-    canonical: "/about",
+    "투자의 시작, 스톡잇으로 완벽하게. 실시간 시세 기반의 모의투자와 가이드 미션, 자유롭게 만들고 참여하는 대회로 주식 투자에 입문하세요!",
+  manifest: "/manifest.json",
+  icons: {
+    // icon을 배열로 바꿔서 두 가지 사이즈를 모두 제공합니다.
+    icon: [
+      { url: "/favicon.png", sizes: "64x64" }, // 브라우저 탭용 (기존 유지)
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" }, // 구글 검색용 (48 배수) <- 이게 핵심입니다!
+    ],
+    shortcut: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/apple-touch-icon.png",
+    },
   },
   openGraph: {
+    siteName: "StockIt",
     title: "스톡잇!",
     description:
-      "리스크 없는 모의투자와 흥미진진한 대회. 실시간 시세 기반의 주식 투자 시뮬레이션으로 초보자도 쉽고 재미있게 주식 시장을 경험해보세요.",
-    url: "/about",
-    siteName: "스톡잇!",
-    images: [
-      {
-        url: "/images/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "StockIt Preview",
-      },
-    ],
-    locale: "ko_KR",
+      "투자의 시작, 스톡잇으로 완벽하게. 실시간 시세 기반의 모의투자와 가이드 미션, 자유롭게 만들고 참여하는 대회로 주식 투자에 입문하세요!",
     type: "website",
+    locale: "ko_KR",
+    url: "https://www.stockit.live",
+  },
+
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "스톡잇!",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "WebSite",
   name: "스톡잇!",
   applicationCategory: "FinanceApplication",
   operatingSystem: "Web",
+  alternateName: "스톡잇",
   offers: {
     "@type": "Offer",
     price: "0",
