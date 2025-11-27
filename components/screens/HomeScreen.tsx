@@ -3,11 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Competition } from "@/lib/types/stock";
 import { useHaptic } from "@/lib/hooks/useHaptic"; // Import useHaptic
 
-import {
-  TrophyIcon,
-  CalendarIcon,
-  ChevronRightIcon,
-} from "@/components/icons/Icons";
+import { ChevronRightIcon } from "@/components/icons/Icons";
 import MissionPanel from "@/components/MissionPanel";
 import HomeScreenSkeleton from "@/components/screens/HomeScreenSkeleton";
 import { useAccounts } from "@/lib/hooks/useAccounts";
@@ -25,64 +21,62 @@ import { MissionDashboard } from "@/lib/types/mission";
 const FeaturedCompetition: React.FC<{ competition: Competition }> = ({
   competition,
 }) => {
-  const totalDays = 31;
-  const elapsedDays = 15;
+  const startDate = new Date(competition.startDate);
+  const endDate = new Date(competition.endDate);
+  const totalDays = endDate.getTime() - startDate.getTime();
+  const elapsedDays = new Date().getTime() - startDate.getTime();
   const progress = (elapsedDays / totalDays) * 100;
   const returnPercent = competition.returnPercent ?? 0;
 
   return (
-    <div className="bg-primary p-6 rounded-2xl text-white space-y-4 cursor-pointer overflow-hidden relative group">
-      {/* Animated background elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-2xl animate-float" />
-
-      <div className="flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-3">
-          <div className="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
-            <TrophyIcon className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-lg leading-tight">
-              {competition.contestName}
-            </h3>
-            <p className="text-xs opacity-80">현재 진행중인 대회</p>
-          </div>
-        </div>
-        <ChevronRightIcon className="w-5 h-5 opacity-70" />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 text-sm relative z-10 pt-2">
-        <div className="bg-white/10 p-3 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:bg-white/20">
-          <p className="opacity-80 text-xs mb-1">나의 순위</p>
-          <p className="font-bold text-2xl">
-            {competition.rank}
-            <span className="text-sm font-normal opacity-80 ml-1">위</span>
-          </p>
-        </div>
-        <div className="bg-white/10 p-3 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:bg-white/20">
-          <p className="opacity-80 text-xs mb-1">수익률</p>
-          <p className="font-bold text-2xl">
-            {returnPercent > 0 ? "+" : ""}
-            {Number(returnPercent).toFixed(2)}%
-          </p>
-        </div>
-      </div>
-
-      <div className="relative z-10 pt-1">
-        <div className="flex justify-between items-center text-xs opacity-90 mb-2">
-          <div className="flex items-center gap-1 bg-black/10 px-2 py-1 rounded-full">
-            <CalendarIcon className="w-3 h-3" />
-            <span>D-{totalDays - elapsedDays}</span>
-          </div>
-          <span className="font-medium">
-            {Number(progress).toFixed(0)}% 진행
+    <div className="bg-bg-secondary p-5 pb-3 pt-3 rounded-2xl cursor-pointer group transition-colors active-transition">
+      <div className="flex justify-between items-center mb-2">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-text-primary text-lg">
+            {competition.contestName}
+          </span>
+          <span className="text-xs text-text-secondary bg-bg-tertiary px-2 py-0.5 rounded-full">
+            진행중
           </span>
         </div>
-        <div className="w-full bg-black/10 backdrop-blur-sm rounded-full h-1.5 overflow-hidden">
-          <div
-            className="bg-white h-1.5 rounded-full transition-all duration-1000 ease-out"
-            style={{ width: `${progress}%` }}
-          />
+        <ChevronRightIcon className="w-5 h-5 text-text-tertiary group-hover:text-text-primary transition-colors" />
+      </div>
+
+      <div className="space-y-3">
+        <div className="flex justify-between items-center px-1">
+          <span className="text-sm font-medium text-text-secondary">
+            나의 순위
+          </span>
+          <div className="flex items-center gap-1">
+            <span className="font-semibold text-text-primary">
+              {competition.rank}위
+            </span>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center px-1">
+          <span className="text-sm text-text-secondary">수익률</span>
+          <span
+            className={`font-semibold ${
+              returnPercent >= 0 ? "text-positive" : "text-negative"
+            }`}
+          >
+            {returnPercent > 0 ? "+" : ""}
+            {Number(returnPercent).toFixed(2)}%
+          </span>
+        </div>
+
+        <div className="pt-1">
+          <div className="flex justify-between items-center text-xs text-text-secondary mb-1.5 px-1">
+            <span>진행률</span>
+            <span>D-{totalDays - elapsedDays}</span>
+          </div>
+          <div className="w-full bg-bg-tertiary rounded-full h-1.5 overflow-hidden">
+            <div
+              className="bg-primary h-1.5 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
