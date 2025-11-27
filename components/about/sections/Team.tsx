@@ -119,14 +119,13 @@ export const Team: React.FC = () => {
                 "투자는 어렵다"는 <br className="md:hidden" /> 편견을 깨다.
               </h3>
               <p className="text-slate-300 text-xl leading-relaxed mb-12 font-medium">
-                스톡잇은 단순한 질문에서 시작되었습니다.{" "}
-                <br className="hidden md:block" />
+                스톡잇은 단순한 질문에서 시작되었습니다. <br />
                 <span className="text-white font-bold">
                   "왜 주식 공부는 항상 지루하고 딱딱해야 할까?"
                 </span>
                 <br />
                 <br />
-                우리는 강력한 서버와 직관적인 UI를 결합하여,{" "}
+                우리는 게임적 요소와 금융, 캐주얼한 UI를 결합하여,{" "}
                 <br className="hidden md:block" />
                 누구나 쉽고 재미있게 금융을 경험할 수 있는 세상을 만들고
                 있습니다.

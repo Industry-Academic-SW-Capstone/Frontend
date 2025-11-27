@@ -1,5 +1,5 @@
 import React from "react";
-import { TrendingUp, Award, Zap } from "lucide-react";
+import { TrendingUp, Zap } from "lucide-react";
 import { HeroActions } from "./HeroActions";
 import { FadeIn } from "@/components/about/ui/Motion";
 import { ScrollDown } from "../scrollDown";
@@ -9,7 +9,7 @@ export const Hero: React.FC = () => {
   return (
     <section
       id="home"
-      className="relative min-h-[100vh] flex items-center pt-20 overflow-hidden bg-[#0f172a]"
+      className="relative h-screen flex items-center pt-20 overflow-hidden bg-[#0f172a]"
     >
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/40 via-[#0f172a] to-[#0f172a] z-0"></div>
@@ -63,7 +63,7 @@ export const Hero: React.FC = () => {
             <HeroActions />
           </FadeIn>
 
-          <FadeIn direction="up" duration={0.6} delay={0.4}>
+          {/* <FadeIn direction="up" duration={0.6} delay={0.4}>
             <div className="pt-8 flex items-center justify-center lg:justify-start gap-8 border-t border-white/5 mt-8">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2 text-2xl font-bold text-white">
@@ -85,7 +85,7 @@ export const Hero: React.FC = () => {
                 </p>
               </div>
             </div>
-          </FadeIn>
+          </FadeIn> */}
         </div>
 
         {/* Visual Area */}
