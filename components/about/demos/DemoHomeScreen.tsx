@@ -17,7 +17,7 @@ export const DemoHomeScreen: React.FC<DemoHomeScreenProps> = ({
   onNavigate,
 }) => {
   return (
-    <div className="relative min-h-screen bg-bg-primary overflow-hidden">
+    <div className="relative min-h-screen-safe bg-bg-primary overflow-hidden">
       <DemoHeader />
 
       <div className="space-y-3 p-4 pt-20 pb-24 relative min-h-full">

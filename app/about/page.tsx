@@ -92,7 +92,7 @@ const jsonLd = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen-safe font-sans selection:bg-blue-100 selection:text-blue-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

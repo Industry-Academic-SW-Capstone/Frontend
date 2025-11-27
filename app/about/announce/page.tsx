@@ -1,4 +1,3 @@
-import React from "react";
 import { Metadata } from "next";
 import { Header } from "@/components/about/Header";
 import { Footer } from "@/components/about/Footer";
@@ -69,7 +68,7 @@ export default function AnnouncePage() {
   };
 
   return (
-    <div className="min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900 bg-gray-50">
+    <div className="min-h-screen-safe font-sans selection:bg-blue-100 selection:text-blue-900 bg-gray-50">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

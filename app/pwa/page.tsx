@@ -349,9 +349,9 @@ export default function Home() {
   // Show loading if data is loading and we have a token (so we expect data)
   if ((isAccountsLoading || isUserLoading) && token) {
     return (
-      <div className="max-w-md mx-auto bg-bg-primary text-text-primary min-h-screen font-sans relative overflow-hidden">
+      <div className="max-w-md mx-auto bg-bg-primary text-text-primary h-screen-safe font-sans relative overflow-hidden">
         <HeaderSkeleton />
-        <main className="h-screen p-4 pt-20">
+        <main className="h-screen-safe p-4 pt-20">
           <HomeScreenSkeleton />
         </main>
         <BottomNavBar
@@ -380,7 +380,7 @@ export default function Home() {
   return (
     <>
       <WebSocketProvider>
-        <div className="max-w-md mx-auto bg-bg-primary text-text-primary min-h-screen font-sans relative overflow-hidden">
+        <div className="max-w-md mx-auto bg-bg-primary text-text-primary h-screen-safe font-sans relative overflow-hidden">
           <Header
             selectedAccount={currentAccount}
             user={user}
@@ -389,7 +389,7 @@ export default function Home() {
             unreadCount={unreadNotifications}
           />
 
-          <main className="h-screen mt-16">
+          <main className="h-screen-safe mt-16">
             <MainSwiper
               selectedAccount={currentAccount}
               user={user}

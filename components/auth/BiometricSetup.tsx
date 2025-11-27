@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { startRegistration } from "@simplewebauthn/browser";
 
 interface BiometricSetupProps {
@@ -67,7 +67,7 @@ export default function BiometricSetup({
 
   if (step === "scanning") {
     return (
-      <div className="flex z-50 flex-col items-center justify-center min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-black px-6">
+      <div className="flex z-50 flex-col items-center justify-center min-h-screen-safe bg-linear-to-br from-gray-900 via-gray-800 to-black px-6">
         <div className="w-full max-w-md text-center">
           {/* 스캔 애니메이션 */}
           <div className="relative w-48 h-48 mx-auto mb-8">
@@ -114,7 +114,7 @@ export default function BiometricSetup({
 
   return (
     <>
-      <div className="flex z-50 flex-col items-center justify-center min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-black px-6">
+      <div className="flex z-50 flex-col items-center justify-center min-h-screen-safe bg-linear-to-br from-gray-900 via-gray-800 to-black px-6">
         <div className="w-full max-w-md text-center">
           <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-white/10 flex items-center justify-center">
             <svg

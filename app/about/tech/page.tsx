@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function TechPage() {
   return (
-    <div className="min-h-screen font-sans bg-slate-50/50">
+    <div className="min-h-screen-safe font-sans bg-slate-50/50">
       <Header />
       <main className="pt-32 pb-20">
         <TechPageContent />

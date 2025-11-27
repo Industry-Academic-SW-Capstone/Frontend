@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 interface PinInputProps {
   length?: number;
@@ -104,7 +104,7 @@ export default function PinInput({
   };
 
   return (
-    <div className="flex z-50 flex-col items-center justify-center min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-black px-6">
+    <div className="flex z-50 flex-col items-center justify-center min-h-screen-safe bg-linear-to-br from-gray-900 via-gray-800 to-black px-6">
       {/* 숨겨진 input (키보드 입력 받기 용) */}
       <input
         id="hidden-pin-input"

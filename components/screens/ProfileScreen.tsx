@@ -282,7 +282,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   return (
     <div
-      className="pt-4 space-y-6 pb-24 min-h-screen relative"
+      className="pt-4 space-y-6 pb-24 min-h-screen-safe relative"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

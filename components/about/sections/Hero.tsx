@@ -9,7 +9,7 @@ export const Hero: React.FC = () => {
   return (
     <section
       id="home"
-      className="relative h-screen flex items-center pt-20 overflow-hidden bg-[#0f172a]"
+      className="relative h-screen-safe flex items-center pt-20 overflow-hidden bg-[#0f172a]"
     >
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/40 via-[#0f172a] to-[#0f172a] z-0"></div>
