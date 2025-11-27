@@ -13,6 +13,7 @@ interface StocksContainerScreenProps {
 import { useStockStore } from "@/lib/stores/useStockStore";
 import { useFetchInfo, usePutInfo } from "@/lib/hooks/me/useInfo";
 import { useTutorialStore } from "@/lib/store/useTutorialStore";
+import { useHistoryStore } from "@/lib/stores/useHistoryStore";
 
 const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
   onExit,
@@ -23,10 +24,22 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
   const { startStocksTutorial } = useTutorialStore();
   const { data: userInfo } = useFetchInfo();
   const { mutate: updateInfo } = usePutInfo();
+  const { pushDepth } = useHistoryStore();
+  const isInitialized = React.useRef(false);
 
   const handleTutorialComplete = () => {
     updateInfo({ securitiesDepthTutorialCompleted: true });
   };
+
+  // 초기 렌더링 시 Stocks Depth 초기화
+  React.useEffect(() => {
+    if (!isInitialized.current) {
+      const viewOrder = ["portfolio", "explore", "analysis"];
+      const initialIndex = viewOrder.indexOf(currentView);
+      pushDepth("stocks", initialIndex);
+      isInitialized.current = true;
+    }
+  }, []);
 
   // Trigger tutorial on mount
   React.useEffect(() => {
@@ -88,7 +101,11 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
       )}
 
       {/* 종목 상세 화면 - 오른쪽에서 슬라이딩 */}
-      <SlidingScreen isOpen={!!selectedTicker} onClose={handleBack}>
+      <SlidingScreen
+        isOpen={!!selectedTicker}
+        onClose={handleBack}
+        depthId={selectedTicker ? `detail_stock_${selectedTicker}` : undefined}
+      >
         {selectedTicker && (
           <StockDetailScreen ticker={selectedTicker} onBack={handleBack} />
         )}

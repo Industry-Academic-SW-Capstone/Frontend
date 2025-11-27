@@ -20,6 +20,8 @@ import { useAccountStore } from "@/lib/store/useAccountStore";
 import { useFetchInfo, usePutInfo } from "@/lib/hooks/me/useInfo";
 import { useAuthStore } from "@/lib/stores/useAuthStore";
 import { useUnreadCount } from "@/lib/hooks/notifications/useUnreadCount";
+import { useHistoryStore } from "@/lib/stores/useHistoryStore";
+import { useStockStore } from "@/lib/stores/useStockStore";
 import {
   isTokenRegistered,
   requestNotificationPermission,
@@ -67,6 +69,11 @@ export default function Home() {
   const [isStocksViewActive, setIsStocksViewActive] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isPermissionPopupOpen, setIsPermissionPopupOpen] = useState(false);
+
+  // History management
+  const { popStep, popDepth, getCurrentDepth, getCurrentStep } =
+    useHistoryStore();
+  const { setStocksView } = useStockStore();
 
   // Check notification permission on load
   useEffect(() => {
@@ -184,6 +191,86 @@ export default function Home() {
     startHomeTutorial,
   ]);
 
+  // popstate 이벤트 리스너: 브라우저 뒤로가기 처리
+  useEffect(() => {
+    const handlePopState = () => {
+      const currentDepth = getCurrentDepth();
+      const currentStep = getCurrentStep();
+
+      if (!currentDepth || currentStep === null) {
+        // Case C: 스택이 비어있으면 앱 종료 (브라우저 기본 동작)
+        return;
+      }
+
+      const stepHistory = currentDepth.stepHistory;
+
+      if (stepHistory.length > 1) {
+        // Case A: Step Back - 현재 Depth 내에서 이전 Step으로 이동
+        popStep();
+        const previousStep = stepHistory[stepHistory.length - 2];
+
+        // UI 업데이트: Depth에 따라 다른 처리
+        if (currentDepth.depthId === "main") {
+          // Main Depth: currentScreen 업데이트
+          const screenOrder: Screen[] = [
+            "home",
+            "competitions",
+            "rankings",
+            "profile",
+          ];
+          const previousScreen = screenOrder[previousStep];
+          if (previousScreen) {
+            setCurrentScreen(previousScreen);
+          }
+        } else if (currentDepth.depthId === "stocks") {
+          // Stocks Depth: stocksView 업데이트
+          const viewOrder = ["portfolio", "explore", "analysis"] as const;
+          const previousView = viewOrder[previousStep];
+          if (previousView) {
+            setStocksView(previousView);
+          }
+        }
+      } else {
+        // Case B: Depth Back - 현재 Depth를 닫고 이전 Depth로 복귀
+        const closedDepth = popDepth();
+
+        if (closedDepth?.depthId === "stocks") {
+          // Stocks 화면 닫기
+          setIsStocksViewActive(false);
+        } else if (closedDepth?.depthId.startsWith("detail_")) {
+          // Detail 화면 닫기 (SlidingScreen)
+          // SlidingScreen별 onClose는 해당 컴포넌트에서 처리
+          if (closedDepth.depthId.startsWith("detail_notifications")) {
+            setIsNotificationsOpen(false);
+          }
+          // 종목 상세는 StocksContainerScreen에서 처리
+        }
+
+        // 이전 Depth 복원 (애니메이션 없이)
+        const previousDepth = getCurrentDepth();
+        const previousStep = getCurrentStep();
+
+        if (previousDepth?.depthId === "main" && previousStep !== null) {
+          const screenOrder: Screen[] = [
+            "home",
+            "competitions",
+            "rankings",
+            "profile",
+          ];
+          const previousScreen = screenOrder[previousStep];
+          if (previousScreen) {
+            setCurrentScreen(previousScreen);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [popStep, popDepth, getCurrentDepth, getCurrentStep]);
+
   // If not logged in and not loading (or if we know there's no token), show Onboarding
   if (!token || !isLoggedIn) {
     return (
@@ -273,6 +360,7 @@ export default function Home() {
           <SlidingScreen
             isOpen={isNotificationsOpen}
             onClose={() => setIsNotificationsOpen(false)}
+            depthId="detail_notifications"
           >
             <NotificationsScreen
               onClose={() => setIsNotificationsOpen(false)}

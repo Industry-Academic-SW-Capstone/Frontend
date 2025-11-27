@@ -4,6 +4,7 @@ import { Competition } from "@/lib/types/stock";
 import CompetitionCard from "@/components/CompetitionCard";
 import CreateCompetitionScreen from "./CreateCompetitionScreen";
 import CompetitionDetailScreen from "./CompetitionDetailScreen";
+import EventDescriptionScreen from "./EventDescriptionScreen";
 import SlidingScreen from "@/components/navigation/SlidingScreen";
 import {
   PlusCircleIcon,
@@ -17,6 +18,7 @@ const CompetitionsScreen: React.FC = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  const [showEventDetail, setShowEventDetail] = useState(false);
   const [selectedCompetition, setSelectedCompetition] =
     useState<Competition | null>(null);
   const [view, setView] = useState<"ongoing" | "finished">("ongoing");
@@ -180,7 +182,10 @@ const CompetitionsScreen: React.FC = () => {
         ) : (
           <div className="min-h-[300px]">
             {/* Event Banner */}
-            <div className="bg-gradient-to-r from-event-start via-event-middle to-event-end rounded-2xl p-5 mb-4 active:scale-95 transition-all duration-300 ease-out text-white shadow-lg relative overflow-hidden">
+            <div
+              onClick={() => setShowEventDetail(true)}
+              className="bg-gradient-to-r from-event-start via-event-middle to-event-end rounded-2xl p-5 mb-4 active:scale-95 transition-all duration-300 ease-out text-white shadow-lg relative overflow-hidden cursor-pointer"
+            >
               <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
               <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-20 h-20 bg-white opacity-10 rounded-full blur-xl"></div>
 
@@ -266,6 +271,15 @@ const CompetitionsScreen: React.FC = () => {
               onJoin={handleJoinCompetition}
             />
           )}
+        </SlidingScreen>
+
+        {/* 이벤트 상세 화면 - 슬라이딩 패널 */}
+        <SlidingScreen
+          isOpen={showEventDetail}
+          onClose={() => setShowEventDetail(false)}
+          depthId="event_detail"
+        >
+          <EventDescriptionScreen onClose={() => setShowEventDetail(false)} />
         </SlidingScreen>
       </div>
     </>

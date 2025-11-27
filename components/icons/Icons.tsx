@@ -56,6 +56,7 @@ import {
   HiHeart,
   HiTrash,
   HiAcademicCap,
+  HiChatBubbleOvalLeft,
 } from "react-icons/hi2";
 import { MdPhone, MdKey, MdEmail, MdError } from "react-icons/md";
 import { IconBaseProps } from "react-icons";
@@ -235,3 +236,10 @@ export const TrashIcon = (props: IconProps) => <HiTrash {...props} />;
 export const AcademicCapIcon = (props: IconProps) => (
   <HiAcademicCap {...props} />
 );
+export const ChatBubbleLeftRightIcon = (props: IconProps) => (
+  <HiChatBubbleOvalLeft {...props} />
+);
+export const CurrencyDollarIcon = (props: IconProps) => (
+  <HiBanknotes {...props} />
+);
+export const UserGroupIcon = (props: IconProps) => <HiUsers {...props} />;

@@ -18,6 +18,7 @@ import TierBadge from "@/components/ui/TierBadge";
 import { use2FA } from "@/lib/hooks/auth/use2FA";
 import { useTierInfo } from "@/lib/hooks/missions/useTierInfo";
 import { parseTier, calculateNextTierTarget } from "@/lib/utils/tierUtils";
+import TierSystemGuide from "@/components/ranking/TierSystemGuide";
 
 interface ProfileScreenProps {
   user: User;
@@ -184,6 +185,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   // Pull to Refresh Handlers
   const handleTouchStart = (e: React.TouchEvent) => {
+    // Ignore events from Portals (like Drawer)
+    if (!e.currentTarget.contains(e.target as Node)) return;
+
     const scrollContainer = e.currentTarget.closest(".overflow-y-auto");
     if (scrollContainer && scrollContainer.scrollTop === 0) {
       setPullStartY(e.touches[0].clientY);
@@ -338,7 +342,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
           {user.username}
         </h2>
 
-        <div className="flex items-center justify-center gap-3 mt-2 flex-wrap">
+        <div className="flex items-center justify-center gap-3 mt-2 flex-wrap relative">
           {isTierLoading ? (
             <div className="h-6 w-20 bg-bg-third animate-pulse rounded-full" />
           ) : (
@@ -358,13 +362,20 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
           ) : tierData ? (
             <>
-              <div className="flex justify-between text-xs font-bold text-text-secondary mb-2">
-                <span>{tierData.totalScore} RP</span>
-                <span>Next: {nextTierTarget} RP</span>
+              <div className="flex justify-between items-center text-xs font-bold text-text-secondary">
+                <span className="p-1">{tierData.totalScore} RP</span>
+                <div className="flex gap-2 items-center">
+                  <span>Next: {nextTierTarget} RP</span>
+                  <TierSystemGuide>
+                    <button className="p-1 text-text-secondary hover:text-accent transition-colors">
+                      <Icons.InformationCircleIcon className="w-5 h-5" />
+                    </button>
+                  </TierSystemGuide>
+                </div>
               </div>
               <div className="w-full h-3 bg-bg-third rounded-full overflow-hidden relative">
                 <div
-                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-1000 ease-out"
+                  className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000 ease-out"
                   style={{
                     width: `${progressPercent}%`,
                   }}

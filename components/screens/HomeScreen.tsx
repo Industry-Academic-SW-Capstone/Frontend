@@ -355,7 +355,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const DemoAdvertise = () => {
     return (
-      <div className=" mt-4 p-4 bg-bg-third rounded-xl flex items-center justify-between shadow-sm">
+      <div className=" mt-4 p-4 bg-bg-banner rounded-xl flex items-center justify-between shadow-sm">
         <div className="w-full">
           <div className="flex items-center gap-2 mb-1">
             <span className="bg-bg-secondary text-text-secondary text-[10px] px-1.5 py-0.5 rounded font-bold">

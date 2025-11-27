@@ -1,10 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { Account, User, RankingEntry, Tier } from "@/lib/types/stock";
-import { ArrowPathIcon } from "@/components/icons/Icons";
 import { useRanking, useMyRanking } from "@/lib/hooks/useRanking";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTierInfo } from "@/lib/hooks/missions/useTierInfo";
+import TierSystemGuide from "@/components/ranking/TierSystemGuide";
+import * as Icons from "@/components/icons/Icons";
 
 // const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
 //   change,
@@ -148,6 +149,9 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
 
   // Pull to Refresh Handlers
   const handleTouchStart = (e: React.TouchEvent) => {
+    // Ignore events from Portals (like Drawer)
+    if (!e.currentTarget.contains(e.target as Node)) return;
+
     const scrollContainer = e.currentTarget.closest(".overflow-y-auto");
     if (scrollContainer && scrollContainer.scrollTop === 0) {
       setPullStartY(e.touches[0].clientY);
@@ -210,7 +214,7 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
               isRefreshing ? "animate-spin" : ""
             }`}
           >
-            <ArrowPathIcon
+            <Icons.ArrowPathIcon
               className={`w-6 h-6 text-primary ${
                 pullCurrentY > PULL_THRESHOLD
                   ? "rotate-180 transition-transform duration-300"
@@ -236,6 +240,23 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
             </div>
           ) : myRankingData ? (
             <div className="relative z-10">
+              {/* My Tier Badge */}
+              <div className="mb-6 flex items-center gap-3 bg-white/10 p-3 rounded-xl backdrop-blur-sm relative">
+                <div className="p-2 bg-white/20 rounded-full">
+                  <span className="text-xl">🏆</span>
+                </div>
+                <div>
+                  <p className="text-xs text-white/80 font-medium">현재 티어</p>
+                  <p className="text-lg font-bold text-white tracking-wide">
+                    {tierData?.currentTier || "Unranked"}
+                  </p>
+                </div>
+                <TierSystemGuide>
+                  <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors">
+                    <Icons.InformationCircleIcon className="w-5 h-5" />
+                  </button>
+                </TierSystemGuide>
+              </div>
               <div className="mb-6 flex items-start justify-between">
                 <div>
                   <p className="mb-1 text-sm font-medium text-white/80">

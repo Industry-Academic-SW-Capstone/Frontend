@@ -14,6 +14,7 @@ import { EffectCreative } from "swiper/modules";
 import PortfolioScreen from "@/components/screens/PortfolioScreen";
 import ExploreScreen from "@/components/screens/ExploreScreen";
 import AnalysisScreen from "@/components/screens/AnalysisScreen";
+import { useHistoryStore } from "@/lib/stores/useHistoryStore";
 
 interface StocksSwiperProps {
   currentView: StocksView;
@@ -32,6 +33,7 @@ const StocksSwiper: React.FC<StocksSwiperProps> = ({
   selectedTicker,
 }) => {
   const swiperRef = useRef<SwiperType | null>(null);
+  const { pushStep, getCurrentDepth } = useHistoryStore();
 
   // currentView가 변경될 때 해당 슬라이드로 이동
   useEffect(() => {
@@ -45,7 +47,14 @@ const StocksSwiper: React.FC<StocksSwiperProps> = ({
 
   const handleSlideChange = (swiper: SwiperType) => {
     const newView = viewOrder[swiper.activeIndex];
+    const newIndex = swiper.activeIndex;
+
     if (newView !== currentView) {
+      // 사용자가 슬라이드를 변경한 경우 히스토리에 기록
+      const currentDepth = getCurrentDepth();
+      if (currentDepth?.depthId === "stocks") {
+        pushStep(newIndex);
+      }
       onSlideChange(newView);
     }
   };

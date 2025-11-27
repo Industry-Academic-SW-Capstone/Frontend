@@ -1,12 +1,14 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import Portal from "@/components/Portal";
+import { useHistoryStore } from "@/lib/stores/useHistoryStore";
 
 interface SlidingScreenProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
   title?: string;
+  depthId?: string; // 히스토리 관리를 위한 고유 ID
 }
 
 /**
@@ -19,6 +21,7 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
   onClose,
   children,
   title,
+  depthId,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -28,6 +31,8 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
   const isDragging = useRef<boolean>(false);
   const isEdgeSwipe = useRef<boolean>(false);
   const EDGE_THRESHOLD = 50; // 왼쪽 가장자리 영역 (픽셀)
+  const { pushDepth, popDepth } = useHistoryStore();
+  const isPushed = useRef(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -35,15 +40,22 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
       requestAnimationFrame(() => {
         setIsAnimating(true);
       });
+
+      // Depth 추가 (depthId가 있을 때만)
+      if (depthId && !isPushed.current) {
+        pushDepth(depthId, 0);
+        isPushed.current = true;
+      }
     } else {
       setIsAnimating(false);
+      isPushed.current = false;
       const timer = setTimeout(() => {
         setIsVisible(false);
         setTranslateX(0);
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, depthId, pushDepth]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -93,6 +105,10 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
     // 100픽셀 이상 또는 화면 너비의 1/3 이상 드래그하면 닫기
     const threshold = Math.min(100, window.innerWidth / 3);
     if (diff > threshold) {
+      // 엣지 스와이프로 닫을 때 히스토리 스택도 정리
+      if (depthId) {
+        popDepth();
+      }
       onClose();
     } else {
       setTranslateX(0);

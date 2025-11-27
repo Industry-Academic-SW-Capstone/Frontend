@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { Screen, Account, User } from "@/lib/types/stock";
+import { useHistoryStore } from "@/lib/stores/useHistoryStore";
 
 // Swiper styles
 import "swiper/css";
@@ -33,8 +34,19 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
   onSlideChange,
 }) => {
   const swiperRef = useRef<SwiperType | null>(null);
+  const { pushDepth, pushStep, getCurrentDepth } = useHistoryStore();
+  const isInitialized = useRef(false);
 
-  // currentScreen이 변경될 때 해당 슬라이드로 이동
+  // 초기 렌더링 시 Main Depth 초기화
+  useEffect(() => {
+    if (!isInitialized.current) {
+      const initialIndex = screenOrder.indexOf(currentScreen);
+      pushDepth("main", initialIndex);
+      isInitialized.current = true;
+    }
+  }, []);
+
+  // currentScreen이 변경될 때 해당 슬라이드로 이동 (외부에서 변경된 경우)
   useEffect(() => {
     if (swiperRef.current && currentScreen !== "stocks") {
       const index = screenOrder.indexOf(currentScreen);
@@ -46,7 +58,11 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
 
   const handleSlideChange = (swiper: SwiperType) => {
     const newScreen = screenOrder[swiper.activeIndex];
+    const newIndex = swiper.activeIndex;
+
     if (newScreen !== currentScreen) {
+      // 사용자가 슬라이드를 변경한 경우 히스토리에 기록
+      pushStep(newIndex);
       onSlideChange(newScreen);
     }
   };
