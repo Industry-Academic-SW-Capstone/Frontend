@@ -13,6 +13,10 @@ interface OrderModalProps {
   cashBalance: number;
   ownedQuantity?: number;
   accountId: number;
+  selectedOrderType: "market" | "limit";
+  setSelectedOrderType: (type: "market" | "limit") => void;
+  limitPrice: string;
+  setLimitPrice: (price: string) => void;
 }
 
 const OrderModal: React.FC<OrderModalProps> = ({
@@ -23,12 +27,12 @@ const OrderModal: React.FC<OrderModalProps> = ({
   cashBalance,
   ownedQuantity = 0,
   accountId,
+  selectedOrderType,
+  setSelectedOrderType,
+  limitPrice,
+  setLimitPrice,
 }) => {
-  const [selectedOrderType, setSelectedOrderType] = useState<
-    "market" | "limit"
-  >("market");
   const [quantity, setQuantity] = useState("");
-  const [limitPrice, setLimitPrice] = useState("");
   const [toast, setToast] = useState<{
     visible: boolean;
     message: string;

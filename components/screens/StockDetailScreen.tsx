@@ -154,11 +154,20 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
   const handleOpenOrderModal = (type: "buy" | "sell", price?: number) => {
     setOrderType(type);
-    // If price is provided, we might want to set it in the modal state (not implemented in modal yet, but prepared)
-    setIsOrderModalOpen(true);
+    if (price) setIsOrderModalOpen(true);
   };
 
+  const [selectedOrderType, setSelectedOrderType] = useState<
+    "market" | "limit"
+  >("market");
+  const [limitPrice, setLimitPrice] = useState("");
+
   const handleOrderBookPriceClick = (price: number, type: "buy" | "sell") => {
+    if (price) {
+      setSelectedOrderType("limit");
+      setLimitPrice(price.toString());
+    } else setSelectedOrderType("market");
+
     handleOpenOrderModal(type, price); // Open order modal
   };
 
@@ -603,6 +612,10 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
         cashBalance={cashBalance}
         ownedQuantity={ownedQuantity}
         accountId={1}
+        setSelectedOrderType={setSelectedOrderType}
+        selectedOrderType={selectedOrderType}
+        setLimitPrice={setLimitPrice}
+        limitPrice={limitPrice}
       />
       <Toast
         message={toastState.message}
