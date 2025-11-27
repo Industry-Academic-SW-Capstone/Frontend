@@ -1,9 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { Account, User, RankingEntry, Tier } from "@/lib/types/stock";
+import { Account, User, RankingEntry } from "@/lib/types/stock";
 import { useRanking, useMyRanking } from "@/lib/hooks/useRanking";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTierInfo } from "@/lib/hooks/missions/useTierInfo";
 import * as Icons from "@/components/icons/Icons";
 
 // const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
@@ -17,13 +16,6 @@ import * as Icons from "@/components/icons/Icons";
 // };
 
 // Mock function to get tier based on rank (for demo)
-const getMockTier = (rank: number): Tier => {
-  if (rank <= 1) return "Legend";
-  if (rank <= 3) return "Platinum";
-  if (rank <= 10) return "Gold";
-  if (rank <= 30) return "Silver";
-  return "Bronze";
-};
 
 interface LeaderboardRowProps {
   entry: RankingEntry;
@@ -38,8 +30,6 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
   onClick,
   showReturnRate,
 }) => {
-  const tier = getMockTier(entry.rank);
-
   return (
     <button
       onClick={onClick}
@@ -131,7 +121,6 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
 
   const { data: rankingData, isLoading: isRankingLoading } = useRanking();
   const { data: myRankingData, isLoading: isMyRankingLoading } = useMyRanking();
-  const { data: tierData } = useTierInfo();
 
   const isRegularAccount = selectedAccount.type === "regular";
 
@@ -239,23 +228,6 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
             </div>
           ) : myRankingData ? (
             <div className="relative z-10">
-              {/* My Tier Badge */}
-              {/* <div className="mb-6 flex items-center gap-3 bg-white/10 p-3 rounded-xl backdrop-blur-sm relative">
-                <div className="p-2 bg-white/20 rounded-full">
-                  <span className="text-xl">🏆</span>
-                </div>
-                <div>
-                  <p className="text-xs text-white/80 font-medium">현재 티어</p>
-                  <p className="text-lg font-bold text-white tracking-wide">
-                    {tierData?.currentTier || "Unranked"}
-                  </p>
-                </div>
-                <TierSystemGuide>
-                  <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors">
-                    <Icons.InformationCircleIcon className="w-5 h-5" />
-                  </button>
-                </TierSystemGuide>
-              </div> */}
               <div className="mb-6 flex items-start justify-between">
                 <div>
                   <p className="mb-1 text-sm font-medium text-white/80">

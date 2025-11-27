@@ -299,7 +299,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
             </div>
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto p-4 bg-bg-primary border-t border-border-color">
+          <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto p-4 bg-bg-primary pb-safe border-t border-border-color">
             <div className="flex gap-3">
               <div className="w-full h-12 bg-bg-secondary rounded-lg animate-pulse" />
               <div className="w-full h-12 bg-bg-secondary rounded-lg animate-pulse" />
@@ -378,7 +378,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
         <motion.div
           ref={scrollRef}
-          className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden"
+          className="flex-1 flex flex-col pb-safe overflow-y-auto overflow-x-hidden"
         >
           <div className="px-4 pb-2 shrink-0">
             <div className="flex items-center gap-2">
@@ -595,7 +595,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
         {/* Bottom Buttons - Only visible in Chart tab */}
         {activeTab === "chart" && (
-          <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto p-4 bg-bg-primary border-t border-border-color">
+          <div className="fixed bottom-0 left-0 right-0 z-10 pb-safe max-w-md mx-auto p-4 bg-bg-primary border-t border-border-color">
             <div className="flex gap-3">
               <button
                 id="stock-buy-button"

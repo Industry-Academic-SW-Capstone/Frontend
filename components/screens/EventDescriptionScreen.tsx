@@ -48,7 +48,7 @@ const EventDescriptionScreen: React.FC<EventDescriptionScreenProps> = ({
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full bg-gradient-to-b from-[#3182F6] via-[#82aded] via-70% to-[#F9FAFB] dark:from-[#1E2B45] dark:via-[#0a0a0a] dark:via-70% dark:to-black pt-16 pb-12 px-6 flex flex-col items-center text-center relative"
       >
-        <div className="relative z-10 flex flex-col items-center">
+        <div className="relative z-10 flex pt-safe flex-col items-center">
           <motion.span
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -306,7 +306,7 @@ const EventDescriptionScreen: React.FC<EventDescriptionScreenProps> = ({
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1, type: "spring", stiffness: 200, damping: 20 }}
-        className="fixed bottom-0 left-0 w-full p-5 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent pb-8 z-50"
+        className="fixed bottom-0 left-0 w-full p-5 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent pb-safe z-50"
       >
         <motion.button
           whileHover={{ scale: 1.02 }}

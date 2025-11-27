@@ -587,7 +587,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* Edit Profile Modal */}
       {isEditingProfile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pb-28 bg-black/60 backdrop-blur-sm animate-fadeIn">
           <div className="bg-bg-secondary w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-scaleIn">
             <div className="p-6 border-b border-border-color flex justify-between items-center">
               <h3 className="text-xl font-bold text-text-primary">
@@ -660,7 +660,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
       )}
 
       {isAvatarModalOpen && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 pb-28 bg-black/60 backdrop-blur-sm animate-fadeIn">
           <div className="bg-bg-secondary w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-scaleIn p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-text-primary">
@@ -676,8 +676,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
             <div className="space-y-6 ">
               {/* Presets */}
-              <div>
-                <div className="grid grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+              <div className="max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-3 gap-4 ">
                   {avatarPresets.map((avatar) => (
                     <button
                       key={avatar.name}
