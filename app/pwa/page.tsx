@@ -389,7 +389,7 @@ export default function Home() {
             unreadCount={unreadNotifications}
           />
 
-          <main className="h-screen-safe mt-16">
+          <main className="h-screen-safe pt-safe mt-16">
             <MainSwiper
               selectedAccount={currentAccount}
               user={user}
