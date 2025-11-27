@@ -66,7 +66,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 onClick={() => handleNavClick(item.screen)}
                 className={`flex flex-col items-center justify-center w-16 h-14 transition-all duration-300 ease-out active-transition rounded-xl relative group ${
                   isActive
-                    ? "text-primary"
+                    ? "text-text-primary"
                     : "text-text-secondary hover:text-text-primary"
                 }`}
                 style={{

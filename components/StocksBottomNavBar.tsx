@@ -46,7 +46,7 @@ const StocksBottomNavBar: React.FC<StocksBottomNavBarProps> = ({
             onClick={() => setCurrentView(item.view)}
             className={`flex flex-col items-center justify-center w-16 h-16 transition-all duration-200 ease-in-out rounded-lg active-transition ${
               currentView === item.view
-                ? "text-primary scale-105"
+                ? "text-text-primary scale-105"
                 : "text-text-secondary hover:text-text-primary"
             }`}
           >
