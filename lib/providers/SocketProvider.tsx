@@ -88,7 +88,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     // 주식 구독 복구
     desiredStockSubscriptionsRef.current.forEach((stockCode) => {
       if (!stockSubscriptionsRef.current[stockCode]) {
-        doSubscribeStock(client, stockCode, manySockets);
+        doSubscribeStock(client, stockCode, !manySockets);
       }
     });
 
@@ -160,7 +160,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     // 추가해야 할 것들
     stockCodes.forEach((code) => {
       if (!desiredStockSubscriptionsRef.current.has(code)) {
-        subscribeStock(manySockets, code);
+        subscribeStock(!manySockets, code);
       }
     });
   };
