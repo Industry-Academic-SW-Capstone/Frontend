@@ -111,6 +111,8 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
       if (depthId) {
         popDepth();
       }
+      setIsAnimating(false);
+      setTranslateX(0);
       onClose();
     } else {
       setTranslateX(0);
