@@ -281,7 +281,7 @@ export default function Home() {
 
           {/* Permission Popup Modal */}
           {isPermissionPopupOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/60 backdrop-blur-sm animate-fadeIn">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bg-primary/60 backdrop-blur-sm animate-fadeIn">
               <div className="bg-bg-primary w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-scaleIn p-6 text-center">
                 <div className="w-16 h-16 bg-bg-secondary rounded-full flex items-center justify-center mx-auto mb-5">
                   <span className="text-3xl">🔔</span>
@@ -296,13 +296,13 @@ export default function Home() {
                 <div className="flex gap-3">
                   <button
                     onClick={handlePermissionDeny}
-                    className="flex-1 py-3.5 rounded-xl bg-primary text-text-secondary font-semibold active-transition"
+                    className="flex-1 py-3.5 rounded-xl bg-primary text-text-primary font-semibold active-transition"
                   >
                     다음에
                   </button>
                   <button
                     onClick={handlePermissionConfirm}
-                    className="flex-1 py-3.5 rounded-xl bg-bg-secondary text-text-secondary font-semibold active-transition"
+                    className="flex-1 py-3.5 rounded-xl bg-bg-secondary text-text-primary font-semibold active-transition"
                   >
                     좋아요
                   </button>
