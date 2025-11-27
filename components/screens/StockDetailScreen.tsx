@@ -182,6 +182,9 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
   useEffect(() => {
     if (stock?.stockCode) setSubscribeSet([stock.stockCode]);
+    return () => {
+      setSubscribeSet([]);
+    };
   }, [stock, setSubscribeSet]);
 
   const { data: chartDatas } = useStockChart(stock?.stockCode || "", period);
