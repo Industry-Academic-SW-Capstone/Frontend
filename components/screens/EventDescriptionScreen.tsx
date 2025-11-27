@@ -9,7 +9,7 @@ const EventDescriptionScreen: React.FC<EventDescriptionScreenProps> = ({
   onClose,
 }) => {
   return (
-    <div className="relative w-full h-full bg-white dark:bg-black overflow-x-auto overflow-y-auto">
+    <div className="relative w-full h-full bg-white dark:bg-black overflow-x-hidden overflow-y-auto">
       {/* Header Section with Gradient Fade */}
       <div className="w-full bg-gradient-to-b from-[#3182F6] to-[#2B76E5] dark:from-[#1E2B45] dark:to-black pt-16 pb-12 px-6 flex flex-col items-center text-center relative">
         <div className="relative z-10 flex flex-col items-center">

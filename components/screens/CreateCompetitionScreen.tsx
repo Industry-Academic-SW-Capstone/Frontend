@@ -10,6 +10,7 @@ import {
   BanknotesIcon,
   ClockIcon,
 } from "@/components/icons/Icons";
+import Toast from "@/components/ui/Toast";
 import { CreateCompetitionRequest } from "@/lib/types/stock";
 import { useCreateContest } from "@/lib/hooks/useContest";
 
@@ -77,7 +78,7 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
       new Date(new Date().setDate(new Date().getDate() + 30))
         .toISOString()
         .split("T")[0] + "T18:00:00",
-    seedMoney: 1000000,
+    seedMoney: 50000000,
     commissionRate: 0.0015,
     password: "",
     minMarketCap: 1000000000,
@@ -126,6 +127,31 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
 
   const handleChange = (field: keyof CreateCompetitionRequest, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const [toast, setToast] = useState<{
+    isVisible: boolean;
+    message: string;
+  }>({
+    isVisible: false,
+    message: "",
+  });
+
+  const handleSeedMoneyBlur = () => {
+    let value = formData.seedMoney;
+    if (value < 10000000) {
+      handleChange("seedMoney", 10000000);
+      setToast({
+        isVisible: true,
+        message: "최소 자본금은 1,000만원입니다.",
+      });
+    } else if (value > 200000000) {
+      handleChange("seedMoney", 200000000);
+      setToast({
+        isVisible: true,
+        message: "최대 자본금은 2억원입니다.",
+      });
+    }
   };
 
   const renderStep = () => {
@@ -182,24 +208,28 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
               <label className="block text-sm font-medium text-text-secondary mb-2">
                 초기 자본금 (Seed Money)
               </label>
-              <div className="text-3xl font-bold text-primary mb-4 text-center">
-                {formData.seedMoney.toLocaleString()}원
+              <div className="relative">
+                <input
+                  type="text"
+                  value={formData.seedMoney.toLocaleString()}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value.replace(/,/g, ""));
+                    if (!isNaN(value)) {
+                      handleChange("seedMoney", value);
+                    } else if (e.target.value === "") {
+                      handleChange("seedMoney", 0);
+                    }
+                  }}
+                  onBlur={handleSeedMoneyBlur}
+                  className="w-full bg-bg-secondary border border-border-color rounded-xl p-4 text-lg focus:ring-2 focus:ring-primary outline-none transition-all pr-12"
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary font-bold">
+                  원
+                </span>
               </div>
-              <input
-                type="range"
-                min="1000000"
-                max="50000000"
-                step="500000"
-                value={formData.seedMoney}
-                onChange={(e) =>
-                  handleChange("seedMoney", parseInt(e.target.value))
-                }
-                className="w-full h-2 bg-border-color rounded-lg appearance-none cursor-pointer accent-primary"
-              />
-              <div className="flex justify-between text-xs text-text-secondary mt-2">
-                <span>100만원</span>
-                <span>5000만원</span>
-              </div>
+              <p className="text-xs text-text-secondary mt-2">
+                최소 1,000만원 ~ 최대 2억원까지 설정 가능합니다.
+              </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-2">
@@ -481,6 +511,12 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
           </button>
         </div>
       )}
+      <Toast
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
+        type="error"
+      />
     </div>
   );
 };
