@@ -65,14 +65,11 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 key={item.screen}
                 id={`bottom-nav-${item.screen}`}
                 onClick={() => handleNavClick(item.screen)}
-                className={`flex flex-col items-center justify-center w-16 h-14 transition-all duration-300 ease-out active-transition rounded-xl relative group ${
+                className={`flex flex-col items-center justify-center w-16 h-14 transition-all duration-300 ease-in-out active-transition rounded-xl relative group ${
                   isActive
                     ? "text-text-primary"
                     : "text-text-secondary hover:text-text-primary"
                 }`}
-                style={{
-                  animationDelay: `${index * 50}ms`,
-                }}
               >
                 <div
                   className={`transition-transform duration-300 group-hover:scale-110 ${
