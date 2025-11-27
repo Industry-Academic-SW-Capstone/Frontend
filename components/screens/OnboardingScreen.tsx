@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { User, UserGroup } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import { requestNotificationPermission } from "@/lib/services/notificationService";
@@ -104,6 +104,11 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     twoFactorEnabled: false,
     notificationAgreement: false,
   });
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
+  const passwordConfirmRef = useRef(passwordConfirm);
+  useEffect(() => {
+    passwordConfirmRef.current = passwordConfirm;
+  }, [passwordConfirm]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(false);
@@ -328,6 +333,11 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
       return;
     } else if (signupRequestRef.current.password.length < 6) {
       setErrorMessage("비밀번호는 최소 6자 이상이어야 합니다.");
+      return;
+    } else if (
+      signupRequestRef.current.password !== passwordConfirmRef.current
+    ) {
+      setErrorMessage("비밀번호가 일치하지 않습니다.");
       return;
     } else if (!/\S+@\S+\.\S+/.test(signupRequestRef.current.email)) {
       setErrorMessage("유효한 이메일 주소를 입력해주세요.");
@@ -727,6 +737,34 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                       }`}
                       disabled={isAuthLoading}
                     />
+                  </div>
+
+                  <div
+                    className={`transition-all duration-300 ease-in overflow-hidden mb-2 ${
+                      signupRequest.password
+                        ? "max-h-30 opacity-100"
+                        : "max-h-0 -mt-2 opacity-0"
+                    }`}
+                  >
+                    <div className={`relative mt-2`}>
+                      <Icons.KeyIcon
+                        className={`w-5 h-5 text-text-secondary absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+                          isError ? "text-error" : "peer-focus:text-primary"
+                        }`}
+                      />
+                      <input
+                        type="password"
+                        placeholder="비밀번호 확인"
+                        onChange={(e) => setPasswordConfirm(e.target.value)}
+                        value={passwordConfirm}
+                        className={`peer w-full bg-bg-secondary border-2 rounded-lg p-3.5 pl-12 focus:border-primary outline-none transition-all duration-300 ${
+                          isError
+                            ? "border-error animate-shake"
+                            : "border-border-color"
+                        }`}
+                        disabled={isAuthLoading}
+                      />
+                    </div>
                   </div>
 
                   <div
