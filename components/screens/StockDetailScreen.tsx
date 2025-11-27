@@ -198,13 +198,14 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   const mergedChartDatas = useMemo(() => {
     let historical = chartDatas || [];
     let merged = historical;
-    if (realTimeChartDatas.length > 0) {
+    if (realTimeChartDatas.length > 1) {
       merged =
         historical.length > 0
           ? [...historical.slice(0, -1), ...realTimeChartDatas]
           : realTimeChartDatas;
     }
-    if (chartDatas) {
+    console.log(chartDatas);
+    if (chartDatas && chartDatas.length > 0) {
       setChartStartPrice(chartDatas[0].openPrice || 0);
     }
     return merged;

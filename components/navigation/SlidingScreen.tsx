@@ -85,7 +85,9 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
     if (diff > 0) {
       setTranslateX(diff);
       // 스크롤 방지 및 이벤트 전파 차단
-      e.preventDefault();
+      if (e.cancelable) {
+        e.preventDefault();
+      }
       // e.stopPropagation();
     } else {
       // 왼쪽으로 드래그하는 경우에도 이벤트 전파 차단
