@@ -16,6 +16,7 @@ import {
 import { useAvatar } from "@/lib/utils/useAvatar";
 import TierBadge from "@/components/ui/TierBadge";
 import PromotionStatusCard from "@/components/ranking/PromotionStatusCard";
+import { use2FA } from "@/lib/hooks/auth/use2FA";
 
 interface ProfileScreenProps {
   user: User;
@@ -228,9 +229,10 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
   const handleAccordion = (section: string) => {
     setOpenSection((prev) => (prev === section ? null : section));
   };
-
+  const { reset2FA } = use2FA();
   const handleLogout = async () => {
     if (confirm("정말 로그아웃 하시겠습니까?")) {
+      reset2FA();
       await logout();
       router.push("/pwa"); // Redirect to landing page
     }

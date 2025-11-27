@@ -5,9 +5,7 @@ import {
   TwoFactorConfig,
   AuthState,
   DEFAULT_SESSION_TIMEOUT,
-  UpdateInfoRequest,
 } from "@/lib/types/auth";
-import { usePutInfo } from "../me/useInfo";
 
 const STORAGE_KEY_CONFIG = "stockit_2fa_config";
 const STORAGE_KEY_AUTH = "stockit_auth_state";
@@ -67,16 +65,9 @@ export function use2FA() {
     }
   }, []);
 
-  const { mutate: putInfo } = usePutInfo();
-
   // 설정 저장
   const saveConfig = useCallback((newConfig: Partial<TwoFactorConfig>) => {
-    const twoFactor: UpdateInfoRequest = {
-      twoFactorEnabled: newConfig.pinEnabled || newConfig.biometricEnabled,
-    };
     setConfigState((prev) => {
-      putInfo(twoFactor);
-
       const updated = { ...prev, ...newConfig };
       localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(updated));
       return updated;
