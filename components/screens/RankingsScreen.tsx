@@ -4,7 +4,6 @@ import { Account, User, RankingEntry, Tier } from "@/lib/types/stock";
 import { useRanking, useMyRanking } from "@/lib/hooks/useRanking";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTierInfo } from "@/lib/hooks/missions/useTierInfo";
-import TierSystemGuide from "@/components/ranking/TierSystemGuide";
 import * as Icons from "@/components/icons/Icons";
 
 // const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
@@ -241,7 +240,7 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
           ) : myRankingData ? (
             <div className="relative z-10">
               {/* My Tier Badge */}
-              <div className="mb-6 flex items-center gap-3 bg-white/10 p-3 rounded-xl backdrop-blur-sm relative">
+              {/* <div className="mb-6 flex items-center gap-3 bg-white/10 p-3 rounded-xl backdrop-blur-sm relative">
                 <div className="p-2 bg-white/20 rounded-full">
                   <span className="text-xl">🏆</span>
                 </div>
@@ -256,7 +255,7 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
                     <Icons.InformationCircleIcon className="w-5 h-5" />
                   </button>
                 </TierSystemGuide>
-              </div>
+              </div> */}
               <div className="mb-6 flex items-start justify-between">
                 <div>
                   <p className="mb-1 text-sm font-medium text-white/80">

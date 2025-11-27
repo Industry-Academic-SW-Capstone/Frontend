@@ -5,6 +5,8 @@ import { CheckCircleIcon, XMarkIcon } from "./icons/Icons";
 import { Drawer } from "vaul";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 
+import { useHaptic } from "@/lib/hooks/useHaptic"; // Import useHaptic
+
 interface AccountSwitcherProps {
   isOpen: boolean;
   onClose: () => void;
@@ -15,6 +17,7 @@ const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
   onClose,
 }) => {
   const { accounts, selectedAccount, setSelectedAccount } = useAccountStore();
+  const { hapticSelection } = useHaptic(); // Initialize hook
 
   if (!selectedAccount) return null;
 
@@ -48,6 +51,7 @@ const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
                 <button
                   key={account.id}
                   onClick={() => {
+                    hapticSelection(); // Haptic on selection
                     setSelectedAccount(account);
                     onClose();
                   }}

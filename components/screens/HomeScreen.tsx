@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Competition } from "@/lib/types/stock";
+import { useHaptic } from "@/lib/hooks/useHaptic"; // Import useHaptic
+
 import {
   TrophyIcon,
   CalendarIcon,
@@ -163,6 +165,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   selectedAccount,
   onNavigate,
 }) => {
+  const { hapticSuccess } = useHaptic();
   const [isMissionPanelOpen, setIsMissionPanelOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [selectedStockTicker, setSelectedStockTicker] = useState<string | null>(
@@ -260,6 +263,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             }, 800);
             break;
         }
+        hapticSuccess(); // Haptic on success
+
         // Optional: Show toast? ProfileScreen does.
       } catch (error) {
         console.error("Refresh failed", error);

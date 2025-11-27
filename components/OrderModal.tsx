@@ -5,6 +5,8 @@ import { useMarketOrder, useLimitOrder } from "@/lib/hooks/useOrder";
 import Toast, { ToastType } from "@/components/ui/Toast";
 import { Drawer } from "vaul";
 
+import { useHaptic } from "@/lib/hooks/useHaptic"; // Import useHaptic
+
 interface OrderModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -45,6 +47,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
   const { mutate: marketOrder, isPending: isMarketPending } = useMarketOrder();
   const { mutate: limitOrder, isPending: isLimitPending } = useLimitOrder();
+  const { hapticSelection, hapticSuccess, hapticError } = useHaptic(); // Initialize hook
 
   useEffect(() => {
     if (isOpen) {
@@ -70,6 +73,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
   const maxBuyableShares = Math.floor(cashBalance / currentPrice);
 
   const handlePercentageClick = (percent: number) => {
+    hapticSelection(); // Haptic on percentage click
     if (orderType === "buy") {
       const maxShares = Math.floor((cashBalance * percent) / currentPrice);
       setQuantity(maxShares.toString());
@@ -82,6 +86,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
   const handleSubmit = () => {
     const qty = Number(quantity);
     if (qty <= 0) {
+      hapticError(); // Haptic on error
       setToast({
         visible: true,
         message: "주문 수량은 0보다 커야 합니다.",
@@ -91,6 +96,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
     }
 
     if (orderType === "buy" && totalOrderValue > cashBalance) {
+      hapticError(); // Haptic on error
       setToast({
         visible: true,
         message: "주문 가능 금액을 초과했습니다.",
@@ -100,6 +106,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
     }
 
     if (orderType === "sell" && qty > ownedQuantity) {
+      hapticError(); // Haptic on error
       setToast({
         visible: true,
         message: "보유 수량을 초과했습니다.",
@@ -110,6 +117,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
     const commonCallbacks = {
       onSuccess: () => {
+        hapticSuccess(); // Haptic on success
         setToast({
           visible: true,
           message: "주문이 접수되었습니다.",
@@ -120,6 +128,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
         }, 1500);
       },
       onError: (error: any) => {
+        hapticError(); // Haptic on error
         setToast({
           visible: true,
           message: error.response?.data?.message || "주문 실패",
@@ -194,7 +203,10 @@ const OrderModal: React.FC<OrderModalProps> = ({
             {/* Tabs */}
             <div className="flex bg-bg-primary p-1 rounded-xl mb-6">
               <button
-                onClick={() => setSelectedOrderType("market")}
+                onClick={() => {
+                  hapticSelection(); // Haptic on tab switch
+                  setSelectedOrderType("market");
+                }}
                 className={`flex-1 py-2.5 active:scale-95 duration-75 px-3 text-sm font-bold rounded-lg transition-all ${
                   selectedOrderType === "market"
                     ? "bg-bg-secondary shadow-md text-text-primary"
@@ -204,7 +216,10 @@ const OrderModal: React.FC<OrderModalProps> = ({
                 시장가
               </button>
               <button
-                onClick={() => setSelectedOrderType("limit")}
+                onClick={() => {
+                  hapticSelection(); // Haptic on tab switch
+                  setSelectedOrderType("limit");
+                }}
                 className={`flex-1 py-2.5 active:scale-95 duration-75 px-3 text-sm font-bold rounded-lg transition-all ${
                   selectedOrderType === "limit"
                     ? "bg-bg-secondary shadow-md text-text-primary"

@@ -383,16 +383,16 @@ export default function Home() {
                 </p>
                 <div className="flex gap-3">
                   <button
-                    onClick={handlePermissionDeny}
+                    onClick={handlePermissionConfirm}
                     className="flex-1 py-3.5 rounded-xl bg-primary text-text-primary font-semibold active-transition"
                   >
-                    다음에
+                    좋아요
                   </button>
                   <button
-                    onClick={handlePermissionConfirm}
+                    onClick={handlePermissionDeny}
                     className="flex-1 py-3.5 rounded-xl bg-bg-secondary text-text-primary font-semibold active-transition"
                   >
-                    좋아요
+                    다음에
                   </button>
                 </div>
               </div>
