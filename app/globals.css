@@ -72,9 +72,7 @@
 }
 
 .min-h-screen-safe {
-  min-height: calc(
-    100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
-  );
+  min-height: calc(100vh - env(safe-area-inset-top));
 }
 
 .h-screen-safe {
