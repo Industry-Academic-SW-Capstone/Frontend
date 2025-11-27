@@ -253,6 +253,10 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({
       );
       setSubscribeSet(Array.from(tickers));
     }
+    return () => {
+      console.log("구독 항목 초기화");
+      setSubscribeSet([]);
+    };
   }, [
     popularStocks,
     industriesTopStocks,
