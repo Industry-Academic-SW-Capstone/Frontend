@@ -20,7 +20,9 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   title: "스톡잇!",
-  description: "투자의 시작, 스톡잇으로 완벽하게. 실시간 ",
+  applicationName: "StockIt",
+  description:
+    "투자의 시작, 스톡잇으로 완벽하게. 실시간 시세 기반의 모의투자와 가이드 미션, 자유롭게 만들고 참여하는 대회로 주식 투자에 입문하세요!",
   manifest: "/manifest.json",
   icons: {
     // icon을 배열로 바꿔서 두 가지 사이즈를 모두 제공합니다.
@@ -35,6 +37,16 @@ export const metadata: Metadata = {
       url: "/apple-touch-icon.png",
     },
   },
+  openGraph: {
+    siteName: "StockIt",
+    title: "스톡잇!",
+    description:
+      "투자의 시작, 스톡잇으로 완벽하게. 실시간 시세 기반의 모의투자와 가이드 미션, 자유롭게 만들고 참여하는 대회로 주식 투자에 입문하세요!",
+    type: "website",
+    locale: "ko_KR",
+    url: "https://www.stockit.live",
+  },
+
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -64,9 +76,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "StockIt", // 검색 결과 윗줄에 표시될 이름
+    alternateName: "스톡잇", // 대체 이름
+    url: "https://www.stockit.live/",
+  };
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
       <body className={`${pretendard.className} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Script
           src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.9/kakao.min.js"
           integrity="sha384-JpLApTkB8lPskhVMhT+m5Ln8aHlnS0bsIexhaak0jOhAkMYedQoVghPfSpjNi9K1"
