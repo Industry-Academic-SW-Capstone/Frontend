@@ -66,15 +66,65 @@ const StockChart: React.FC<StockChartProps> = ({
   const periods: PeriodType[] = ["1day", "1week", "3month", "1year", "5year"];
   const activeIndex = periods.indexOf(period);
 
-  // 데이터 로드 시 초기 Zoom 상태 설정 (전체 보기)
+  // --- State Tracking Refs ---
+  const prevPeriodRef = useRef<PeriodType>(period);
+  const prevDataLengthRef = useRef<number>(0);
+
+  // 데이터 로드 및 업데이트 시 Zoom 상태 관리
   useEffect(() => {
-    if (mergedChartDatas.length > 0) {
-      // 기간이 바뀌거나 데이터가 처음 로드되면 전체를 보여줌
+    const currentLength = mergedChartDatas.length;
+    const prevLength = prevDataLengthRef.current;
+    const prevPeriod = prevPeriodRef.current;
+
+    // 1. 기간이 바뀌었거나, 데이터가 처음 로드되는 경우 (Reset)
+    if (period !== prevPeriod || (prevLength === 0 && currentLength > 0)) {
       setViewStartIndex(0);
-      setVisibleCount(mergedChartDatas.length);
-      setChartStartPrice(mergedChartDatas[0].closePrice);
+      setVisibleCount(currentLength);
+      if (currentLength > 0) {
+        setChartStartPrice(mergedChartDatas[0].closePrice);
+      }
     }
-  }, [mergedChartDatas, period, setChartStartPrice]);
+    // 2. 데이터가 추가된 경우 (Real-time Update)
+    else if (currentLength > prevLength) {
+      const addedCount = currentLength - prevLength;
+
+      // 현재 사용자가 "가장 최신 데이터"를 보고 있었는지 확인
+      // (viewStartIndex + visibleCount 가 이전 데이터 길이와 거의 일치하는지)
+      // 약간의 오차 허용 (예: 1개 정도)
+      const isAtEnd = viewStartIndex + visibleCount >= prevLength - 1;
+
+      if (isAtEnd) {
+        // 최신 데이터를 보고 있었다면:
+        // 1. Zoom Level(visibleCount)은 유지 (단, 전체 보기 상태였다면 늘려줌)
+        // 2. View Start Index를 이동시켜서 새 데이터가 보이게 함
+
+        if (visibleCount >= prevLength) {
+          // 전체를 보고 있었다면 계속 전체를 보여줌
+          setVisibleCount(currentLength);
+          setViewStartIndex(0);
+        } else {
+          // 줌 상태였다면, 오른쪽으로 스크롤 (새 데이터가 들어온 만큼 start index 증가)
+          // visibleCount는 유지
+          const newStartIndex = viewStartIndex + addedCount;
+          setViewStartIndex(newStartIndex);
+        }
+      } else {
+        // 과거 데이터를 보고 있었다면:
+        // 아무것도 하지 않음 (현재 뷰 유지)
+        // 다만, start index나 visibleCount가 범위를 벗어나지 않도록 clamp는 필요할 수 있음 (render logic에서 처리됨)
+      }
+    }
+
+    // Refs 업데이트
+    prevPeriodRef.current = period;
+    prevDataLengthRef.current = currentLength;
+  }, [
+    mergedChartDatas,
+    period,
+    setChartStartPrice,
+    viewStartIndex,
+    visibleCount,
+  ]);
 
   // --- Derived Visible Data ---
   const visibleDatas = useMemo(() => {
