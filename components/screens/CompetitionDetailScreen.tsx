@@ -157,7 +157,7 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
   return (
     <div className="h-full bg-bg-primary flex flex-col relative">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-10 bg-bg-primary/80 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-transparent transition-colors">
+      <div className="sticky pt-safe top-0 z-10 bg-bg-primary/80 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-transparent transition-colors">
         <button
           onClick={onClose}
           className="p-2 -ml-2 rounded-full hover:bg-bg-secondary transition-colors text-text-primary"
@@ -286,7 +286,7 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
       </div>
 
       {/* Bottom Action Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-bg-primary via-bg-primary/95 to-transparent pt-8 safe-area-bottom z-20">
+      <div className="fixed pb-safe bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-bg-primary via-bg-primary/95 to-transparent pt-8 safe-area-bottom z-20">
         <button
           onClick={() => setIsJoinDrawerOpen(true)}
           disabled={competition.isParticipating || isFinished}
@@ -315,7 +315,7 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
       <Drawer.Root open={isJoinDrawerOpen} onOpenChange={setIsJoinDrawerOpen}>
         <Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-100 backdrop-blur-sm" />
-          <Drawer.Content className="bg-bg-primary flex flex-col rounded-t-[20px] h-auto max-h-[85%] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
+          <Drawer.Content className="bg-bg-primary pb-safe flex flex-col rounded-t-[20px] h-auto max-h-[85%] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
             <div className="p-6 bg-bg-primary rounded-t-[20px] flex-1 pb-10">
               <div className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300/50 mb-8" />
               <div className="max-w-md mx-auto">
@@ -388,7 +388,7 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
       <Drawer.Root open={isEditDrawerOpen} onOpenChange={setIsEditDrawerOpen}>
         <Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-100 backdrop-blur-sm" />
-          <Drawer.Content className="bg-bg-primary flex flex-col rounded-t-[20px] h-[90%] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
+          <Drawer.Content className="bg-bg-primary pb-safe flex flex-col rounded-t-[20px] h-[90%] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
             <div className="p-6 bg-bg-primary rounded-t-[20px] flex-1 overflow-y-auto">
               <div className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300/50 mb-8" />
               <div className="max-w-md mx-auto space-y-6 pb-10">
@@ -569,7 +569,7 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
       <Drawer.Root open={isShareDrawerOpen} onOpenChange={setIsShareDrawerOpen}>
         <Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-100 backdrop-blur-sm" />
-          <Drawer.Content className="bg-bg-primary flex flex-col rounded-t-[20px] h-fit min-h-[200px] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
+          <Drawer.Content className="bg-bg-primary pb-safe flex flex-col rounded-t-[20px] h-fit min-h-[200px] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
             <div className="p-6 bg-bg-primary rounded-t-[20px] flex-1 overflow-y-auto">
               <div className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300/50 mb-8" />
               <div className="max-w-md mx-auto space-y-6 pb-10">

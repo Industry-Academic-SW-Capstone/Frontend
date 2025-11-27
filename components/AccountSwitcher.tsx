@@ -31,7 +31,7 @@ const AccountSwitcher: React.FC<AccountSwitcherProps> = ({
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-60 bg-black/30 backdrop-blur-sm" />
         <Drawer.Content
-          className="fixed bottom-0 left-0 right-0 z-70 w-full max-w-md mx-auto bg-bg-secondary rounded-t-2xl p-4 shadow-2xl"
+          className="fixed bottom-0 pb-safe left-0 right-0 z-70 w-full max-w-md mx-auto bg-bg-secondary rounded-t-2xl p-4 shadow-2xl"
           style={{ touchAction: "none" }}
         >
           <div className="flex justify-between items-center mb-4">

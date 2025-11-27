@@ -50,7 +50,7 @@ const Toast: React.FC<ToastProps> = ({
 
   return createPortal(
     <div
-      className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[20000] flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border transition-all duration-300 ${
+      className={`fixed mt-safe top-4 left-1/2 transform -translate-x-1/2 z-[20000] flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border transition-all duration-300 ${
         isShowing ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"
       } ${
         type === "success"

@@ -39,7 +39,7 @@ const PortfolioOrderHistory: React.FC<PortfolioOrderHistoryProps> = ({
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed inset-0 z-50 bg-bg-primary flex flex-col"
+          className="fixed inset-0 pb-safe pt-safe z-50 bg-bg-primary flex flex-col"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-4 border-b border-border-color">
@@ -75,7 +75,7 @@ const PortfolioOrderHistory: React.FC<PortfolioOrderHistoryProps> = ({
                     <div key={group.date} className="flex gap-4">
                       {/* Date Column */}
                       <div className="w-12 pt-1">
-                        <span className="text-text-secondary font-medium sticky top-4">
+                        <span className="text-text-secondary font-medium pt-safe sticky top-4">
                           {formatDate(group.date)}
                         </span>
                       </div>

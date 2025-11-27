@@ -165,7 +165,7 @@ const SlidingScreen: React.FC<SlidingScreenProps> = ({
           />
 
           {title && (
-            <header className="sticky top-0 z-10 bg-bg-primary/95 backdrop-blur-sm border-b border-border-color p-4">
+            <header className="sticky pt-safe top-0 z-10 bg-bg-primary/95 backdrop-blur-sm border-b border-border-color p-4">
               <div className="flex items-center justify-between">
                 <h1 className="text-xl font-bold text-text-primary">{title}</h1>
                 <button

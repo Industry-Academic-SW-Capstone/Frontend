@@ -77,7 +77,7 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
 
   return (
     <div className="h-screen-safe flex flex-col">
-      <header className="sticky top-0 z-10 bg-bg-primary/95 backdrop-blur-sm border-b border-border-color p-4">
+      <header className="sticky pt-safe top-0 z-10 bg-bg-primary/95 backdrop-blur-sm border-b border-border-color p-4">
         <h1 className="text-xl font-bold text-center text-text-primary">
           {getHeaderTitle()}
         </h1>

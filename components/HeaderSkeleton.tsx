@@ -3,7 +3,7 @@ import Skeleton from "@/components/ui/Skeleton";
 
 const HeaderSkeleton = () => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-20 max-w-md mx-auto bg-bg-primary/80 backdrop-blur-lg border-b border-border-color">
+    <header className="fixed top-0 pt-safe left-0 right-0 z-20 max-w-md mx-auto bg-bg-primary/80 backdrop-blur-lg border-b border-border-color">
       <div className="flex items-center justify-between p-4 h-16">
         <div className="flex items-center gap-2">
           {/* User Group Skeleton */}

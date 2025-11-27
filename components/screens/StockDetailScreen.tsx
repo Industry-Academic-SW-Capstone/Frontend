@@ -252,7 +252,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
     return (
       <>
         <div className="h-full flex flex-col">
-          <header className="sticky top-0 z-10 bg-bg-primary/80 backdrop-blur-sm p-4 flex items-center gap-4">
+          <header className="sticky pt-safe top-0 z-10 bg-bg-primary/80 backdrop-blur-sm p-4 flex items-center gap-4">
             <button onClick={onBack} className="p-1">
               <ArrowLeftIcon className="w-6 h-6 text-text-primary" />
             </button>
@@ -324,7 +324,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   return (
     <>
       <div className="h-full flex flex-col bg-bg-primary">
-        <header className="sticky top-0 z-20 bg-bg-primary/95 backdrop-blur-sm p-4 pb-2 flex items-center justify-between border-b border-transparent transition-colors duration-200">
+        <header className="sticky pt-safe top-0 z-20 bg-bg-primary/95 backdrop-blur-sm p-4 pb-2 flex items-center justify-between border-b border-transparent transition-colors duration-200">
           <div className="flex items-center gap-4 flex-1">
             <button onClick={onBack} className="p-1">
               <ArrowLeftIcon className="w-6 h-6 text-text-primary" />
@@ -332,7 +332,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
             {/* Sticky Header Info */}
             <motion.div
-              className="flex flex-col"
+              className="flex flex-col pt-safe"
               initial={{ opacity: 0, y: 10 }}
               animate={{
                 opacity: !isPriceVisible ? 1 : 0,

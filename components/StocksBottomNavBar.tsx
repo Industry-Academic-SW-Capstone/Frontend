@@ -28,7 +28,7 @@ const StocksBottomNavBar: React.FC<StocksBottomNavBarProps> = ({
 }) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-10 max-w-md mx-auto">
-      <div className="bg-bg-secondary/80 backdrop-blur-lg border-t border-border-color px-2 pt-2 pb-4 flex justify-around rounded-t-2xl">
+      <div className="bg-bg-secondary/80 pb-safe backdrop-blur-lg border-t border-border-color px-2 pt-2 flex justify-around rounded-t-2xl">
         <button
           onClick={onExit}
           className="flex flex-col active-transition items-center justify-center w-16 h-16 transition-all duration-200 ease-in-out rounded-lg text-text-secondary group"

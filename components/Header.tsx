@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({
   unreadCount = 0,
 }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-20 max-w-md mx-auto bg-bg-primary/80 backdrop-blur-lg">
+    <header className="fixed top-0 pt-safe left-0 right-0 z-20 max-w-md mx-auto bg-bg-primary/80 backdrop-blur-lg">
       <div className="flex items-center justify-between p-4 h-16 pb-2">
         <div className="flex items-center gap-2">
           {user.group && (

@@ -37,7 +37,7 @@ const DrawerContent = React.forwardRef<
     <DrawerOverlay />
     <VaulDrawer.Content
       ref={ref}
-      className={`fixed inset-x-0 bottom-0 z-50 mt-24 flex h-[90%] flex-col rounded-t-[24px] bg-bg-secondary outline-none ${className}`}
+      className={`fixed inset-x-0 bottom-0 z-50 mt-24 pb-safe flex h-[90%] flex-col rounded-t-[24px] bg-bg-secondary outline-none ${className}`}
       {...props}
     >
       <div className="mx-auto mt-4 h-1.5 w-12 rounded-full bg-border-color" />

@@ -71,7 +71,7 @@ const WateringCalculator: React.FC<WateringCalculatorProps> = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed inset-0 z-50 flex flex-col bg-bg-primary"
+          className="fixed pb-safe pt-safe inset-0 z-50 flex flex-col bg-bg-primary"
         >
           {/* Header */}
           <div className="flex justify-between items-center p-4">

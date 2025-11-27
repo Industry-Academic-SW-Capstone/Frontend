@@ -20,7 +20,7 @@ const AnalysisDetailModal: React.FC<AnalysisDetailModalProps> = ({
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm" />
         <Drawer.Content
-          className="fixed bottom-0 left-0 right-0 z-[10001] w-full max-w-md mx-auto bg-bg-secondary rounded-t-3xl p-6 shadow-2xl outline-none"
+          className="fixed bottom-0 left-0 pb-safe right-0 z-[10001] w-full max-w-md mx-auto bg-bg-secondary rounded-t-3xl p-6 shadow-2xl outline-none"
           style={{ touchAction: "none" }}
         >
           {/* Handle */}

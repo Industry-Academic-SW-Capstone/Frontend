@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { use2FA } from "@/lib/hooks/auth/use2FA";
 import { startAuthentication } from "@simplewebauthn/browser";
 
@@ -138,7 +138,7 @@ export default function TwoFactorPrompt({
   // 선택 화면
   if (method === "choice") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
+      <div className="fixed inset-0 pb-safe pt-safe z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
         <div className="w-full max-w-md mx-6 rounded-3xl p-8 shadow-2xl animate-slideUp bg-linear-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
           {/* 헤더 */}
           <div className="text-center mb-8">
@@ -273,7 +273,7 @@ export default function TwoFactorPrompt({
   // PIN 입력 화면
   if (method === "pin") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
+      <div className="fixed pb-safe pt-safe inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
         <div className="w-full max-w-md mx-6 rounded-3xl p-8 shadow-2xl animate-slideUp bg-linear-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
           {/* 뒤로가기 버튼 */}
           <button
@@ -371,7 +371,7 @@ export default function TwoFactorPrompt({
   // 생체 인증 화면
   if (method === "biometric") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
+      <div className="fixed pb-safe pt-safe inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/80 backdrop-blur-sm animate-fadeIn">
         <div className="w-full max-w-md mx-6 rounded-3xl p-8 shadow-2xl animate-slideUp bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900">
           {/* 뒤로가기 버튼 */}
           <button

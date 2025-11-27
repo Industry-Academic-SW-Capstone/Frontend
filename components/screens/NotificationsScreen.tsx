@@ -177,7 +177,7 @@ const NotificationsScreen: React.FC<{ onClose: () => void }> = ({
   return (
     <div className="h-full flex flex-col bg-bg-secondary">
       {/* Header */}
-      <div className="sticky top-0 bg-bg-secondary/90 backdrop-blur-md z-10 px-5 py-4 flex items-center justify-between border-b border-border-color">
+      <div className="sticky pt-safe top-0 bg-bg-secondary/90 backdrop-blur-md z-10 px-5 py-4 flex items-center justify-between border-b border-border-color">
         <h1 className="text-2xl font-bold text-text-primary">알림</h1>
         <div className="flex items-center gap-5">
           <div className="flex items-center gap-3">
