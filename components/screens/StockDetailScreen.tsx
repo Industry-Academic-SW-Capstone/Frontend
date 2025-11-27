@@ -154,7 +154,7 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
 
   const handleOpenOrderModal = (type: "buy" | "sell", price?: number) => {
     setOrderType(type);
-    if (price) setIsOrderModalOpen(true);
+    setIsOrderModalOpen(true);
   };
 
   const [selectedOrderType, setSelectedOrderType] = useState<
