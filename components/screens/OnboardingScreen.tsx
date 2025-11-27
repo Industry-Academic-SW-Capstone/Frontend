@@ -834,6 +834,7 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                 <div className="space-y-3 mt-6">
                   <button
                     onClick={async () => {
+                      setIsKakaoSignup(true);
                       handleNext();
                     }}
                     className="w-full bg-primary text-white font-bold py-3.5 rounded-xl"

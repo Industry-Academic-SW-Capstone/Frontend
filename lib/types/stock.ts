@@ -469,6 +469,8 @@ export interface RankingEntry {
   memberId: number;
   nickname: string;
   balance: number;
+  profileImage: string;
+  totalAssets: number;
   returnRate: number;
 }
 
@@ -486,6 +488,7 @@ export interface MyRankingResponse {
   returnRateRank: number;
   totalParticipants: number;
   myBalance: number;
+  myTotalAssets: number;
   myReturnRate: number;
 }
 

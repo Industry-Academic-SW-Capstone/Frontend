@@ -1,24 +1,20 @@
 "use client";
 import React, { useState } from "react";
 import { Account, User, RankingEntry, Tier } from "@/lib/types/stock";
-import {
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
-  ArrowPathIcon,
-} from "@/components/icons/Icons";
+import { ArrowPathIcon } from "@/components/icons/Icons";
 import { useRanking, useMyRanking } from "@/lib/hooks/useRanking";
 import { useQueryClient } from "@tanstack/react-query";
-import TierBadge from "@/components/ui/TierBadge";
+import { useTierInfo } from "@/lib/hooks/missions/useTierInfo";
 
-const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
-  change,
-}) => {
-  if (change === "up")
-    return <ArrowTrendingUpIcon className="w-4 h-4 text-positive" />;
-  if (change === "down")
-    return <ArrowTrendingDownIcon className="w-4 h-4 text-negative" />;
-  return <span className="text-text-secondary">-</span>;
-};
+// const RankChange: React.FC<{ change: "up" | "down" | "same" }> = ({
+//   change,
+// }) => {
+//   if (change === "up")
+//     return <ArrowTrendingUpIcon className="w-4 h-4 text-positive" />;
+//   if (change === "down")
+//     return <ArrowTrendingDownIcon className="w-4 h-4 text-negative" />;
+//   return <span className="text-text-secondary">-</span>;
+// };
 
 // Mock function to get tier based on rank (for demo)
 const getMockTier = (rank: number): Tier => {
@@ -63,19 +59,22 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
 
       <div className="flex items-center gap-4 flex-1 ml-4">
         {/* Avatar Placeholder */}
-        {/* <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+        <div
+          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden ${
             isMe
               ? "bg-primary/10 text-primary"
               : "bg-bg-third text-text-secondary"
           }`}
         >
-          {entry.nickname[0]}
-        </div> */}
+          <img
+            src={entry.profileImage}
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
 
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <TierBadge tier={tier} size="sm" showLabel={false} />
             <p
               className={`font-bold text-base ${
                 isMe ? "text-primary" : "text-text-primary"
@@ -104,7 +103,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
 
       <div className="text-right">
         <p className="font-bold text-text-primary text-base">
-          {Number(entry.balance).toLocaleString()}원
+          {Number(entry.totalAssets).toLocaleString()}원
         </p>
       </div>
     </button>
@@ -132,6 +131,7 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
 
   const { data: rankingData, isLoading: isRankingLoading } = useRanking();
   const { data: myRankingData, isLoading: isMyRankingLoading } = useMyRanking();
+  const { data: tierData } = useTierInfo();
 
   const isRegularAccount = selectedAccount.type === "regular";
 
@@ -265,7 +265,7 @@ const RankingsScreen: React.FC<RankingsScreenProps> = ({
               <div className="flex items-center justify-between rounded-2xl bg-white/10 px-5 py-4 backdrop-blur-md">
                 <span className="font-medium text-white/90">현재 자산</span>
                 <span className="text-xl font-bold text-white">
-                  {Number(myRankingData.myBalance).toLocaleString()}원
+                  {Number(myRankingData.myTotalAssets).toLocaleString()}원
                 </span>
               </div>
             </div>

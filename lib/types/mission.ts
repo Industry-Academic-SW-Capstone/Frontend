@@ -37,3 +37,13 @@ export interface MemberTitle {
   name: string;
   description: string;
 }
+
+export interface TierResponse {
+  currentTier: string;
+  nextTier: string;
+  totalScore: number;
+  activityScore: number;
+  skillScore: number;
+  scoreToNextTier: number;
+  progressPercentage: number;
+}

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MOCK_ACHIEVEMENTS } from "@/lib/constants";
-import { Achievement, Screen, User, TierInfo } from "@/lib/types/stock";
+import { Achievement, Screen, User } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import TwoFactorSettings from "@/components/settings/TwoFactorSettings";
 import { useLogout } from "@/lib/hooks/auth/useLogout";
@@ -15,8 +15,9 @@ import {
 } from "@/lib/services/notificationService";
 import { useAvatar } from "@/lib/utils/useAvatar";
 import TierBadge from "@/components/ui/TierBadge";
-import PromotionStatusCard from "@/components/ranking/PromotionStatusCard";
 import { use2FA } from "@/lib/hooks/auth/use2FA";
+import { useTierInfo } from "@/lib/hooks/missions/useTierInfo";
+import { parseTier, calculateNextTierTarget } from "@/lib/utils/tierUtils";
 
 interface ProfileScreenProps {
   user: User;
@@ -33,19 +34,6 @@ const iconMap: { [key: string]: React.FC<any> } = {
 };
 
 const avatarPresets = useAvatar();
-
-// Mock Tier Data (Replace with API data later)
-const MOCK_TIER_INFO: TierInfo = {
-  currentTier: "Gold",
-  score: 1250,
-  activityScore: 450,
-  skillScore: 800,
-  nextTierScore: 1500,
-  promotionStatus: "in_progress",
-  promotionMission: "최근 5회 매매 중 3회 이상 수익 실현",
-  promotionProgress: 2,
-  promotionTarget: 3,
-};
 
 const AchievementItem: React.FC<{ achievement: Achievement }> = ({
   achievement,
@@ -116,8 +104,15 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
       }
     : initialUser;
 
-  // Use mock tier info for now
-  const tierInfo = MOCK_TIER_INFO;
+  // Fetch Tier Info
+  const { data: tierData, isLoading: isTierLoading } = useTierInfo();
+
+  // Parse Tier Data
+  const currentTier = tierData ? parseTier(tierData.currentTier) : "Bronze";
+  const nextTierTarget = tierData
+    ? calculateNextTierTarget(tierData.totalScore, tierData.scoreToNextTier)
+    : 1000;
+  const progressPercent = tierData ? tierData.progressPercentage : 0;
 
   // Accordion states
   const [openSection, setOpenSection] = useState<string | null>(null);
@@ -344,7 +339,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </h2>
 
         <div className="flex items-center justify-center gap-3 mt-2 flex-wrap">
-          <TierBadge tier={tierInfo.currentTier} />
+          {isTierLoading ? (
+            <div className="h-6 w-20 bg-bg-third animate-pulse rounded-full" />
+          ) : (
+            <TierBadge tier={currentTier} />
+          )}
           <div className="px-4 py-1.5 bg-accent/10 text-accent text-sm font-bold rounded-full">
             {user.title}
           </div>
@@ -352,26 +351,40 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
         {/* Tier Progress Bar */}
         <div className="w-full mt-6 px-4">
-          <div className="flex justify-between text-xs font-bold text-text-secondary mb-2">
-            <span>{tierInfo.score} RP</span>
-            <span>Next: {tierInfo.nextTierScore} RP</span>
-          </div>
-          <div className="w-full h-3 bg-bg-third rounded-full overflow-hidden relative">
-            <div
-              className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-              style={{
-                width: `${(tierInfo.score / tierInfo.nextTierScore) * 100}%`,
-              }}
-            />
-          </div>
-          <p className="text-xs text-text-secondary mt-2">
-            활동 점수 {tierInfo.activityScore} + 실력 점수 {tierInfo.skillScore}
-          </p>
+          {isTierLoading ? (
+            <div className="space-y-2">
+              <div className="h-4 bg-bg-third animate-pulse rounded w-full" />
+              <div className="h-3 bg-bg-third animate-pulse rounded-full w-full" />
+            </div>
+          ) : tierData ? (
+            <>
+              <div className="flex justify-between text-xs font-bold text-text-secondary mb-2">
+                <span>{tierData.totalScore} RP</span>
+                <span>Next: {nextTierTarget} RP</span>
+              </div>
+              <div className="w-full h-3 bg-bg-third rounded-full overflow-hidden relative">
+                <div
+                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-1000 ease-out"
+                  style={{
+                    width: `${progressPercent}%`,
+                  }}
+                />
+              </div>
+              <p className="text-xs text-text-secondary mt-2">
+                활동 점수 {tierData.activityScore} + 실력 점수{" "}
+                {tierData.skillScore}
+              </p>
+            </>
+          ) : (
+            <p className="text-sm text-text-secondary">
+              티어 정보를 불러올 수 없습니다.
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Promotion Status Card */}
-      <PromotionStatusCard tierInfo={tierInfo} />
+      {/* Promotion Status Card - Hidden for now as API doesn't support it yet */}
+      {/* <PromotionStatusCard tierInfo={tierInfo} /> */}
 
       {/* Grouped Sections */}
       <div className=" bg-bg-secondary rounded-3xl shadow-sm border border-border-color overflow-hidden divide-y divide-border-color">

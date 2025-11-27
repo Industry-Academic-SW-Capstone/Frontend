@@ -343,6 +343,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         rank: myRanking.returnRateRank,
         nickname: userInfo?.name || "나",
         balance: myRanking.myBalance,
+        totalAssets: myRanking.myTotalAssets,
         returnRate: myRanking.myReturnRate,
         memberId: selectedAccount.memberId,
         isMe: true,
