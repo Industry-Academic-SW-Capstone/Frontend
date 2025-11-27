@@ -16,7 +16,7 @@ import { useOrderBookStore } from "../stores/useOrderBookStore";
 
 interface WebSocketContextType {
   isConnected: boolean;
-  subscribe: (stockCode: string) => void;
+  subscribe: (chartAvailable: boolean, stockCode: string) => void;
   unsubscribe: (stockCode: string) => void;
   setSubscribeSet: (stockCodes: string[]) => void;
   subscribeOrderBook: (stockCode: string) => void;
@@ -84,10 +84,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     const client = stompClientRef.current;
     if (!client || !client.connected) return;
 
+    const manySockets = desiredStockSubscriptionsRef.current.size > 1;
     // 주식 구독 복구
     desiredStockSubscriptionsRef.current.forEach((stockCode) => {
       if (!stockSubscriptionsRef.current[stockCode]) {
-        doSubscribeStock(client, stockCode);
+        doSubscribeStock(client, stockCode, manySockets);
       }
     });
 
