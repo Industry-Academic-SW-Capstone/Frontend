@@ -342,8 +342,10 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-base font-bold text-text-primary">
-                  {mergedChartDatas[-1]?.closePrice
-                    ? mergedChartDatas[-1].closePrice.toLocaleString()
+                  {mergedChartDatas[mergedChartDatas.length - 1]?.closePrice
+                    ? mergedChartDatas[
+                        mergedChartDatas.length - 1
+                      ].closePrice.toLocaleString()
                     : stock.currentPrice.toLocaleString()}
                   원
                 </span>
@@ -387,7 +389,12 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               viewport={{ margin: "-60px 0px 0px 0px" }}
               className="text-4xl font-bold text-text-primary"
             >
-              {stock.currentPrice.toLocaleString()}원
+              {mergedChartDatas[mergedChartDatas.length - 1]?.closePrice
+                ? mergedChartDatas[
+                    mergedChartDatas.length - 1
+                  ].closePrice.toLocaleString()
+                : stock.currentPrice.toLocaleString()}
+              원
             </motion.p>
             <p
               className={`text-md font-semibold ${
