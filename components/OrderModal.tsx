@@ -6,6 +6,7 @@ import Toast, { ToastType } from "@/components/ui/Toast";
 import { Drawer } from "vaul";
 
 import { useHaptic } from "@/lib/hooks/useHaptic"; // Import useHaptic
+import { useQueryClient } from "@tanstack/react-query";
 
 interface OrderModalProps {
   isOpen: boolean;
@@ -34,6 +35,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
   limitPrice,
   setLimitPrice,
 }) => {
+  const queryClient = useQueryClient();
   const [quantity, setQuantity] = useState("");
   const [toast, setToast] = useState<{
     visible: boolean;
@@ -118,6 +120,9 @@ const OrderModal: React.FC<OrderModalProps> = ({
     const commonCallbacks = {
       onSuccess: () => {
         hapticSuccess(); // Haptic on success
+        queryClient.invalidateQueries({
+          queryKey: ["accountAssets", accountId],
+        });
         setToast({
           visible: true,
           message: "주문이 접수되었습니다.",
