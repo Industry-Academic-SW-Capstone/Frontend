@@ -146,6 +146,7 @@ import { Screen, Account } from "@/lib/types/stock";
 import { useStockStore } from "@/lib/stores/useStockStore";
 import SlidingScreen from "@/components/navigation/SlidingScreen";
 import StockDetailScreen from "@/components/screens/StockDetailScreen";
+import DailyReportScreen from "@/components/screens/DailyReportScreen";
 import OrderDetailModal from "@/components/OrderDetailModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowPathIcon } from "@/components/icons/Icons";
@@ -163,6 +164,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 }) => {
   const { hapticSuccess } = useHaptic();
   const [isMissionPanelOpen, setIsMissionPanelOpen] = useState(false);
+  const [isDailyReportOpen, setIsDailyReportOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [selectedStockTicker, setSelectedStockTicker] = useState<string | null>(
     null
@@ -419,6 +421,48 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     );
   };
 
+  const DailyReportBanner = () => {
+    return (
+      <div
+        className="bg-linear-to-r from-blue-600 to-blue-500 p-5 rounded-2xl flex flex-col cursor-pointer relative overflow-hidden shadow-lg group active:scale-95 transition-all duration-200"
+        onClick={() => setIsDailyReportOpen(true)}
+      >
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="bg-white/20 text-white text-[10px] px-1.5 py-0.5 rounded font-bold backdrop-blur-sm">
+              Daily
+            </span>
+            <span className="text-xs font-semibold text-blue-100">
+              오늘의 증시 리포트
+            </span>
+          </div>
+          <h1 className="text-xl font-bold text-white mt-1">
+            어제와 오늘의
+            <br />
+            주식 시장 흐름은? 📈
+          </h1>
+          <div className="mt-3 flex items-center gap-1 text-blue-100 text-sm font-medium group-hover:text-white transition-colors">
+            <span>리포트 보러가기</span>
+            <ChevronRightIcon className="w-4 h-4" />
+          </div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute -right-2.5 -bottom-5 opacity-20 rotate-12">
+          <svg
+            width="120"
+            height="120"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="text-white"
+          >
+            <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z" />
+          </svg>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <div
@@ -557,6 +601,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             {"%)"}
           </div>
         </div>
+
+        {/* Daily Report Banner */}
+        <DailyReportBanner />
 
         {/* Featured Competition or Mission */}
         <div
@@ -772,6 +819,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             ticker={selectedStockTicker}
             onBack={() => setSelectedStockTicker(null)}
           />
+        )}
+      </SlidingScreen>
+
+      {/* Daily Report Sliding Screen */}
+      <SlidingScreen
+        isOpen={isDailyReportOpen}
+        onClose={() => setIsDailyReportOpen(false)}
+      >
+        {isDailyReportOpen && (
+          <DailyReportScreen onBack={() => setIsDailyReportOpen(false)} />
         )}
       </SlidingScreen>
 

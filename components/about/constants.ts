@@ -15,6 +15,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "특징", href: "/about#features" },
   { label: "기술 스택", href: "/about/tech" },
   { label: "블로그", href: "/about/blog" },
+  { label: "이벤트", href: "/about/event" },
   { label: "공지사항", href: "/about/announce" },
   { label: "팀 소개", href: "/about#team" },
 ];
