@@ -271,7 +271,7 @@ const EventDescriptionScreen: React.FC<EventDescriptionScreenProps> = ({
             대회 일정 상세
           </h4>
           <p className="text-[13px] text-[#8B95A1] mb-6 font-medium">
-            2025.11.28(목) 09:00 ~ 12.05(목) 12:00
+            2025.11.28(금) 09:00 ~ 12.05(금) 13:00
           </p>
 
           <h4 className="font-bold text-[#8B95A1] text-[13px] mb-3">
