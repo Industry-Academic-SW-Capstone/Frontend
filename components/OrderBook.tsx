@@ -13,6 +13,10 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
   const { subscribeOrderBook, unsubscribeOrderBook } = useWebSocket();
 
   useEffect(() => {
+    console.log(orderBook);
+  }, [orderBook]);
+
+  useEffect(() => {
     subscribeOrderBook(stockCode);
     return () => {
       unsubscribeOrderBook(stockCode);
@@ -72,16 +76,10 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
   // Let's assume API returns levels. We want to display:
   // Top: High Price
   // Bottom: Low Price
-  const asks = [...(orderBook.ask_levels || [])].sort(
-    (a, b) => b.price - a.price
-  );
 
-  // Sort Bids: Price Descending (Highest -> Lowest)
-  // The highest bid is the "Best Bid", which should be at the top of the Bids list (closest to center).
-  // So we render Bids in normal order.
-  const bids = [...(orderBook.bid_levels || [])].sort(
-    (a, b) => b.price - a.price
-  );
+  const asks = orderBook.ask_levels?.reverse() || [];
+
+  const bids = orderBook.bid_levels || [];
 
   const renderAskRow = (level: OrderBookLevel) => {
     const barWidth = `${(level.quantity / maxQuantity) * 100}%`;
@@ -151,11 +149,6 @@ const OrderBook: React.FC<OrderBookProps> = ({ stockCode, onPriceClick }) => {
       <div className="flex flex-col w-full">
         {asks.map((level) => renderAskRow(level))}
       </div>
-
-      {/* Current Price / Summary Bar (Optional, but nice to have) */}
-      {/* <div className="flex items-center justify-center py-2 bg-bg-secondary border-y border-border-color font-bold text-lg">
-        {orderBook.expected_price?.toLocaleString() || "-"}
-      </div> */}
 
       {/* Bids List */}
       <div className="flex flex-col w-full">

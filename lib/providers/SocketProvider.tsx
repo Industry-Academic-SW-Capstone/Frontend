@@ -47,9 +47,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const client = new Client({
       webSocketFactory: () => new SockJS("https://api.stockit.live/ws"),
-      reconnectDelay: 4000, // 5초 후 재연결 시도
-      heartbeatIncoming: 8000,
-      heartbeatOutgoing: 8000,
+      reconnectDelay: 5000, // 5초 후 재연결 시도
+      heartbeatIncoming: 6000,
+      heartbeatOutgoing: 6000,
       onConnect: (frame) => {
         console.log("STOMP 연결 성공: " + frame);
         setIsConnected(true);
