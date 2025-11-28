@@ -7,6 +7,8 @@ import React, {
   useEffect,
   useRef,
   useState,
+  useCallback,
+  useMemo,
 } from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
@@ -44,6 +46,67 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const { updateTickerFromSocket: chartUpdateTicker } =
     useChartStore.getState();
 
+  const doSubscribeStock = useCallback(
+    (client: Client, stockCode: string, chartAvailable: boolean) => {
+      console.log(`구독 시작: /topic/stock/${stockCode}`);
+      const sub = client.subscribe(
+        `/topic/stock/${stockCode}`,
+        (message: IMessage) => {
+          try {
+            const data = JSON.parse(message.body);
+            socketUpdateTicker(stockCode, data);
+            if (chartAvailable) {
+              chartUpdateTicker(stockCode, data);
+            }
+          } catch (e) {
+            console.error("소켓 메시지 파싱 오류:", e);
+          }
+        }
+      );
+      stockSubscriptionsRef.current[stockCode] = sub;
+    },
+    [socketUpdateTicker, chartUpdateTicker]
+  );
+
+  const doSubscribeOrderBook = useCallback(
+    (client: Client, stockCode: string) => {
+      console.log(`호가 구독 시작: /topic/stock/${stockCode}/orderbook`);
+      const sub = client.subscribe(
+        `/topic/stock/${stockCode}/orderbook`,
+        (message: IMessage) => {
+          try {
+            const data = JSON.parse(message.body);
+            useOrderBookStore.getState().setOrderBook(data);
+          } catch (e) {
+            console.error("호가 소켓 메시지 파싱 오류:", e);
+          }
+        }
+      );
+      orderBookSubscriptionsRef.current[stockCode] = sub;
+    },
+    []
+  );
+
+  const resubscribeAll = useCallback(() => {
+    const client = stompClientRef.current;
+    if (!client || !client.connected) return;
+
+    const manySockets = desiredStockSubscriptionsRef.current.size > 1;
+    // 주식 구독 복구
+    desiredStockSubscriptionsRef.current.forEach((stockCode) => {
+      if (!stockSubscriptionsRef.current[stockCode]) {
+        doSubscribeStock(client, stockCode, !manySockets);
+      }
+    });
+
+    // 호가 구독 복구
+    desiredOrderBookSubscriptionsRef.current.forEach((stockCode) => {
+      if (!orderBookSubscriptionsRef.current[stockCode]) {
+        doSubscribeOrderBook(client, stockCode);
+      }
+    });
+  }, [doSubscribeStock, doSubscribeOrderBook]);
+
   useEffect(() => {
     const client = new Client({
       webSocketFactory: () => new SockJS("https://api.stockit.live/ws"),
@@ -77,109 +140,26 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       client.deactivate();
     };
-  }, []);
+  }, [resubscribeAll]);
 
-  // 재연결 시 모든 구독 복구
-  const resubscribeAll = () => {
-    const client = stompClientRef.current;
-    if (!client || !client.connected) return;
+  const subscribeStock = useCallback(
+    (chartAvailable: boolean, stockCode: string) => {
+      // 원하는 목록에 추가
+      desiredStockSubscriptionsRef.current.add(stockCode);
 
-    const manySockets = desiredStockSubscriptionsRef.current.size > 1;
-    // 주식 구독 복구
-    desiredStockSubscriptionsRef.current.forEach((stockCode) => {
-      if (!stockSubscriptionsRef.current[stockCode]) {
-        doSubscribeStock(client, stockCode, !manySockets);
+      const client = stompClientRef.current;
+      if (
+        client &&
+        client.connected &&
+        !stockSubscriptionsRef.current[stockCode]
+      ) {
+        doSubscribeStock(client, stockCode, chartAvailable);
       }
-    });
+    },
+    [doSubscribeStock]
+  );
 
-    // 호가 구독 복구
-    desiredOrderBookSubscriptionsRef.current.forEach((stockCode) => {
-      if (!orderBookSubscriptionsRef.current[stockCode]) {
-        doSubscribeOrderBook(client, stockCode);
-      }
-    });
-  };
-
-  const doSubscribeStock = (
-    client: Client,
-    stockCode: string,
-    chartAvailable: boolean
-  ) => {
-    console.log(`구독 시작: /topic/stock/${stockCode}`);
-    const sub = client.subscribe(
-      `/topic/stock/${stockCode}`,
-      (message: IMessage) => {
-        try {
-          const data = JSON.parse(message.body);
-          socketUpdateTicker(stockCode, data);
-          if (chartAvailable) {
-            chartUpdateTicker(stockCode, data);
-          }
-        } catch (e) {
-          console.error("소켓 메시지 파싱 오류:", e);
-        }
-      }
-    );
-    stockSubscriptionsRef.current[stockCode] = sub;
-  };
-
-  const doSubscribeOrderBook = (client: Client, stockCode: string) => {
-    console.log(`호가 구독 시작: /topic/stock/${stockCode}/orderbook`);
-    const sub = client.subscribe(
-      `/topic/stock/${stockCode}/orderbook`,
-      (message: IMessage) => {
-        try {
-          const data = JSON.parse(message.body);
-          useOrderBookStore.getState().setOrderBook(data);
-        } catch (e) {
-          console.error("호가 소켓 메시지 파싱 오류:", e);
-        }
-      }
-    );
-    orderBookSubscriptionsRef.current[stockCode] = sub;
-  };
-
-  const setSubscribeStockSet = (stockCodes: string[]) => {
-    // 현재 원하는 목록 업데이트
-    const newSet = new Set(stockCodes);
-
-    const manySockets = stockCodes.length > 1;
-
-    if (manySockets) {
-      desiredStockSubscriptionsRef.current.forEach((code) => {
-        if (!newSet.has(code)) {
-          unsubscribeStock(code);
-        }
-      });
-    } else {
-      desiredStockSubscriptionsRef.current.forEach((code) => {
-        unsubscribeStock(code);
-      });
-    }
-
-    // 추가해야 할 것들
-    stockCodes.forEach((code) => {
-      if (!desiredStockSubscriptionsRef.current.has(code)) {
-        subscribeStock(!manySockets, code);
-      }
-    });
-  };
-
-  const subscribeStock = (chartAvailable: boolean, stockCode: string) => {
-    // 원하는 목록에 추가
-    desiredStockSubscriptionsRef.current.add(stockCode);
-
-    const client = stompClientRef.current;
-    if (
-      client &&
-      client.connected &&
-      !stockSubscriptionsRef.current[stockCode]
-    ) {
-      doSubscribeStock(client, stockCode, chartAvailable);
-    }
-  };
-
-  const unsubscribeStock = (stockCode: string) => {
+  const unsubscribeStock = useCallback((stockCode: string) => {
     // 원하는 목록에서 제거
     desiredStockSubscriptionsRef.current.delete(stockCode);
 
@@ -189,22 +169,25 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       delete stockSubscriptionsRef.current[stockCode];
       console.log(`구독 해제: ${stockCode}`);
     }
-  };
+  }, []);
 
-  const subscribeOrderBook = (stockCode: string) => {
-    desiredOrderBookSubscriptionsRef.current.add(stockCode);
+  const subscribeOrderBook = useCallback(
+    (stockCode: string) => {
+      desiredOrderBookSubscriptionsRef.current.add(stockCode);
 
-    const client = stompClientRef.current;
-    if (
-      client &&
-      client.connected &&
-      !orderBookSubscriptionsRef.current[stockCode]
-    ) {
-      doSubscribeOrderBook(client, stockCode);
-    }
-  };
+      const client = stompClientRef.current;
+      if (
+        client &&
+        client.connected &&
+        !orderBookSubscriptionsRef.current[stockCode]
+      ) {
+        doSubscribeOrderBook(client, stockCode);
+      }
+    },
+    [doSubscribeOrderBook]
+  );
 
-  const unsubscribeOrderBook = (stockCode: string) => {
+  const unsubscribeOrderBook = useCallback((stockCode: string) => {
     desiredOrderBookSubscriptionsRef.current.delete(stockCode);
 
     const sub = orderBookSubscriptionsRef.current[stockCode];
@@ -214,19 +197,58 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       useOrderBookStore.getState().clearOrderBook();
       console.log(`호가 구독 해제: ${stockCode}`);
     }
-  };
+  }, []);
+
+  const setSubscribeStockSet = useCallback(
+    (stockCodes: string[]) => {
+      // 현재 원하는 목록 업데이트
+      const newSet = new Set(stockCodes);
+
+      const manySockets = stockCodes.length > 1;
+
+      if (manySockets) {
+        desiredStockSubscriptionsRef.current.forEach((code) => {
+          if (!newSet.has(code)) {
+            unsubscribeStock(code);
+          }
+        });
+      } else {
+        desiredStockSubscriptionsRef.current.forEach((code) => {
+          unsubscribeStock(code);
+        });
+      }
+
+      // 추가해야 할 것들
+      stockCodes.forEach((code) => {
+        if (!desiredStockSubscriptionsRef.current.has(code)) {
+          subscribeStock(!manySockets, code);
+        }
+      });
+    },
+    [subscribeStock, unsubscribeStock]
+  );
+
+  const value = useMemo(
+    () => ({
+      isConnected,
+      subscribe: subscribeStock,
+      unsubscribe: unsubscribeStock,
+      setSubscribeSet: setSubscribeStockSet,
+      subscribeOrderBook,
+      unsubscribeOrderBook,
+    }),
+    [
+      isConnected,
+      subscribeStock,
+      unsubscribeStock,
+      setSubscribeStockSet,
+      subscribeOrderBook,
+      unsubscribeOrderBook,
+    ]
+  );
 
   return (
-    <WebSocketContext.Provider
-      value={{
-        isConnected,
-        subscribe: subscribeStock,
-        unsubscribe: unsubscribeStock,
-        setSubscribeSet: setSubscribeStockSet,
-        subscribeOrderBook,
-        unsubscribeOrderBook,
-      }}
-    >
+    <WebSocketContext.Provider value={value}>
       {children}
     </WebSocketContext.Provider>
   );

@@ -721,7 +721,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-text-primary text-sm">
-                      {Number(rank.balance).toLocaleString()}원
+                      {Number(rank.totalAssets).toLocaleString()}원
                     </p>
                   </div>
                 </div>

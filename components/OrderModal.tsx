@@ -54,7 +54,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setQuantity("");
-      setLimitPrice(stock.currentPrice.toString());
+      if (!limitPrice) setLimitPrice(stock.currentPrice.toString());
     }
   }, [isOpen, stock.currentPrice]);
 
