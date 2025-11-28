@@ -569,7 +569,7 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
       <Drawer.Root open={isShareDrawerOpen} onOpenChange={setIsShareDrawerOpen}>
         <Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-100 backdrop-blur-sm" />
-          <Drawer.Content className="bg-bg-primary pb-safe flex flex-col rounded-t-[20px] h-fit min-h-[200px] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
+          <Drawer.Content className="bg-bg-primary pb-safe flex flex-col rounded-t-[20px] min-h-[200px] mt-24 fixed bottom-0 left-0 right-0 z-101 outline-none shadow-2xl">
             <div className="p-6 bg-bg-primary rounded-t-[20px] flex-1 overflow-y-auto">
               <div className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300/50 mb-8" />
               <div className="max-w-md mx-auto space-y-6 pb-10">
