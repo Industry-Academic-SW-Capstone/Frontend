@@ -37,9 +37,7 @@ export async function scrapeStockNews(): Promise<NewsItem[]> {
       );
       const pressElement = $(element).find("span.press");
       const timeElement = $(element).find("span.wdate");
-      const imageElement = $(element).find(
-        "dt.articlePhoto img, .thumb img, dt.photo img"
-      );
+      const imageElement = $(element).find("dt.thumb img");
 
       if (titleElement.length > 0) {
         const title = titleElement.text().trim();
