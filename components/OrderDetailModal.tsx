@@ -25,7 +25,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
           onClose();
         },
         onError: () => {
-          alert("주문 취소에 실패했습니다.");
+          onClose();
         },
       });
     }
