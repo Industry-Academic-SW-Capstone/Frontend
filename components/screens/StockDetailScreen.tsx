@@ -441,7 +441,10 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
               onTabChange={(id) => {
                 setActiveTab(id as "chart" | "orderbook" | "my_stock");
                 const now = new Date();
-                const isMarketOpen = now.getHours() >= 9 && now.getHours() < 15;
+                const isMarketOpen =
+                  now.getHours() >= 9 &&
+                  (now.getHours() < 15 ||
+                    (now.getHours() === 15 && now.getMinutes() < 30));
                 if (id === "orderbook" && !isMarketOpen) {
                   showToast("호가는 내일 9시부터 다시 볼 수 있어요!");
                 }
