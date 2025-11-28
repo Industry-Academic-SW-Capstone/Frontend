@@ -101,6 +101,7 @@ export interface Competition {
   isDefault: boolean;
   isPrivate: boolean;
   isParticipating: boolean;
+  participantCount: number;
   managerMemberId: number;
   startDate: string;
   endDate: string;

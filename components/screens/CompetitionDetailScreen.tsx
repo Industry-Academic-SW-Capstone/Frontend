@@ -233,7 +233,7 @@ const CompetitionDetailScreen: React.FC<CompetitionDetailScreenProps> = ({
               참가자
             </div>
             <div className="text-xl font-bold text-text-primary">
-              {competition.participants?.toLocaleString() ?? 0}명
+              {competition.participantCount?.toLocaleString() ?? 0}명
             </div>
           </div>
         </div>
