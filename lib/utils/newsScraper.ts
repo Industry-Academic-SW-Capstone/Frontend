@@ -37,7 +37,9 @@ export async function scrapeStockNews(): Promise<NewsItem[]> {
       );
       const pressElement = $(element).find("span.press");
       const timeElement = $(element).find("span.wdate");
-      const imageElement = $(element).find("dt.articlePhoto img");
+      const imageElement = $(element).find(
+        "dt.articlePhoto img, .thumb img, dt.photo img"
+      );
 
       if (titleElement.length > 0) {
         const title = titleElement.text().trim();
@@ -48,9 +50,10 @@ export async function scrapeStockNews(): Promise<NewsItem[]> {
         }
 
         let image = imageElement.attr("src");
-        if (image && !image.startsWith("http")) {
-          // Sometimes images are relative or have protocol missing
-          // Naver finance images usually start with http/https
+        if (image) {
+          if (!image.startsWith("http")) {
+            image = `https://finance.naver.com${image}`;
+          }
         }
 
         newsList.push({

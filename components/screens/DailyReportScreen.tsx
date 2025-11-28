@@ -45,7 +45,7 @@ const DailyReportScreen: React.FC<DailyReportScreenProps> = ({ onBack }) => {
 
   if (loading) {
     return (
-      <div className="flex flex-col h-full bg-[#191F28] text-white">
+      <div className="flex pt-safe pb-safe flex-col h-full bg-[#191F28] text-white">
         <div className="flex items-center h-[52px] px-4">
           <button onClick={onBack} className="p-2 -ml-2">
             <ChevronLeftIcon className="w-6 h-6 text-white" />
@@ -73,7 +73,7 @@ const DailyReportScreen: React.FC<DailyReportScreenProps> = ({ onBack }) => {
 
   if (error || !report) {
     return (
-      <div className="flex flex-col h-full bg-[#191F28] text-white">
+      <div className="flex pt-safe pb-safe flex-col h-full bg-[#191F28] text-white">
         <div className="flex items-center h-[52px] px-4">
           <button onClick={onBack} className="p-2 -ml-2">
             <ChevronLeftIcon className="w-6 h-6 text-white" />
@@ -87,7 +87,7 @@ const DailyReportScreen: React.FC<DailyReportScreenProps> = ({ onBack }) => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#191F28] text-white overflow-y-auto pb-10">
+    <div className="flex pt-safe pb-safe flex-col h-full bg-[#191F28] text-white overflow-y-auto pb-10">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-[#191F28]/90 backdrop-blur-md">
         <div className="flex items-center h-[52px] px-4">
