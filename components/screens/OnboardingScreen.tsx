@@ -1167,7 +1167,9 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="h-screen-safe w-full bg-bg-primary">{renderContent()}</div>
+    <div className="h-screen pt-safe pb-safe w-full bg-bg-primary">
+      {renderContent()}
+    </div>
   );
 };
 
