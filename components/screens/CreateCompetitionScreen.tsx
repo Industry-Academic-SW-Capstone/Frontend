@@ -432,7 +432,7 @@ const CreateCompetitionScreen: React.FC<CreateCompetitionScreenProps> = ({
         return (
           <div className="flex flex-col items-center justify-center h-full animate-fadeInUp">
             <div className="w-24 h-24 bg-positive/10 rounded-full flex items-center justify-center mb-8 animate-bounce">
-              <CheckCircleIcon className="w-12 h-12 text-positive" />
+              <CheckCircleIcon className="w-12 h-12 text-success" />
             </div>
             <h2 className="text-2xl font-bold text-text-primary mb-2">
               대회가 생성되었습니다!

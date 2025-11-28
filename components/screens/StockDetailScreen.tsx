@@ -1,5 +1,11 @@
 "use client";
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import StockChart from "@/components/StockChart";
 import OrderModal from "@/components/OrderModal";
 import { ArrowLeftIcon, HeartIcon } from "@/components/icons/Icons";
@@ -166,14 +172,17 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   >("market");
   const [limitPrice, setLimitPrice] = useState("");
 
-  const handleOrderBookPriceClick = (price: number, type: "buy" | "sell") => {
-    if (price) {
-      setSelectedOrderType("limit");
-      setLimitPrice(price.toString());
-    } else setSelectedOrderType("market");
+  const handleOrderBookPriceClick = useCallback(
+    (price: number, type: "buy" | "sell") => {
+      if (price) {
+        setSelectedOrderType("limit");
+        setLimitPrice(price.toString());
+      } else setSelectedOrderType("market");
 
-    handleOpenOrderModal(type, price); // Open order modal
-  };
+      handleOpenOrderModal(type, price); // Open order modal
+    },
+    [limitPrice]
+  );
 
   // --- Data Fetching & Stores ---
   const { setSubscribeSet } = useWebSocket();

@@ -14,6 +14,7 @@ const fetchContestRanking = async (
   contestId: number,
   sortBy: string
 ): Promise<RankingResponse> => {
+  console.log("크아악", contestId, sortBy);
   const response = await defaultClient.get<RankingResponse>(
     `/api/rankings/contest/${contestId}?sortBy=${sortBy}`
   );
@@ -30,7 +31,9 @@ const fetchMyRanking = async (
   return response.data;
 };
 
-export const useRanking = (sortBy: "balance" | "returnRate" = "balance") => {
+export const useRanking = (
+  sortBy: "totalAssets" | "returnRate" = "totalAssets"
+) => {
   const { selectedAccount } = useAccountStore();
 
   return useQuery({
