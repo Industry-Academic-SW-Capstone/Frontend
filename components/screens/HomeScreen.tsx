@@ -439,7 +439,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           <h1 className="text-xl font-bold text-white mt-1">
             어제와 오늘의
             <br />
-            주식 시장 흐름은? 📈
+            주식 시장 흐름은?
           </h1>
           <div className="mt-3 flex items-center gap-1 text-blue-100 text-sm font-medium group-hover:text-white transition-colors">
             <span>리포트 보러가기</span>
