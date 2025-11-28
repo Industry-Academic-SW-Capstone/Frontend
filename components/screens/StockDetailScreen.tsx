@@ -153,6 +153,10 @@ const StockDetailScreen: React.FC<StockDetailScreenProps> = ({
   const ownedQuantity = ownedStock?.quantity || 0;
 
   const handleOpenOrderModal = (type: "buy" | "sell", price?: number) => {
+    if (!price) {
+      setSelectedOrderType("market");
+      setLimitPrice(stock?.currentPrice.toString() || limitPrice);
+    }
     setOrderType(type);
     setIsOrderModalOpen(true);
   };
