@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { User, UserGroup } from "@/lib/types/stock";
+import { User } from "@/lib/types/stock";
 import * as Icons from "@/components/icons/Icons";
 import { requestNotificationPermission } from "@/lib/services/notificationService";
 import TFARegisterPage from "../auth/TFARegisterPage";
@@ -90,7 +90,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const [newUser, setNewUser] = useState<Partial<User>>({
     username: "",
     avatar: "/image/avatar/small/avatar_bear.png",
-    group: undefined,
   });
   const [loginRequest, setLoginRequest] = useState<LoginRequest>({
     email: "",
@@ -467,12 +466,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
 
   const renderContent = () => {
     const avatars = useAvatar();
-    const groups: UserGroup[] = [
-      { id: "hsu", name: "한성대학교", averageReturn: 18.5 },
-      { id: "snu", name: "서울대학교", averageReturn: 22.1 },
-      { id: "ku", name: "고려대학교", averageReturn: 20.3 },
-      { id: "yu", name: "연세대학교", averageReturn: 21.5 },
-    ];
 
     const isError = errorMessage !== null;
 
@@ -1036,60 +1029,6 @@ const OnboardingScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
             </button>
           </div>
         );
-      case "group":
-        return (
-          <div className="p-6 flex flex-col h-full animate-fadeInUp">
-            <div className="mb-4">
-              <ProgressBar step={3} totalSteps={4} />
-            </div>
-            <button onClick={handleBack} className="self-start mb-4">
-              <Icons.ArrowLeftIcon className="w-6 h-6" />
-            </button>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold">
-                소속 그룹을
-                <br />
-                선택하세요.
-              </h2>
-            </div>
-            <div className="space-y-3">
-              {groups.map((group) => (
-                <button
-                  key={group.id}
-                  onClick={() => setNewUser({ ...newUser, group })}
-                  className={`w-full text-left p-4 border-2 rounded-lg flex justify-between items-center transition-colors ${
-                    newUser.group?.id === group.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border-color"
-                  }`}
-                >
-                  <span className="font-bold text-text-primary">
-                    {group.name}
-                  </span>
-                  {newUser.group?.id === group.id && (
-                    <Icons.CheckCircleIcon className="w-6 h-6 text-primary" />
-                  )}
-                </button>
-              ))}
-            </div>
-            <div className="h-full" />
-            <div className="space-y-3 mt-6">
-              <button
-                onClick={handleNext}
-                className="w-full bg-primary text-white font-bold py-3.5 rounded-xl"
-              >
-                다음
-              </button>
-              <button
-                onClick={handleNext}
-                className="w-full text-text-secondary font-semibold py-3"
-              >
-                나중에 설정할게요
-              </button>
-            </div>
-          </div>
-        );
-
       case "notification":
         return (
           <div className="p-6 flex flex-col h-full animate-fadeInUp text-center">
