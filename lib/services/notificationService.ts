@@ -4,6 +4,7 @@ import {
   getToken,
   deleteToken,
   onMessage,
+  isSupported,
 } from "firebase/messaging";
 import defaultClient from "../api/axiosClient";
 import { NotificationType } from "../types/notification";
@@ -22,27 +23,34 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 let messaging: any = null;
 
-if (typeof window !== "undefined") {
-  try {
-    messaging = getMessaging(app);
-    onMessage(messaging, (payload) => {
-      console.log("Message received. ", payload);
-      const title = payload.data?.title || "StockIt";
-      const options = {
-        body: payload.data?.body,
-        icon: "/new_logo.png",
-        badge: "/new_logo.png",
-        data: payload.data,
-      };
-      showLocalNotification(title, options);
+const initializeMessaging = async () => {
+  if (typeof window !== "undefined") {
+    try {
+      const supported = await isSupported();
+      if (supported) {
+        messaging = getMessaging(app);
+        onMessage(messaging, (payload) => {
+          console.log("Message received. ", payload);
+          const title = payload.data?.title || "StockIt";
+          const options = {
+            body: payload.data?.body,
+            icon: "/new_logo.png",
+            badge: "/new_logo.png",
+            data: payload.data,
+          };
+          showLocalNotification(title, options);
 
-      // Dispatch event to trigger React Query refetch
-      window.dispatchEvent(new CustomEvent("notificationUpdate"));
-    });
-  } catch (err) {
-    console.error("Firebase Messaging initialization failed", err);
+          // Dispatch event to trigger React Query refetch
+          window.dispatchEvent(new CustomEvent("notificationUpdate"));
+        });
+      }
+    } catch (err) {
+      console.error("Firebase Messaging initialization failed", err);
+    }
   }
-}
+};
+
+initializeMessaging();
 
 // 알림 권한 상태 확인
 export const checkNotificationPermission = (): NotificationPermission => {
@@ -153,11 +161,22 @@ export const showLocalNotification = (
   options?: NotificationOptions
 ): void => {
   if (Notification.permission === "granted") {
-    new Notification(title, {
-      icon: "/new_logo.png",
-      badge: "/new_logo.png",
-      ...options,
-    });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(title, {
+          icon: "/new_logo.png",
+          badge: "/new_logo.png",
+          ...options,
+        });
+      });
+    } else {
+      // Fallback for browsers without Service Worker support (mostly desktop legacy)
+      new Notification(title, {
+        icon: "/new_logo.png",
+        badge: "/new_logo.png",
+        ...options,
+      });
+    }
   }
 };
 

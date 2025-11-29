@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
-import { Account, User } from "@/lib/types/stock";
-import { ChevronDownIcon, BuildingOffice2Icon, BellIcon } from "./icons/Icons";
+import { Account } from "@/lib/types/stock";
+import { ChevronDownIcon, BellIcon } from "./icons/Icons";
 
 interface HeaderProps {
   selectedAccount: Account;
-  user: User;
   onAccountSwitch: () => void;
   onNotificationClick?: () => void;
   unreadCount?: number;
@@ -13,22 +12,21 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({
   selectedAccount,
-  user,
   onAccountSwitch,
   onNotificationClick,
   unreadCount = 0,
 }) => {
   return (
     <header className="fixed top-0 pt-safe left-0 right-0 z-20 max-w-md mx-auto bg-bg-primary/80 backdrop-blur-lg">
-      <div className="flex items-center justify-between p-4 h-16 pb-2">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-end p-4 h-16 pb-2">
+        {/* <div className="flex items-center gap-2">
           {user.group && (
             <div className="flex items-center gap-1 text-xs bg-bg-secondary px-2 py-1 rounded-full text-text-secondary font-semibold">
               <BuildingOffice2Icon className="w-4 h-4" />
               <span>{user.group.name}</span>
             </div>
           )}
-        </div>
+        </div> */}
 
         <div className="flex items-center gap-2 ">
           {/* 알림 버튼 */}

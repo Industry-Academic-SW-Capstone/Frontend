@@ -39,7 +39,7 @@ const StocksSwiper: React.FC<StocksSwiperProps> = ({
   useEffect(() => {
     if (swiperRef.current) {
       const index = viewOrder.indexOf(currentView);
-      if (index !== -1 && swiperRef.current.activeIndex !== index) {
+      if (index !== -1) {
         swiperRef.current.slideTo(index);
       }
     }

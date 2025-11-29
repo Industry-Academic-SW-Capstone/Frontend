@@ -13,6 +13,7 @@ import {
   useBankruptcy,
   useViewReport,
 } from "@/lib/hooks/missions/useMissionActions";
+import { useMyTitle, useUpdateTitle } from "@/lib/hooks/me/useTitle";
 import { ChevronDownIcon } from "lucide-react";
 
 interface MissionPanelProps {
@@ -369,22 +370,50 @@ const MissionPanel: React.FC<MissionPanelProps> = ({ isOpen, onClose }) => {
 
 const TitlesSection: React.FC = () => {
   const { data: titles } = useMissionTitles();
+  const { data: currentTitle } = useMyTitle();
+  const { mutate: updateTitle } = useUpdateTitle();
 
   if (!titles || titles.length === 0) return null;
+
+  const handleTitleClick = (titleId: number, titleName: string) => {
+    if (currentTitle?.name === titleName) return; // 이미 장착중이면 무시
+
+    if (confirm(`'${titleName}' 칭호를 대표 칭호로 설정하시겠습니까?`)) {
+      updateTitle(
+        { titleId },
+        {
+          onSuccess: () => {
+            alert("대표 칭호가 변경되었습니다.");
+          },
+          onError: (error: any) => {
+            alert(error.response?.data || "칭호 변경 실패");
+          },
+        }
+      );
+    }
+  };
 
   return (
     <div className="mt-6 mb-6">
       <h3 className="text-lg font-bold text-text-primary mb-3">보유 칭호</h3>
       <div className="flex flex-wrap gap-2 w-full overflow-auto no-scrollbar p-2 rounded-2xl border border-border-color bg-bg-secondary">
-        {titles.map((title) => (
-          <div
-            key={title.titleId}
-            className="px-3 py-1.5 bg-yellow-50 border border-yellow-200 rounded-full text-yellow-800 text-xs font-bold"
-            title={title.description}
-          >
-            {title.name}
-          </div>
-        ))}
+        {titles.map((title) => {
+          const isActive = currentTitle?.name === title.name;
+          return (
+            <button
+              key={title.titleId}
+              onClick={() => handleTitleClick(title.titleId, title.name)}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                isActive
+                  ? "bg-primary text-white border border-primary shadow-md scale-105"
+                  : "bg-bg-primary border border-border-color text-text-secondary hover:bg-bg-tertiary"
+              }`}
+              title={title.description}
+            >
+              {title.name}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

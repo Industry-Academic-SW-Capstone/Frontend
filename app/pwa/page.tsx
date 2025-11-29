@@ -18,6 +18,7 @@ import { WebSocketProvider } from "@/lib/providers/SocketProvider";
 import { useAccounts } from "@/lib/hooks/useAccounts";
 import { useAccountStore } from "@/lib/store/useAccountStore";
 import { useFetchInfo, usePutInfo } from "@/lib/hooks/me/useInfo";
+import { useMyTitle } from "@/lib/hooks/me/useTitle";
 import { useAuthStore } from "@/lib/stores/useAuthStore";
 import { useUnreadCount } from "@/lib/hooks/notifications/useUnreadCount";
 import { useHistoryStore } from "@/lib/stores/useHistoryStore";
@@ -48,6 +49,8 @@ export default function Home() {
     enabled: !!token,
   });
 
+  const { data: userTitle } = useMyTitle(!!token);
+
   const { mutate: updateInfo } = usePutInfo();
 
   // Use hook for unread notifications
@@ -63,8 +66,8 @@ export default function Home() {
     ? {
         username: userInfo.name,
         avatar: userInfo.profileImage,
-        title: "초보 투자자", // Mock or derive from data
-        group: { id: "1", name: "새싹 투자자", averageReturn: 0 }, // Mock or derive
+        title: userTitle?.name || "초보 투자자", // Use fetched title name or default
+        // group: { id: "1", name: "한성대학교", averageReturn: 0 }, // Mock or derive
       }
     : MOCK_USER;
 
@@ -383,7 +386,6 @@ export default function Home() {
         <div className="max-w-md mx-auto bg-bg-primary text-text-primary h-screen pt-safe font-sans relative overflow-hidden">
           <Header
             selectedAccount={currentAccount}
-            user={user}
             onAccountSwitch={() => setIsAccountSwitcherOpen(true)}
             onNotificationClick={() => setIsNotificationsOpen(true)}
             unreadCount={unreadNotifications}

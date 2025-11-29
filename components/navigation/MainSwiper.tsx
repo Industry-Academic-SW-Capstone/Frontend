@@ -52,7 +52,7 @@ const MainSwiper: React.FC<MainSwiperProps> = ({
   useEffect(() => {
     if (swiperRef.current && currentScreen !== "stocks") {
       const index = screenOrder.indexOf(currentScreen);
-      if (index !== -1 && swiperRef.current.activeIndex !== index) {
+      if (index !== -1) {
         swiperRef.current.slideTo(index);
       }
     }

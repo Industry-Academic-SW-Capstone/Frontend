@@ -10,14 +10,14 @@ export interface User {
   username: string;
   avatar: string;
   title: string;
-  group: UserGroup;
+  // group: UserGroup;
 }
 
-export interface UserGroup {
-  id: string;
-  name: string;
-  averageReturn: number;
-}
+// export interface UserGroup {
+//   id: string;
+//   name: string;
+//   averageReturn: number;
+// }
 
 export interface AccountData {
   accountId: number;
