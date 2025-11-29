@@ -147,7 +147,6 @@ import { useStockStore } from "@/lib/stores/useStockStore";
 import SlidingScreen from "@/components/navigation/SlidingScreen";
 import StockDetailScreen from "@/components/screens/StockDetailScreen";
 import DailyReportScreen from "@/components/screens/DailyReportScreen";
-import ReportListScreen from "@/components/screens/ReportListScreen";
 import OrderDetailModal from "@/components/OrderDetailModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowPathIcon } from "@/components/icons/Icons";
@@ -165,10 +164,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 }) => {
   const { hapticSuccess } = useHaptic();
   const [isMissionPanelOpen, setIsMissionPanelOpen] = useState(false);
-  const [activeReportScreen, setActiveReportScreen] = useState<
-    "NONE" | "LIST" | "DETAIL"
-  >("NONE");
-  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+  const [isDailyReportOpen, setIsDailyReportOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [selectedStockTicker, setSelectedStockTicker] = useState<string | null>(
     null
@@ -429,7 +425,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     return (
       <div
         className="bg-linear-to-r from-blue-600 to-blue-500 p-5 rounded-2xl flex flex-col cursor-pointer relative overflow-hidden shadow-lg group active:scale-95 transition-all duration-200"
-        onClick={() => setActiveReportScreen("LIST")}
+        onClick={() => setIsDailyReportOpen(true)}
       >
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-1">
@@ -808,46 +804,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       </div>
 
       {/* Mission Panel */}
-      <SlidingScreen
+      <MissionPanel
         isOpen={isMissionPanelOpen}
         onClose={() => setIsMissionPanelOpen(false)}
-      >
-        <MissionPanel
-          isOpen={isMissionPanelOpen}
-          onClose={() => setIsMissionPanelOpen(false)}
-        />
-      </SlidingScreen>
+      />
 
-      {/* Report List Screen */}
-      <SlidingScreen
-        isOpen={
-          activeReportScreen === "LIST" || activeReportScreen === "DETAIL"
-        }
-        onClose={() => setActiveReportScreen("NONE")}
-      >
-        <ReportListScreen
-          onBack={() => setActiveReportScreen("NONE")}
-          onReportClick={(id) => {
-            setSelectedReportId(id);
-            setActiveReportScreen("DETAIL");
-          }}
-        />
-      </SlidingScreen>
-
-      {/* Report Detail Screen */}
-      <SlidingScreen
-        isOpen={activeReportScreen === "DETAIL"}
-        onClose={() => setActiveReportScreen("LIST")}
-      >
-        {selectedReportId && (
-          <DailyReportScreen
-            reportId={selectedReportId}
-            onBack={() => setActiveReportScreen("LIST")}
-          />
-        )}
-      </SlidingScreen>
-
-      {/* Stock Detail Screen */}
+      {/* Stock Detail Sliding Screen */}
       <SlidingScreen
         isOpen={!!selectedStockTicker}
         onClose={() => setSelectedStockTicker(null)}
@@ -857,6 +819,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
             ticker={selectedStockTicker}
             onBack={() => setSelectedStockTicker(null)}
           />
+        )}
+      </SlidingScreen>
+
+      {/* Daily Report Sliding Screen */}
+      <SlidingScreen
+        isOpen={isDailyReportOpen}
+        onClose={() => setIsDailyReportOpen(false)}
+      >
+        {isDailyReportOpen && (
+          <DailyReportScreen onBack={() => setIsDailyReportOpen(false)} />
         )}
       </SlidingScreen>
 
