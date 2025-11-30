@@ -21,8 +21,10 @@ interface TickerState {
   updateTickerFromSocket: (stockCode: string, socketData: any) => void;
 
   // Navigation State
-  stocksView: "portfolio" | "explore" | "analysis";
-  setStocksView: (view: "portfolio" | "explore" | "analysis") => void;
+  stocksView: "portfolio" | "explore" | "analysis" | "insight";
+  setStocksView: (
+    view: "portfolio" | "explore" | "analysis" | "insight"
+  ) => void;
 }
 
 export const useStockStore = create<TickerState>((set, get) => ({
@@ -73,7 +75,7 @@ export const useStockStore = create<TickerState>((set, get) => ({
     });
   },
   // Navigation State
-  stocksView: "portfolio" as "portfolio" | "explore" | "analysis",
-  setStocksView: (view: "portfolio" | "explore" | "analysis") =>
+  stocksView: "portfolio" as "portfolio" | "explore" | "analysis" | "insight",
+  setStocksView: (view: "portfolio" | "explore" | "analysis" | "insight") =>
     set({ stocksView: view }),
 }));

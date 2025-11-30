@@ -5,9 +5,10 @@ import {
   BriefcaseIcon,
   MagnifyingGlassIcon,
   ChartPieIcon,
+  SparklesIcon,
 } from "./icons/Icons";
 
-export type StocksView = "explore" | "portfolio" | "analysis";
+export type StocksView = "explore" | "portfolio" | "analysis" | "insight";
 
 interface StocksBottomNavBarProps {
   currentView: StocksView;
@@ -17,6 +18,7 @@ interface StocksBottomNavBarProps {
 
 const navItems: { view: StocksView; label: string; icon: React.FC<any> }[] = [
   { view: "portfolio", label: "자산", icon: BriefcaseIcon },
+  { view: "insight", label: "인사이트", icon: SparklesIcon },
   { view: "explore", label: "탐색", icon: MagnifyingGlassIcon },
   { view: "analysis", label: "투자분석", icon: ChartPieIcon },
 ];

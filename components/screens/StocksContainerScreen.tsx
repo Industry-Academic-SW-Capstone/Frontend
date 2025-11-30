@@ -4,6 +4,7 @@ import StocksBottomNavBar from "@/components/StocksBottomNavBar";
 import StocksSwiper from "@/components/navigation/StocksSwiper";
 import SlidingScreen from "@/components/navigation/SlidingScreen";
 import StockDetailScreen from "./StockDetailScreen";
+import InsightScreen from "./InsightScreen";
 
 interface StocksContainerScreenProps {
   onExit: () => void;
@@ -34,7 +35,7 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
   // 초기 렌더링 시 Stocks Depth 초기화
   React.useEffect(() => {
     if (!isInitialized.current) {
-      const viewOrder = ["portfolio", "explore", "analysis"];
+      const viewOrder = ["portfolio", "insight", "explore", "analysis"];
       const initialIndex = viewOrder.indexOf(currentView);
       pushDepth("stocks", initialIndex);
       isInitialized.current = true;
@@ -70,6 +71,8 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
         return "탐색";
       case "analysis":
         return "투자 분석";
+      case "insight":
+        return "인사이트";
       default:
         return "증권";
     }
@@ -84,12 +87,16 @@ const StocksContainerScreen: React.FC<StocksContainerScreenProps> = ({
       </header>
 
       <div className="flex-1 overflow-hidden">
-        <StocksSwiper
-          currentView={currentView}
-          onSlideChange={setCurrentView}
-          onSelectStock={handleSelectStock}
-          selectedTicker={selectedTicker || ""}
-        />
+        {currentView === "insight" ? (
+          <InsightScreen />
+        ) : (
+          <StocksSwiper
+            currentView={currentView}
+            onSlideChange={setCurrentView}
+            onSelectStock={handleSelectStock}
+            selectedTicker={selectedTicker || ""}
+          />
+        )}
       </div>
 
       {needHeader && (

@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/insight/generate",
+      "schedule": "30 8 * * 1-5"
+    },
+    {
+      "path": "/api/insight/generate",
+      "schedule": "0 12 * * 1-5"
+    },
+    {
+      "path": "/api/insight/generate",
+      "schedule": "30 15 * * 1-5"
+    }
+  ]
+}

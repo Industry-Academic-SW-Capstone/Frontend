@@ -1,30 +1,19 @@
 import {
-  Account,
-  Transaction,
-  Competition,
   Achievement,
   LeaderboardEntry,
   User,
-  UserGroup,
   AIPersonaLeaderboardEntry,
   RivalLeaderboardEntry,
-  Order,
   InvestmentStyleAnalysis,
   Notification,
   Mission,
   MissionProgress,
-  BasicStockInfo,
 } from "./types/stock";
 
 export const MOCK_USER: User = {
   username: "주린이탈출",
   avatar: "https://picsum.photos/seed/userMe/100",
   title: "주식의 신",
-  group: {
-    id: "group-hsu",
-    name: "한성대학교",
-    averageReturn: 18.5,
-  },
 };
 
 export const MOCK_CASH_BALANCE = 2350000;
